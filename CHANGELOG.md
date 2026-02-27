@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.0.2](https://github.com/BobPayments/documentation/compare/v1.0.1...v1.0.2) (2026-02-27)
+
+### Documentação
+
+* add README in AbacatePay style ([5373bf1](https://github.com/BobPayments/documentation/commit/5373bf1ca8594bd4904134de682c2f8534c3218a))
+
 ## [1.0.1](https://github.com/BobPayments/documentation/compare/v1.0.0...v1.0.1) (2026-02-27)
 
 ### Documentação
