@@ -1,0 +1,152 @@
+---
+title: "Criar ou atualizar cliente"
+description: "Cadastre um novo cliente ou atualize os dados de um existente."
+icon: "user-plus"
+---
+
+# Criar ou atualizar cliente
+
+Cria um novo cliente no seu projeto. Se já existir um cliente com o mesmo `document`, os dados são atualizados.
+
+<Note>
+  Você não precisa criar clientes manualmente — eles são criados automaticamente ao criar uma transação PIX com os dados do comprador. Use este endpoint quando quiser gerenciar clientes de forma independente.
+</Note>
+
+## Endpoint
+
+```
+POST /api/customers
+```
+
+## Parâmetros do body
+
+<AccordionGroup>
+  <Accordion title="name" icon="user">
+    **string** · Obrigatório
+
+    Nome completo do cliente.
+  </Accordion>
+
+  <Accordion title="email" icon="envelope">
+    **string** · Obrigatório
+
+    E-mail do cliente.
+  </Accordion>
+
+  <Accordion title="document" icon="id-card">
+    **string** · Obrigatório
+
+    CPF ou CNPJ do cliente, somente números. Usado como identificador único.
+  </Accordion>
+
+  <Accordion title="documentType" icon="id-badge">
+    **string** · Obrigatório
+
+    Tipo do documento: `CPF` ou `CNPJ`.
+  </Accordion>
+
+  <Accordion title="phone" icon="phone">
+    **string** · Opcional
+
+    Telefone com DDD, somente números. Exemplo: `11987654321`.
+  </Accordion>
+
+  <Accordion title="address" icon="map-pin">
+    **object** · Opcional
+
+    Endereço completo do cliente. Consulte a [entidade Customer](/pages/customers/reference) para ver os campos disponíveis.
+  </Accordion>
+</AccordionGroup>
+
+## Exemplo de requisição
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://api.payments.bob.company/api/customers \
+  -H "Authorization: Bearer sk_test_sua_chave" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "phone": "11987654321",
+    "document": "12345678900",
+    "documentType": "CPF",
+    "address": {
+      "street": "Rua Exemplo",
+      "streetNumber": "123",
+      "neighborhood": "Centro",
+      "zipCode": "01234567",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "BR"
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.payments.bob.company/api/customers', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sk_test_sua_chave',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'João Silva',
+    email: 'joao@email.com',
+    phone: '11987654321',
+    document: '12345678900',
+    documentType: 'CPF'
+  })
+});
+
+const { data } = await response.json();
+console.log(data.id); // ID do cliente criado ou atualizado
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.payments.bob.company/api/customers',
+    headers={'Authorization': 'Bearer sk_test_sua_chave'},
+    json={
+        'name': 'João Silva',
+        'email': 'joao@email.com',
+        'phone': '11987654321',
+        'document': '12345678900',
+        'documentType': 'CPF'
+    }
+)
+
+data = response.json()['data']
+print(data['id'])
+```
+</CodeGroup>
+
+## Resposta de sucesso
+
+```json
+{
+  "success": true,
+  "message": "Customer created successfully",
+  "data": {
+    "id": "clx1a2b3c4d5e6f7g8h9",
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "phone": "11987654321",
+    "document": "12345678900",
+    "documentType": "CPF",
+    "address": {
+      "street": "Rua Exemplo",
+      "streetNumber": "123",
+      "neighborhood": "Centro",
+      "zipCode": "01234567",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "BR"
+    },
+    "createdAt": "2026-02-27T09:00:00.000Z",
+    "updatedAt": "2026-02-27T09:00:00.000Z"
+  }
+}
+```

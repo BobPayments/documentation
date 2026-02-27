@@ -1,0 +1,133 @@
+---
+title: "Listar transações"
+description: "Retorna todas as transações PIX do seu projeto com suporte a filtros."
+icon: "list"
+---
+
+# Listar transações
+
+Retorna uma lista paginada de todas as transações do seu projeto. Você pode filtrar por status, período ou cliente.
+
+## Endpoint
+
+```
+GET /api/transactions
+```
+
+## Parâmetros de query
+
+<AccordionGroup>
+  <Accordion title="page" icon="arrow-right">
+    **number** · Opcional
+
+    Número da página para paginação. Padrão: `1`.
+  </Accordion>
+
+  <Accordion title="limit" icon="list-ol">
+    **number** · Opcional
+
+    Quantidade de registros por página. Padrão: `20`. Máximo: `100`.
+  </Accordion>
+
+  <Accordion title="status" icon="circle-half-stroke">
+    **string** · Opcional
+
+    Filtra por status da transação. Valores aceitos: `waiting_payment`, `paid`, `expired`, `refunded`, `cancelled`.
+  </Accordion>
+
+  <Accordion title="customerId" icon="user">
+    **string** · Opcional
+
+    Filtra transações de um cliente específico pelo ID.
+  </Accordion>
+
+  <Accordion title="startDate" icon="calendar">
+    **string (ISO 8601)** · Opcional
+
+    Data de início para filtro por período de criação.
+  </Accordion>
+
+  <Accordion title="endDate" icon="calendar-check">
+    **string (ISO 8601)** · Opcional
+
+    Data de fim para filtro por período de criação.
+  </Accordion>
+</AccordionGroup>
+
+## Exemplo de requisição
+
+<CodeGroup>
+```bash cURL
+# Listar todas as transações pagas
+curl "https://api.payments.bob.company/api/transactions?status=paid&limit=10" \
+  -H "Authorization: Bearer sk_test_sua_chave"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  status: 'paid',
+  limit: '10',
+  page: '1'
+});
+
+const response = await fetch(
+  `https://api.payments.bob.company/api/transactions?${params}`,
+  {
+    headers: { 'Authorization': 'Bearer sk_test_sua_chave' }
+  }
+);
+
+const { data } = await response.json();
+console.log(data.transactions); // array de transações
+console.log(data.total);        // total de registros
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.payments.bob.company/api/transactions',
+    headers={'Authorization': 'Bearer sk_test_sua_chave'},
+    params={'status': 'paid', 'limit': 10, 'page': 1}
+)
+
+result = response.json()['data']
+print(result['transactions'])
+print(result['total'])
+```
+</CodeGroup>
+
+## Resposta de sucesso
+
+```json
+{
+  "success": true,
+  "message": "Transactions retrieved successfully",
+  "data": {
+    "transactions": [
+      {
+        "id": "clx7a8b9c0d1e2f3g4h5",
+        "externalId": "pedido_123",
+        "amount": 100.00,
+        "product": "Plano Premium",
+        "status": "paid",
+        "expirationDate": "2026-02-27T10:00:00.000Z",
+        "customer": {
+          "name": "João Silva",
+          "email": "joao@email.com"
+        },
+        "isSandbox": false,
+        "createdAt": "2026-02-27T09:00:00.000Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<Note>
+  As transações sandbox (criadas com `sk_test_*`) são isoladas das de produção e não aparecem quando você usa `sk_live_*`, e vice-versa.
+</Note>

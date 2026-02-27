@@ -1,0 +1,45 @@
+---
+title: "Dev Mode"
+description: "Teste sua integração no ambiente sandbox sem processar pagamentos reais."
+icon: "flask"
+---
+
+# Dev Mode
+
+O Dev Mode é um ambiente isolado para testar sua integração sem cobranças reais. Tudo funciona exatamente como em produção — incluindo webhooks — mas nenhuma transação é processada de verdade.
+
+## Chaves de API
+
+Cada projeto tem duas chaves de API:
+
+| Prefixo | Ambiente | Processa pagamentos? |
+|---------|----------|-----------------------|
+| `sk_test_*` | Sandbox | Não |
+| `sk_live_*` | Produção | Sim |
+
+<Warning>
+  Nunca use `sk_live_*` em código frontend, repositórios públicos ou variáveis de ambiente não protegidas.
+</Warning>
+
+## Simulando pagamentos
+
+No sandbox, confirme uma transação sem precisar de um PIX real:
+
+```bash cURL
+curl -X POST https://api.payments.bob.company/api/sandbox/transactions/TRANSACTION_ID/pay \
+  -H "Authorization: Bearer sk_test_sua_chave"
+```
+
+Após a simulação, o webhook configurado no projeto é disparado automaticamente com o evento `transaction.paid`.
+
+<Note>
+  Webhooks funcionam normalmente no sandbox — ideal para testar o fluxo completo de ponta a ponta.
+</Note>
+
+## Identificando transações sandbox
+
+Transações criadas com `sk_test_*` ficam isoladas das de produção. O campo `isSandbox: true` é incluído no payload dos webhooks para facilitar a identificação.
+
+<Card title="Simular pagamento" icon="play" href="/pages/pix/simulate-payment">
+  Veja como simular o pagamento de uma transação sandbox.
+</Card>

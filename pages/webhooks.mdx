@@ -1,0 +1,134 @@
+---
+title: "Webhooks"
+description: "Receba notificações automáticas quando eventos acontecem no seu projeto."
+icon: "bell"
+---
+
+# Webhooks
+
+Webhooks permitem que sua aplicação seja notificada automaticamente quando eventos ocorrem — como um pagamento confirmado ou uma transação expirada. Em vez de fazer polling, a Bob Payments avisa você.
+
+## Configurando um webhook
+
+<Steps>
+  <Step title="Acesse o Dashboard">
+    Vá em **Webhooks → Adicionar webhook** no seu projeto.
+  </Step>
+  <Step title="Informe a URL">
+    Insira a URL HTTPS da sua aplicação que receberá os eventos (ex: `https://suaapi.com/webhooks/bob`).
+  </Step>
+  <Step title="Copie o secret">
+    Um secret é gerado automaticamente. Guarde-o para verificar a autenticidade das requisições.
+  </Step>
+</Steps>
+
+<Note>
+  Webhooks funcionam normalmente no sandbox. Use-os para testar o fluxo completo antes de ir a produção.
+</Note>
+
+## Eventos disponíveis
+
+<AccordionGroup>
+  <Accordion title="transaction.paid" icon="circle-check">
+    Disparado quando um pagamento PIX é confirmado. Use para liberar o produto ou serviço ao cliente.
+  </Accordion>
+  <Accordion title="transaction.expired" icon="clock">
+    Disparado quando uma transação expira sem pagamento. Use para notificar o cliente ou criar nova cobrança.
+  </Accordion>
+  <Accordion title="transaction.refunded" icon="rotate-left">
+    Disparado quando uma transação é estornada.
+  </Accordion>
+  <Accordion title="transaction.cancelled" icon="circle-xmark">
+    Disparado quando uma transação é cancelada manualmente.
+  </Accordion>
+</AccordionGroup>
+
+## Formato do payload
+
+Toda notificação chega como um `POST` com o seguinte formato:
+
+```json
+{
+  "event": "transaction.paid",
+  "type": "transaction",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100.00,
+    "product": "Plano Premium",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "gateway": "gateway-alias",
+    "originDomain": "loja.exemplo.com.br",
+    "isSandbox": false
+  }
+}
+```
+
+## Verificando a assinatura
+
+Cada requisição inclui o header `X-Webhook-Signature` com um HMAC-SHA256 do payload. Verifique sempre para garantir que a requisição veio da Bob Payments.
+
+<CodeGroup>
+```javascript JavaScript
+const crypto = require('crypto');
+
+function verifyWebhook(payload, signature, secret) {
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(payload))
+    .digest('hex');
+
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expected)
+  );
+}
+
+app.post('/webhooks/bob', (req, res) => {
+  const sig = req.headers['x-webhook-signature'];
+
+  if (!verifyWebhook(req.body, sig, process.env.BOB_WEBHOOK_SECRET)) {
+    return res.status(401).send('Assinatura inválida');
+  }
+
+  // Processe de forma assíncrona
+  processEvent(req.body).catch(console.error);
+
+  // Responda 200 imediatamente
+  res.status(200).send('ok');
+});
+```
+
+```python Python
+import hmac
+import hashlib
+import json
+
+def verify_webhook(payload: dict, signature: str, secret: str) -> bool:
+    expected = hmac.new(
+        secret.encode(),
+        json.dumps(payload).encode(),
+        hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(signature, expected)
+```
+</CodeGroup>
+
+<Tip>
+  Retorne HTTP 200 imediatamente e processe o evento de forma assíncrona para evitar timeouts.
+</Tip>

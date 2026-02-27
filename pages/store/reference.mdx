@@ -1,0 +1,54 @@
+---
+title: "Entidade Store"
+description: "Estrutura completa do objeto de loja na Bob Payments."
+icon: "book"
+---
+
+# Entidade Store
+
+O objeto `Store` representa o projeto (loja) associado à sua chave de API. Cada chave (`sk_test_*` ou `sk_live_*`) pertence a um projeto específico.
+
+## Atributos
+
+<AccordionGroup>
+  <Accordion title="id" icon="fingerprint">
+    **string** — Identificador único do projeto no formato CUID.
+  </Accordion>
+
+  <Accordion title="name" icon="store">
+    **string** — Nome do projeto/loja configurado no Dashboard.
+  </Accordion>
+
+  <Accordion title="domains" icon="globe">
+    **string[]** — Lista de domínios cadastrados e autorizados para criar transações em produção.
+  </Accordion>
+
+  <Accordion title="webhookUrl" icon="bell">
+    **string | null** — URL de webhook configurada para receber notificações de eventos.
+  </Accordion>
+
+  <Accordion title="isSandbox" icon="flask">
+    **boolean** — `true` se a chave utilizada é de sandbox (`sk_test_*`).
+  </Accordion>
+
+  <Accordion title="createdAt" icon="calendar">
+    **string (ISO 8601)** — Data e hora de criação do projeto.
+  </Accordion>
+</AccordionGroup>
+
+## Exemplo de objeto
+
+```json
+{
+  "id": "clz9x8w7v6u5t4s3r2q1",
+  "name": "Minha Loja",
+  "domains": ["loja.exemplo.com.br", "www.loja.exemplo.com.br"],
+  "webhookUrl": "https://loja.exemplo.com.br/webhooks/bob",
+  "isSandbox": false,
+  "createdAt": "2026-01-15T08:00:00.000Z"
+}
+```
+
+<Note>
+  O campo `domains` é obrigatório em produção. Transações criadas a partir de domínios não cadastrados serão rejeitadas.
+</Note>

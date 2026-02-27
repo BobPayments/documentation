@@ -1,0 +1,168 @@
+---
+title: "Criar cobrança PIX"
+description: "Gere um código PIX para receber pagamentos dos seus clientes."
+icon: "plus"
+---
+
+# Criar cobrança PIX
+
+Cria uma nova transação PIX e retorna o código copia-e-cola e o QR Code para o cliente efetuar o pagamento.
+
+## Endpoint
+
+```
+POST /api/transactions
+```
+
+## Parâmetros do body
+
+<AccordionGroup>
+  <Accordion title="amount" icon="brazilian-real-sign">
+    **number** · Obrigatório
+
+    Valor da cobrança em reais. Exemplo: `100.00` = R$ 100,00.
+  </Accordion>
+
+  <Accordion title="product" icon="box">
+    **string** · Obrigatório
+
+    Nome ou descrição do produto/serviço. Aparece na notificação do PIX para o pagador.
+  </Accordion>
+
+  <Accordion title="externalId" icon="tag">
+    **string** · Opcional
+
+    Identificador da transação no seu sistema. Use para cruzar dados com seu banco de dados. Deve ser único por projeto.
+  </Accordion>
+
+  <Accordion title="expiresIn" icon="clock">
+    **number** · Opcional
+
+    Tempo de expiração em segundos. Padrão: `3600` (1 hora). Mínimo: `300` (5 minutos).
+  </Accordion>
+
+  <Accordion title="customer" icon="user">
+    **object** · Opcional
+
+    Dados do comprador. Se o cliente já existir (pelo `document`), os dados são atualizados automaticamente.
+
+    | Campo | Tipo | Descrição |
+    |-------|------|-----------|
+    | `name` | string | Nome completo |
+    | `email` | string | E-mail |
+    | `phone` | string | Telefone (somente números) |
+    | `document` | string | CPF ou CNPJ (somente números) |
+    | `documentType` | string | `CPF` ou `CNPJ` |
+    | `address` | object | Endereço completo (opcional) |
+  </Accordion>
+</AccordionGroup>
+
+## Exemplo de requisição
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://api.payments.bob.company/api/transactions \
+  -H "Authorization: Bearer sk_test_sua_chave" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 100.00,
+    "product": "Plano Premium",
+    "externalId": "pedido_123",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF"
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.payments.bob.company/api/transactions', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sk_test_sua_chave',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    amount: 100.00,
+    product: 'Plano Premium',
+    externalId: 'pedido_123',
+    customer: {
+      name: 'João Silva',
+      email: 'joao@email.com',
+      phone: '11987654321',
+      document: '12345678900',
+      documentType: 'CPF'
+    }
+  })
+});
+
+const { data } = await response.json();
+console.log(data.pixCode); // código copia-e-cola
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.payments.bob.company/api/transactions',
+    headers={'Authorization': 'Bearer sk_test_sua_chave'},
+    json={
+        'amount': 100.00,
+        'product': 'Plano Premium',
+        'externalId': 'pedido_123',
+        'customer': {
+            'name': 'João Silva',
+            'email': 'joao@email.com',
+            'phone': '11987654321',
+            'document': '12345678900',
+            'documentType': 'CPF'
+        }
+    }
+)
+
+data = response.json()['data']
+print(data['pixCode'])  # código copia-e-cola
+```
+</CodeGroup>
+
+## Resposta de sucesso
+
+```json
+{
+  "success": true,
+  "message": "Transaction created successfully",
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100.00,
+    "product": "Plano Premium",
+    "status": "waiting_payment",
+    "pixCode": "00020126580014br.gov.bcb.pix0136...",
+    "pixQrCode": "data:image/png;base64,iVBORw0KGgo...",
+    "expirationDate": "2026-02-27T10:00:00.000Z",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "document": "12345678900",
+      "documentType": "CPF"
+    },
+    "isSandbox": true,
+    "createdAt": "2026-02-27T09:00:00.000Z"
+  }
+}
+```
+
+<Tip>
+  Exiba o `pixQrCode` diretamente em uma tag `<img src={data.pixQrCode} />` — ele já vem em base64 pronto para uso.
+</Tip>
+
+<Note>
+  Se o cliente já estiver cadastrado pelo `document`, os dados dele são atualizados automaticamente com os valores enviados na requisição.
+</Note>
+
+<Card title="Testar no sandbox" icon="flask" href="/pages/pix/simulate-payment">
+  Depois de criar a transação, simule o pagamento sem precisar de um PIX real.
+</Card>

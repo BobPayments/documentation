@@ -1,0 +1,83 @@
+---
+title: "Autenticação"
+description: "Todas as rotas exigem um Bearer Token no header Authorization."
+icon: "key"
+---
+
+# Autenticação
+
+A Bob Payments usa Bearer Token para autenticar todas as requisições. A chave é enviada no header `Authorization`:
+
+```
+Authorization: Bearer sk_test_sua_chave_aqui
+```
+
+## Tipos de chave
+
+| Tipo | Prefixo | Uso |
+|------|---------|-----|
+| Sandbox | `sk_test_*` | Testes e desenvolvimento |
+| Produção | `sk_live_*` | Ambiente real |
+
+## Exemplos
+
+<CodeGroup>
+```bash cURL
+curl https://api.payments.bob.company/api/store \
+  -H "Authorization: Bearer sk_test_sua_chave"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.payments.bob.company/api/store', {
+  headers: {
+    'Authorization': 'Bearer sk_test_sua_chave',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.payments.bob.company/api/store',
+    headers={'Authorization': 'Bearer sk_test_sua_chave'}
+)
+
+data = response.json()
+```
+</CodeGroup>
+
+## Gerando sua chave de API
+
+<Steps>
+  <Step title="Acesse o Dashboard">
+    Entre em [app.payments.bob.company](https://app.payments.bob.company) e selecione seu projeto.
+  </Step>
+  <Step title="Abra as configurações de API">
+    No menu lateral, clique em **Configurações → API Keys**.
+  </Step>
+  <Step title="Crie uma nova chave">
+    Clique em **Nova chave**, dê um nome descritivo (ex: `backend-producao`) e confirme.
+  </Step>
+  <Step title="Copie e guarde com segurança">
+    A chave é exibida **apenas uma vez**. Salve em um gerenciador de segredos ou variável de ambiente.
+  </Step>
+</Steps>
+
+<Tip>
+  Use variáveis de ambiente (`process.env.BOB_API_KEY`) para nunca expor a chave no código.
+</Tip>
+
+<Warning>
+  Em caso de vazamento, revogue a chave imediatamente pelo Dashboard e gere uma nova.
+</Warning>
+
+## Erros de autenticação
+
+| HTTP | Descrição |
+|------|-----------|
+| `401` | Token ausente ou inválido |
+| `403` | Token válido, mas sem permissão para este recurso |

@@ -1,0 +1,54 @@
+---
+title: "Indo para Produção"
+description: "Como sair do sandbox e começar a processar pagamentos reais."
+icon: "rocket"
+---
+
+# Indo para Produção
+
+Quando sua integração estiver funcionando perfeitamente no sandbox, siga os passos abaixo para ativar o ambiente de produção.
+
+## Processo de ativação
+
+<Steps>
+  <Step title="Teste integralmente no sandbox">
+    Certifique-se de que todos os fluxos funcionam: criar cobrança, receber webhook, tratar erros.
+  </Step>
+  <Step title="Acesse as configurações de produção">
+    No Dashboard, vá em **Configurações → Produção** e inicie o processo de ativação.
+  </Step>
+  <Step title="Envie a documentação da empresa">
+    Forneça os dados da empresa e dos sócios para verificação de identidade (KYB).
+  </Step>
+  <Step title="Aguarde a aprovação">
+    A análise leva até 24 horas úteis. Você receberá uma notificação por email.
+  </Step>
+  <Step title="Troque as chaves de API">
+    Substitua `sk_test_*` por `sk_live_*` nas variáveis de ambiente da sua aplicação.
+  </Step>
+</Steps>
+
+## Checklist antes de ir a produção
+
+<CardGroup cols={2}>
+  <Card title="Domínio registrado" icon="globe">
+    Cadastre o domínio da sua loja no Dashboard antes de criar transações em produção.
+  </Card>
+  <Card title="Webhook configurado" icon="bell">
+    Configure a URL de webhook de produção (diferente da URL de sandbox).
+  </Card>
+  <Card title="Tratamento de erros" icon="triangle-exclamation">
+    Implemente retry com backoff exponencial para erros `503` (gateways indisponíveis).
+  </Card>
+  <Card title="Variáveis de ambiente" icon="lock">
+    Nunca commite `sk_live_*` no código. Use variáveis de ambiente seguras.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Nunca exponha `sk_live_*` no frontend, em repositórios públicos ou em logs de aplicação.
+</Warning>
+
+<Card title="Precisa de ajuda para ativar?" icon="envelope">
+  Entre em contato com [suporte@payments.bob.company](mailto:suporte@payments.bob.company)
+</Card>

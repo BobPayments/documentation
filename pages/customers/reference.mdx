@@ -1,0 +1,89 @@
+---
+title: "Entidade Customer"
+description: "Estrutura completa do objeto de cliente na Bob Payments."
+icon: "book"
+---
+
+# Entidade Customer
+
+O objeto `Customer` representa um comprador cadastrado no seu projeto. Os clientes são criados ou atualizados automaticamente ao criar transações, ou diretamente pelo endpoint de clientes.
+
+## Atributos
+
+<AccordionGroup>
+  <Accordion title="id" icon="fingerprint">
+    **string** — Identificador único do cliente no formato CUID. Exemplo: `clx1a2b3c4d5e6f7g8h9`
+  </Accordion>
+
+  <Accordion title="name" icon="user">
+    **string** — Nome completo do cliente.
+  </Accordion>
+
+  <Accordion title="email" icon="envelope">
+    **string** — Endereço de e-mail do cliente.
+  </Accordion>
+
+  <Accordion title="phone" icon="phone">
+    **string** — Telefone do cliente com DDD, somente números. Exemplo: `11987654321`.
+  </Accordion>
+
+  <Accordion title="document" icon="id-card">
+    **string** — CPF ou CNPJ do cliente, somente números. Exemplo: `12345678900`.
+  </Accordion>
+
+  <Accordion title="documentType" icon="id-badge">
+    **string** — Tipo do documento. Valores possíveis: `CPF`, `CNPJ`.
+  </Accordion>
+
+  <Accordion title="address" icon="map-pin">
+    **object** — Endereço do cliente. Todos os campos são opcionais.
+
+    | Campo | Tipo | Descrição |
+    |-------|------|-----------|
+    | `street` | string | Logradouro |
+    | `streetNumber` | string | Número |
+    | `complement` | string | Complemento |
+    | `neighborhood` | string | Bairro |
+    | `zipCode` | string | CEP (somente números) |
+    | `city` | string | Cidade |
+    | `state` | string | UF (ex: `SP`) |
+    | `country` | string | País (ex: `BR`) |
+  </Accordion>
+
+  <Accordion title="createdAt" icon="calendar">
+    **string (ISO 8601)** — Data e hora de criação do registro.
+  </Accordion>
+
+  <Accordion title="updatedAt" icon="calendar-check">
+    **string (ISO 8601)** — Data e hora da última atualização.
+  </Accordion>
+</AccordionGroup>
+
+## Exemplo de objeto
+
+```json
+{
+  "id": "clx1a2b3c4d5e6f7g8h9",
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "phone": "11987654321",
+  "document": "12345678900",
+  "documentType": "CPF",
+  "address": {
+    "street": "Rua Exemplo",
+    "streetNumber": "123",
+    "complement": "Apto 4",
+    "neighborhood": "Centro",
+    "zipCode": "01234567",
+    "city": "São Paulo",
+    "state": "SP",
+    "country": "BR"
+  },
+  "createdAt": "2026-02-27T09:00:00.000Z",
+  "updatedAt": "2026-02-27T09:00:00.000Z"
+}
+```
+
+<Note>
+  O campo `document` é usado como identificador único do cliente por projeto. Se você criar uma transação com um `document` já cadastrado, o registro do cliente é atualizado com os novos dados enviados.
+</Note>

@@ -1,0 +1,101 @@
+---
+title: "Buscar cliente por ID"
+description: "Retorna os dados completos de um cliente pelo seu ID."
+icon: "user"
+---
+
+# Buscar cliente por ID
+
+Retorna os dados completos de um cliente específico pelo ID gerado pela Bob Payments.
+
+## Endpoint
+
+```
+GET /api/customers/:id
+```
+
+## Parâmetros de rota
+
+<AccordionGroup>
+  <Accordion title="id" icon="fingerprint">
+    **string** · Obrigatório
+
+    ID do cliente no formato CUID. Exemplo: `clx1a2b3c4d5e6f7g8h9`.
+  </Accordion>
+</AccordionGroup>
+
+## Exemplo de requisição
+
+<CodeGroup>
+```bash cURL
+curl https://api.payments.bob.company/api/customers/clx1a2b3c4d5e6f7g8h9 \
+  -H "Authorization: Bearer sk_test_sua_chave"
+```
+
+```javascript JavaScript
+const customerId = 'clx1a2b3c4d5e6f7g8h9';
+
+const response = await fetch(
+  `https://api.payments.bob.company/api/customers/${customerId}`,
+  {
+    headers: { 'Authorization': 'Bearer sk_test_sua_chave' }
+  }
+);
+
+const { data } = await response.json();
+console.log(data.name); // "João Silva"
+```
+
+```python Python
+import requests
+
+customer_id = 'clx1a2b3c4d5e6f7g8h9'
+
+response = requests.get(
+    f'https://api.payments.bob.company/api/customers/{customer_id}',
+    headers={'Authorization': 'Bearer sk_test_sua_chave'}
+)
+
+data = response.json()['data']
+print(data['name'])
+```
+</CodeGroup>
+
+## Resposta de sucesso
+
+```json
+{
+  "success": true,
+  "message": "Customer retrieved successfully",
+  "data": {
+    "id": "clx1a2b3c4d5e6f7g8h9",
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "phone": "11987654321",
+    "document": "12345678900",
+    "documentType": "CPF",
+    "address": {
+      "street": "Rua Exemplo",
+      "streetNumber": "123",
+      "neighborhood": "Centro",
+      "zipCode": "01234567",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "BR"
+    },
+    "createdAt": "2026-02-27T09:00:00.000Z",
+    "updatedAt": "2026-02-27T09:00:00.000Z"
+  }
+}
+```
+
+## Erros comuns
+
+| HTTP | Descrição |
+|------|-----------|
+| `404` | Cliente não encontrado ou não pertence ao seu projeto |
+| `401` | Token de autenticação inválido ou ausente |
+
+<Tip>
+  Se você tem o CPF/CNPJ, e-mail ou telefone do cliente mas não o ID, use o endpoint de [busca por documento/email/phone](/pages/customers/lookup).
+</Tip>

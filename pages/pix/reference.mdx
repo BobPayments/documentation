@@ -1,0 +1,104 @@
+---
+title: "Entidade Transaction"
+description: "Estrutura completa do objeto de transação PIX."
+icon: "book"
+---
+
+# Entidade Transaction
+
+O objeto `Transaction` representa uma cobrança PIX criada na Bob Payments. Ele é retornado em todos os endpoints de transações.
+
+## Atributos
+
+<AccordionGroup>
+  <Accordion title="id" icon="fingerprint">
+    **string** — Identificador único da transação no formato CUID. Exemplo: `clx7a8b9c0d1e2f3g4h5`
+  </Accordion>
+
+  <Accordion title="externalId" icon="tag">
+    **string** — Identificador da transação no seu sistema. Útil para cruzar dados sem precisar armazenar o `id` interno.
+  </Accordion>
+
+  <Accordion title="amount" icon="brazilian-real-sign">
+    **number** — Valor da transação em reais (ex: `100.00` = R$ 100,00).
+  </Accordion>
+
+  <Accordion title="product" icon="box">
+    **string** — Nome ou descrição do produto/serviço sendo cobrado. Aparece na notificação do PIX.
+  </Accordion>
+
+  <Accordion title="status" icon="circle-half-stroke">
+    **string** — Status atual da transação. Valores possíveis:
+
+    | Valor | Descrição |
+    |-------|-----------|
+    | `waiting_payment` | Aguardando pagamento do cliente |
+    | `paid` | Pagamento confirmado |
+    | `expired` | Transação expirou sem pagamento |
+    | `refunded` | Valor estornado ao cliente |
+    | `cancelled` | Transação cancelada manualmente |
+  </Accordion>
+
+  <Accordion title="pixCode" icon="qrcode">
+    **string** — Código PIX copia-e-cola (Pix Payload Format Object). Presente apenas quando a transação está em `waiting_payment`.
+  </Accordion>
+
+  <Accordion title="pixQrCode" icon="image">
+    **string** — QR Code do PIX em formato base64. Pode ser exibido diretamente em uma tag `<img>`.
+  </Accordion>
+
+  <Accordion title="expirationDate" icon="clock">
+    **string (ISO 8601)** — Data e hora de expiração da transação. Após esse momento, o status muda para `expired`.
+  </Accordion>
+
+  <Accordion title="customer" icon="user">
+    **object** — Dados do comprador. Consulte a [entidade Customer](/pages/customers/reference) para ver a estrutura completa.
+  </Accordion>
+
+  <Accordion title="gateway" icon="server">
+    **string** — Alias do gateway PIX utilizado para processar a transação.
+  </Accordion>
+
+  <Accordion title="originDomain" icon="globe">
+    **string** — Domínio da loja que originou a transação. Deve ser cadastrado no Dashboard.
+  </Accordion>
+
+  <Accordion title="isSandbox" icon="flask">
+    **boolean** — `true` se a transação foi criada no ambiente sandbox (com `sk_test_*`).
+  </Accordion>
+
+  <Accordion title="createdAt" icon="calendar">
+    **string (ISO 8601)** — Data e hora de criação da transação.
+  </Accordion>
+
+  <Accordion title="updatedAt" icon="calendar-check">
+    **string (ISO 8601)** — Data e hora da última atualização.
+  </Accordion>
+</AccordionGroup>
+
+## Exemplo de objeto
+
+```json
+{
+  "id": "clx7a8b9c0d1e2f3g4h5",
+  "externalId": "pedido_123",
+  "amount": 100.00,
+  "product": "Plano Premium",
+  "status": "waiting_payment",
+  "pixCode": "00020126580014br.gov.bcb.pix...",
+  "pixQrCode": "data:image/png;base64,iVBORw0KGgo...",
+  "expirationDate": "2026-02-28T10:00:00.000Z",
+  "customer": {
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "phone": "11987654321",
+    "document": "12345678900",
+    "documentType": "CPF"
+  },
+  "gateway": "gateway-alias",
+  "originDomain": "loja.exemplo.com.br",
+  "isSandbox": false,
+  "createdAt": "2026-02-27T09:00:00.000Z",
+  "updatedAt": "2026-02-27T09:00:00.000Z"
+}
+```
