@@ -1,31 +1,64 @@
-# Bob Payments — Documentação
+<p align="center">
+  <img alt="Bob Payments Logo" src="https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio" width="200" />
+</p>
 
-Documentação pública da API Bob Payments, construída com [Mintlify](https://mintlify.com).
+# Bob Payments Documentation
 
-## Pré-visualizar localmente
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/BobPayments/documentation/issues)
+
+Bob Payments é um orquestrador de pagamentos PIX para desenvolvedores. Com uma única integração você pode:
+
+- Criar cobranças PIX com código copia-e-cola e QR Code
+- Gerenciar clientes com histórico de transações
+- Receber notificações em tempo real via webhooks (HMAC-SHA256)
+- Testar no sandbox sem processar pagamentos reais
+- Consultar e filtrar transações com paginação
+
+## 🚀 Quick Start
+
+Esta documentação é construída com [Mintlify](https://mintlify.com).
+
+1. **Visualizar localmente**
+```bash
+# Instalar o CLI do Mintlify
+npm i -g mintlify
+
+# Iniciar o servidor de desenvolvimento
+mintlify dev
+```
+
+2. **Acesse `http://localhost:3000` para ver a documentação**
+
+## 📚 Estrutura
+
+```
+.
+├── pages/
+│   ├── introduction.mdx        # Visão geral da API
+│   ├── devmode.mdx             # Ambiente sandbox
+│   ├── authentication.mdx      # Autenticação Bearer Token
+│   ├── webhooks.mdx            # Webhooks e verificação de assinatura
+│   ├── production.mdx          # Guia para ir a produção
+│   ├── pix/                    # Cobranças PIX
+│   ├── customers/              # Gestão de clientes
+│   └── store/                  # Dados da loja
+├── docs.json                   # Configuração do Mintlify
+└── openapi.yaml                # Especificação OpenAPI (gerada automaticamente)
+```
+
+## 🔧 Desenvolvimento local
 
 ```bash
-npx mintlify dev
+mintlify dev
 ```
 
-## Atualizar a referência da API
+Se o servidor não iniciar, execute `mintlify install` para reinstalar as dependências.
 
-Com o backend rodando localmente:
+## 🚀 Deploy
 
-```bash
-./update-openapi.sh
-```
+As alterações são publicadas automaticamente quando mescladas na branch `main`, via integração do Mintlify com o GitHub.
 
-Isso busca o spec em `http://localhost:3000/docs/json` e atualiza o `openapi.yaml`.
+## 💪 Suporte
 
-## Estrutura
-
-```
-pages/          # Páginas de documentação (MDX)
-openapi.yaml    # Spec OpenAPI gerado do backend
-docs.json       # Configuração do Mintlify
-```
-
-## Deploy
-
-O deploy é automático via Mintlify ao fazer push na branch `main`.
+- Abra uma issue no [GitHub](https://github.com/BobPayments/documentation/issues)
+- Entre em contato via [suporte@payments.bob.company](mailto:suporte@payments.bob.company)
