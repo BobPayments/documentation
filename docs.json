@@ -7,7 +7,7 @@
     "light": "https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio",
     "dark": "https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio"
   },
-  "favicon": "pages/favicon.svg",
+  "favicon": "https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio",
   "colors": {
     "primary": "#0D9373",
     "light": "#07C983",
