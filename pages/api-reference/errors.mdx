@@ -1,0 +1,119 @@
+---
+title: "Erros"
+description: "Referência completa dos códigos de erro RFC 7807 da API Bob Payments - autenticação, validação, transações, rate limit, gateways, fraude e sandbox"
+---
+
+# Erros
+
+Todas as respostas de erro seguem o formato [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) (`application/problem+json`).
+
+## Formato
+
+```json
+{
+  "type": "ERR_VALIDATION_001",
+  "title": "Erro de Validação",
+  "status": 400,
+  "detail": "Erro de validação nos dados de body.",
+  "instance": "/api/transactions"
+}
+```
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `type` | `string` | Código único do erro |
+| `title` | `string` | Título legível do erro |
+| `status` | `integer` | HTTP status code |
+| `detail` | `string` | Descrição detalhada |
+| `instance` | `string` | Path da requisição que gerou o erro |
+
+## Códigos de erro
+
+### Autenticação
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 401 | `ERR_AUTH_009` | Token inválido ou ausente |
+
+### Validação
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 400 | `ERR_VALIDATION_001` | Body ou query parameters inválidos |
+
+Erros de validação incluem detalhes dos campos:
+
+```json
+{
+  "type": "ERR_VALIDATION_001",
+  "title": "Erro de Validação",
+  "status": 400,
+  "detail": "Erro de validação nos dados de body.",
+  "instance": "/api/customers",
+  "details": {
+    "context": "body",
+    "issues": [
+      {
+        "path": "email",
+        "message": "Invalid email"
+      }
+    ]
+  }
+}
+```
+
+### Transações
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 404 | `ERR_TRANSACTION_001` | Transação não encontrada |
+| 400 | `ERR_TRANSACTION_002` | Status da transação não permite esta operação |
+| 403 | `ERR_TRANSACTION_003` | Transação pertence a outro projeto |
+| 409 | `ERR_TRANSACTION_010` | Transação duplicada em processamento (mesmo cliente, valor e produto) |
+
+### Rate Limit
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 429 | `ERR_RATE_LIMIT_001` | Limite de requisições excedido. Verifique o header `Retry-After` |
+
+### Gateways
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 503 | `ERR_ALL_GATEWAYS_FAILED` | Todos os gateways de pagamento falharam. Tente novamente em instantes |
+
+### Fraude
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 403 | `FRAUD_DETECTED` | Limite de velocidade anti-fraude excedido para este cliente |
+
+### Projetos
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 404 | `ERR_PROJECT_001` | Projeto não encontrado |
+
+### Sandbox
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 400 | `ERR_SANDBOX_002` | Transação não pertence ao ambiente sandbox |
+
+## HTTP Status Codes
+
+| Status | Significado |
+|--------|-------------|
+| 200 | Sucesso |
+| 201 | Recurso criado |
+| 400 | Requisição inválida |
+| 401 | Não autenticado |
+| 403 | Não autorizado |
+| 404 | Recurso não encontrado |
+| 429 | Rate limit excedido |
+| 500 | Erro interno do servidor |
+
+<Note>
+  Respostas `429` incluem o header `Retry-After` indicando quantos segundos aguardar antes de tentar novamente.
+</Note>

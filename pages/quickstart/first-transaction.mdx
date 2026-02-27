@@ -1,0 +1,170 @@
+---
+title: Primeira transação
+description: "Tutorial rápido para criar um QR Code PIX e simular pagamento no sandbox da API Bob Payments em menos de 5 minutos"
+---
+
+# Primeira transação
+
+Vamos criar um QR Code PIX no ambiente sandbox e simular o pagamento.
+
+## 1. Crie a transação
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.payments.bob.company/api/transactions \
+  -H "Authorization: Bearer sk_test_seu-token-aqui" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "originDomain": "loja.exemplo.com.br",
+    "customer": {
+      "name": "João Silva",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "email": "joao@email.com",
+      "phone": "11999999999",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "zipCode": "01310100",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "payment": {
+      "amountCents": 10000,
+      "product": "Plano Premium"
+    }
+  }'
+```
+
+```javascript Node.js
+const response = await fetch('https://api.payments.bob.company/api/transactions', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sk_test_seu-token-aqui',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    originDomain: 'loja.exemplo.com.br',
+    customer: {
+      name: 'João Silva',
+      document: '12345678900',
+      documentType: 'CPF',
+      email: 'joao@email.com',
+      phone: '11999999999',
+      address: {
+        street: 'Rua Exemplo',
+        streetNumber: '123',
+        neighborhood: 'Centro',
+        zipCode: '01310100',
+        city: 'São Paulo',
+        state: 'SP',
+        country: 'BR',
+      },
+    },
+    payment: { amountCents: 10000, product: 'Plano Premium' },
+  }),
+});
+
+const { data } = await response.json();
+console.log('PIX Code:', data.pixCode);
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.payments.bob.company/api/transactions',
+    headers={'Authorization': 'Bearer sk_test_seu-token-aqui'},
+    json={
+        'originDomain': 'loja.exemplo.com.br',
+        'customer': {
+            'name': 'João Silva',
+            'document': '12345678900',
+            'documentType': 'CPF',
+            'email': 'joao@email.com',
+            'phone': '11999999999',
+            'address': {
+                'street': 'Rua Exemplo', 'streetNumber': '123',
+                'neighborhood': 'Centro', 'zipCode': '01310100',
+                'city': 'São Paulo', 'state': 'SP', 'country': 'BR',
+            },
+        },
+        'payment': {'amountCents': 10000, 'product': 'Plano Premium'},
+    },
+)
+
+data = response.json()['data']
+print('PIX Code:', data['pixCode'])
+```
+
+</CodeGroup>
+
+**Resposta (201):**
+
+```json
+{
+  "success": true,
+  "message": "Transaction created successfully",
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "pixCode": "00020126580014br.gov.bcb.pix...",
+    "expirationDate": "2026-01-17T10:00:00.000Z",
+    "status": "waiting_payment"
+  }
+}
+```
+
+O campo `pixCode` contém o código PIX copia-e-cola que pode ser exibido ao cliente ou convertido em QR Code.
+
+## 2. Simule o pagamento (sandbox)
+
+No sandbox, use o endpoint de simulação para marcar a transação como paga:
+
+```bash
+curl -X POST https://api.payments.bob.company/api/sandbox/transactions/clx7a8b9c0d1e2f3g4h5/pay \
+  -H "Authorization: Bearer sk_test_seu-token-aqui"
+```
+
+**Resposta (200):**
+
+```json
+{
+  "success": true,
+  "message": "Payment simulated successfully",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "status": "paid",
+    "paidAt": "2026-01-16T10:05:00.000Z"
+  }
+}
+```
+
+## 3. Verifique o status
+
+```bash
+curl https://api.payments.bob.company/api/transactions/clx7a8b9c0d1e2f3g4h5 \
+  -H "Authorization: Bearer sk_test_seu-token-aqui"
+```
+
+O campo `status` agora será `"paid"`.
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Webhooks" icon="bell" href="/docs/public/webhooks/overview">
+    Configure notificações para receber alertas quando pagamentos forem confirmados.
+  </Card>
+  <Card title="Integração Completa" icon="map" href="/docs/public/guides/complete-integration">
+    Guia completo do zero à produção com checklist.
+  </Card>
+  <Card title="Ir para produção" icon="rocket" href="/docs/public/quickstart/authentication#produção-sk_live_">
+    Desative o modo sandbox e use chaves de produção.
+  </Card>
+  <Card title="SDKs" icon="code" href="/docs/public/sdks/overview">
+    Exemplos completos em Node.js, Python, PHP e mais.
+  </Card>
+</CardGroup>

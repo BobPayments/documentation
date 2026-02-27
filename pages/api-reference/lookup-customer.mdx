@@ -1,0 +1,88 @@
+---
+title: "Buscar Cliente por Chave"
+api: "GET /api/customers/lookup"
+description: "GET /api/customers/lookup - Busca um cliente pelo telefone, CPF/CNPJ ou e-mail sem precisar do ID interno"
+---
+
+# Buscar Cliente por Chave
+
+Retorna o perfil completo de um cliente usando telefone, CPF/CNPJ ou e-mail como chave de busca. Informe exatamente **um** dos parâmetros disponíveis.
+
+## Autenticação
+
+```
+Authorization: Bearer sk_test_xxx
+```
+
+## Query Parameters
+
+<ParamField query="phone" type="string">
+  Número de telefone do cliente (máximo 20 caracteres).
+</ParamField>
+<ParamField query="document" type="string">
+  CPF ou CNPJ do cliente (máximo 20 caracteres).
+</ParamField>
+<ParamField query="email" type="string">
+  E-mail do cliente (máximo 200 caracteres).
+</ParamField>
+
+<Note>
+  Informe **exatamente um** dos parâmetros acima. Enviar mais de um ou nenhum retorna erro 400.
+</Note>
+
+## Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "cly1234567890",
+    "projectId": "clx0000000001",
+    "name": "João Silva",
+    "document": "12345678900",
+    "email": "joao@email.com",
+    "phone": "11999999999",
+    "street": "Rua Exemplo",
+    "streetNumber": "123",
+    "neighborhood": "Centro",
+    "complement": null,
+    "zipCode": "01310100",
+    "city": "São Paulo",
+    "state": "SP",
+    "country": "BR",
+    "isBlocked": false,
+    "blockedAt": null,
+    "blockedReason": null,
+    "blockExpiresAt": null,
+    "blockType": null,
+    "createdAt": "2026-01-16T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:00:00.000Z",
+    "recentTransactions": [
+      {
+        "id": "clz9876543210",
+        "amountCents": 9990,
+        "status": "paid",
+        "product": "pix",
+        "createdAt": "2026-01-16T10:00:00.000Z",
+        "paidAt": "2026-01-16T10:01:00.000Z"
+      }
+    ],
+    "totalTransactions": 1,
+    "fraudEvents": []
+  }
+}
+```
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 400 | `ERR_VALIDATION` | Nenhum ou mais de um parâmetro informado |
+| 401 | `ERR_AUTH_009` | Token inválido |
+| 404 | `ERR_CUSTOMER_001` | Cliente não encontrado |
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

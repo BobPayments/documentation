@@ -1,0 +1,115 @@
+---
+title: Comece Aqui
+description: "Tudo que você precisa para integrar pagamentos PIX com múltiplos gateways."
+icon: "house"
+---
+
+Bem-vindo à documentação do Bob Payments!
+
+Aqui você encontra tudo para integrar nossa API de pagamentos PIX. O Bob foi construído por desenvolvedores que queriam uma solução simples para orquestrar múltiplos gateways — sem perder venda por indisponibilidade e sem reescrever integração toda vez que precisar trocar de provedor.
+
+---
+
+## O que é o Bob Payments?
+
+O Bob nasceu da frustração de depender de um único gateway de pagamento. Quando ele cai, você perde venda. Quando muda de provedor, reescreve a integração do zero. Quando quer testar outro gateway, é mais uma integração para manter.
+
+Os problemas que a gente viu se repetir:
+
+- Cada gateway tem sua própria API, seu próprio contrato de erros e seu processo de homologação
+- Indisponibilidade de gateway sem nenhum fallback automático
+- Cobranças duplicadas por cliques duplos e retentativas de rede
+- Fraudes detectadas tarde, já nos gateways
+- Migração de provedor como um projeto de meses
+
+Nossa resposta foi construir uma camada de orquestração: você integra o Bob uma vez e a gente cuida de múltiplos gateways por baixo — com failover automático, distribuição de tráfego e proteção contra fraude embutidos.
+
+---
+
+## API descomplicada
+
+Nossa API foi construída com três princípios:
+
+**Ambiente pelo token**
+Não existe parâmetro `mode=sandbox`. Sua chave define o ambiente automaticamente — troque a chave, troque o ambiente.
+
+```
+sk_test_...  →  sandbox
+sk_live_...  →  produção
+```
+
+**Consistente**
+Toda resposta tem o mesmo formato: `success` e `data`. Você trata o retorno uma vez e funciona em qualquer endpoint.
+
+**Idempotente**
+Cliques duplos e retentativas não geram cobranças duplicadas. Se já existe uma transação pendente com os mesmos dados, ela é retornada — nunca criada duas vezes.
+
+Veja como é simples criar uma cobrança:
+
+```javascript
+const response = await fetch('https://api.payments.bob.company/api/transactions', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sk_test_sua-chave-aqui',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    originDomain: 'loja.exemplo.com.br',
+    customer: {
+      name: 'João Silva',
+      document: '12345678900',
+      documentType: 'CPF',
+      email: 'joao@email.com',
+      phone: '11999999999',
+      address: {
+        street: 'Rua Exemplo', streetNumber: '123',
+        neighborhood: 'Centro', zipCode: '01310100',
+        city: 'São Paulo', state: 'SP', country: 'BR',
+      },
+    },
+    payment: { amountCents: 10000, product: 'Plano Premium' },
+  }),
+});
+
+const { data } = await response.json();
+// data.pixCode → código PIX copia-e-cola
+// data.status  → "waiting_payment"
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "pixCode": "00020126580014br.gov.bcb.pix...",
+    "status": "waiting_payment",
+    "amountCents": 10000,
+    "isSandbox": true
+  }
+}
+```
+
+---
+
+## Por onde continuar
+
+<CardGroup cols={2}>
+  <Card title="Autenticação" icon="key" href="/docs/public/quickstart/authentication">
+    Obtenha suas chaves de API e faça sua primeira requisição autenticada.
+  </Card>
+  <Card title="Sandbox e Produção" icon="flask" href="/docs/public/guides/environments">
+    Entenda os dois ambientes e como alternar entre eles.
+  </Card>
+  <Card title="Criar cobrança PIX" icon="qrcode" href="/docs/public/api-reference/create-pix">
+    Referência completa do endpoint de criação de transações.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/docs/public/webhooks/overview">
+    Receba notificações em tempo real quando pagamentos forem confirmados.
+  </Card>
+</CardGroup>
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

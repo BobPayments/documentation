@@ -1,0 +1,91 @@
+---
+title: Autenticação
+description: "Como autenticar suas requisições na API Bob Payments usando Bearer Token."
+icon: "key"
+---
+
+Todas as requisições para a API precisam de uma chave de autenticação. Ela identifica seu projeto, determina o ambiente e aponta para a integração (configuração de gateways) que será usada — sandbox ou produção.
+
+Inclua a chave no header `Authorization` de cada requisição:
+
+```bash
+Authorization: Bearer sk_test_xxxxxxxxxxxxxxxx
+```
+
+<Warning>
+  Nunca exponha sua chave no frontend, em apps mobile ou em repositórios públicos. Use exclusivamente no backend.
+</Warning>
+
+---
+
+## Obtendo sua chave
+
+Acesse o [dashboard](https://app.payments.bob.company) → seu projeto → **Configurações → Chaves de API** → **Nova chave**.
+
+Ao criar uma chave, você associa ela a uma **integração** (conjunto de gateways configurados). Isso significa que a chave carrega, por si só, todas as informações necessárias para processar pagamentos — sem depender de configurações extras no momento da requisição.
+
+Você pode criar quantas chaves quiser por projeto — cada uma com um nome para facilitar a identificação (ex: "Backend produção", "App mobile", "CI/CD").
+
+Dois tipos de chave existem:
+
+- **`sk_test_...`** — para desenvolvimento e testes. Nenhum pagamento real é processado.
+- **`sk_live_...`** — para produção. Processa pagamentos reais via PIX.
+
+A chave define o ambiente automaticamente. Não é necessário nenhum parâmetro adicional.
+
+<Note>
+  A chave secreta é exibida **apenas uma vez** no momento da criação. Guarde-a em segurança — não é possível recuperá-la depois. Se perder, crie uma nova e revogue a anterior.
+</Note>
+
+---
+
+## Exemplo de requisição
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.payments.bob.company/api/transactions \
+  -H "Authorization: Bearer sk_test_abc123" \
+  -H "Content-Type: application/json" \
+  -d '{"customer": {...}, "payment": {...}}'
+```
+
+```javascript Node.js
+const response = await fetch('https://api.payments.bob.company/api/transactions', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sk_test_abc123',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ customer: {...}, payment: {...} }),
+});
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.payments.bob.company/api/transactions',
+    headers={'Authorization': 'Bearer sk_test_abc123'},
+    json={'customer': {...}, 'payment': {...}},
+)
+```
+
+</CodeGroup>
+
+---
+
+## Erros de autenticação
+
+| HTTP | Descrição |
+|------|-----------|
+| `401` | Chave ausente, inválida ou revogada |
+| `403` | Modo dev ativado com chave de produção |
+
+Se sua chave for comprometida, revogue-a imediatamente no dashboard e gere uma nova.
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

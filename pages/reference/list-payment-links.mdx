@@ -1,0 +1,101 @@
+---
+title: "Listar Links de Pagamento"
+api: "GET /api/payment-links"
+description: "Retorna uma lista paginada de links de pagamento com filtros opcionais."
+---
+
+# Listar Links de Pagamento
+
+Retorna todos os links de pagamento do projeto, com suporte a paginação, busca e filtros.
+
+## Query Parameters
+
+<ParamField query="page" type="integer">
+  Página atual. Mínimo `1`. Padrão: `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Itens por página. Entre `1` e `100`. Padrão: `20`.
+</ParamField>
+
+<ParamField query="active" type="boolean">
+  Filtra por status. `true` retorna apenas links ativos, `false` apenas inativos.
+</ParamField>
+
+<ParamField query="tagIds" type="string">
+  IDs de tags separados por vírgula. Ex: `tag1,tag2`.
+</ParamField>
+
+<ParamField query="search" type="string">
+  Busca textual pelo nome do produto ou shortCode.
+</ParamField>
+
+## Response (200)
+
+```json
+{
+  "data": [
+    {
+      "id": "clx7a8b9c0d1e2f3g4h5",
+      "shortCode": "abc123",
+      "domains": [
+        {
+          "id": "dom_123",
+          "host": "loja.exemplo.com.br",
+          "url": "https://loja.exemplo.com.br/abc123",
+          "available": true
+        }
+      ],
+      "layout": "CLASSIC",
+      "theme": "DEFAULT",
+      "product": {
+        "id": "prod_xyz",
+        "name": "Plano Premium",
+        "amountCents": 9900
+      },
+      "orderBumpsCount": 2,
+      "tags": [],
+      "active": true,
+      "viewCount": 145,
+      "createdAt": "2026-01-17T10:00:00.000Z"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 20,
+  "totalPages": 1
+}
+```
+
+<ResponseField name="data" type="array">
+  Lista de links de pagamento.
+</ResponseField>
+<ResponseField name="data[].shortCode" type="string">
+  Código curto que compõe a URL do checkout.
+</ResponseField>
+<ResponseField name="data[].orderBumpsCount" type="integer">
+  Quantidade de order bumps configurados no link.
+</ResponseField>
+<ResponseField name="data[].viewCount" type="integer">
+  Total de visualizações da página de checkout.
+</ResponseField>
+<ResponseField name="total" type="integer">
+  Total de registros (sem paginação).
+</ResponseField>
+<ResponseField name="totalPages" type="integer">
+  Total de páginas disponíveis.
+</ResponseField>
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 400 | `ERR_VALIDATION_001` | Query inválida |
+| 401 | `ERR_AUTH_009` | Token inválido |
+| 500 | — | Erro interno do servidor |
+
+---
+
+<Card title="Precisa de ajuda?">
+  Entre em contato com [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

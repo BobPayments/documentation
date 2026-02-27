@@ -1,0 +1,100 @@
+---
+title: "Criar Cliente"
+api: "POST /api/customers"
+description: "POST /api/customers - Cria ou atualiza um cliente por CPF/CNPJ (upsert automático) com nome, email, telefone e endereço"
+---
+
+# Criar Cliente
+
+Cria um novo cliente ou atualiza os dados de um cliente existente. A identificação é feita pelo campo `document` (CPF/CNPJ).
+
+Se um cliente com o mesmo documento já existir no projeto, seus dados serão atualizados.
+
+<Note>
+  Clientes também são criados automaticamente ao criar uma transação PIX. Este endpoint é útil para pré-cadastrar clientes antes de criar transações.
+</Note>
+
+## Autenticação
+
+```
+Authorization: Bearer sk_test_xxx
+```
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  Nome completo do cliente. Máximo 255 caracteres.
+</ParamField>
+<ParamField body="document" type="string" required>
+  CPF (11 dígitos) ou CNPJ (14 dígitos), apenas números.
+</ParamField>
+<ParamField body="email" type="string" required>
+  Email do cliente.
+</ParamField>
+<ParamField body="phone" type="string" required>
+  Telefone do cliente (10-15 dígitos).
+</ParamField>
+<ParamField body="address" type="object" required>
+  <Expandable title="Campos do address">
+    <ParamField body="street" type="string" required>Rua/logradouro.</ParamField>
+    <ParamField body="streetNumber" type="string" required>Número.</ParamField>
+    <ParamField body="complement" type="string">Complemento (opcional).</ParamField>
+    <ParamField body="neighborhood" type="string" required>Bairro.</ParamField>
+    <ParamField body="zipCode" type="string" required>CEP (8-9 caracteres).</ParamField>
+    <ParamField body="city" type="string" required>Cidade.</ParamField>
+    <ParamField body="state" type="string" required>UF (2 caracteres).</ParamField>
+    <ParamField body="country" type="string">País (2 caracteres). Default: `BR`.</ParamField>
+  </Expandable>
+</ParamField>
+
+## Response
+
+**201** — Cliente criado:
+
+```json
+{
+  "success": true,
+  "message": "Customer created successfully",
+  "data": {
+    "id": "cly1234567890",
+    "name": "João Silva",
+    "document": "12345678900",
+    "email": "joao@email.com",
+    "phone": "11999999999",
+    "street": "Rua Exemplo",
+    "streetNumber": "123",
+    "neighborhood": "Centro",
+    "complement": null,
+    "zipCode": "01310100",
+    "city": "São Paulo",
+    "state": "SP",
+    "country": "BR",
+    "isBlocked": false,
+    "createdAt": "2026-01-16T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:00:00.000Z"
+  }
+}
+```
+
+**200** — Cliente atualizado (documento já existia):
+
+```json
+{
+  "success": true,
+  "message": "Customer updated successfully",
+  "data": { ... }
+}
+```
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 400 | `ERR_VALIDATION_001` | Body inválido |
+| 401 | `ERR_AUTH_009` | Token inválido |
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

@@ -1,0 +1,76 @@
+---
+title: "Simular Pagamento"
+api: "POST /api/sandbox/transactions/:id/pay"
+description: "POST /api/sandbox/transactions/:id/pay - Simula confirmação de pagamento PIX no sandbox, dispara webhook transaction_paid e atualiza status para paid"
+---
+
+# Simular Pagamento
+
+Simula a confirmação de pagamento de uma transação PIX criada no ambiente sandbox. Isso permite testar o fluxo completo de pagamento sem movimentar dinheiro real.
+
+<Note>
+  Este endpoint só funciona com transações criadas usando chaves de teste (`sk_test_*`).
+</Note>
+
+## Autenticação
+
+```
+Authorization: Bearer sk_test_xxx
+```
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  ID da transação sandbox (formato CUID).
+</ParamField>
+
+## Response (200)
+
+```json
+{
+  "success": true,
+  "message": "Payment simulated successfully",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "status": "paid",
+    "paidAt": "2026-01-16T10:05:00.000Z"
+  }
+}
+```
+
+<ResponseField name="data.status" type="string">
+  Sempre `paid` em caso de sucesso.
+</ResponseField>
+<ResponseField name="data.paidAt" type="string">
+  Data/hora em que o pagamento foi simulado (ISO 8601).
+</ResponseField>
+
+## Efeitos
+
+Ao simular o pagamento:
+
+1. O status da transação muda para `paid`
+2. O evento `transaction_paid` é disparado via webhook
+3. O email de confirmação de compra é enviado ao cliente
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 401 | `ERR_AUTH_009` | Token inválido |
+| 404 | `ERR_TRANSACTION_001` | Transação não encontrada |
+| 400 | `ERR_SANDBOX_002` | Transação não pertence ao sandbox |
+| 400 | `ERR_TRANSACTION_002` | Transação não está com status `waiting_payment` |
+
+## Exemplo
+
+```bash
+curl -X POST https://api.payments.bob.company/api/sandbox/transactions/clx7a8b9c0d1e2f3g4h5/pay \
+  -H "Authorization: Bearer sk_test_xxx"
+```
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

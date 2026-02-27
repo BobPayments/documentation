@@ -1,0 +1,74 @@
+---
+title: "Checar Status"
+api: "GET /api/transactions/:id"
+description: "GET /api/transactions/:id - Consulta status, dados de pagamento e informações do cliente de uma transação PIX"
+---
+
+# Checar Status
+
+Retorna os detalhes completos de uma transação, incluindo status de pagamento e dados do cliente.
+
+Se a transação estiver expirada, o status será atualizado automaticamente para `expired`.
+
+## Autenticação
+
+```
+Authorization: Bearer sk_test_xxx
+```
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  ID da transação (formato CUID).
+</ParamField>
+
+## Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "ext_123456",
+    "transactionCode": null,
+    "pixCode": "00020126580014br.gov.bcb.pix...",
+    "expirationDate": "2026-01-17T10:00:00.000Z",
+    "status": "paid",
+    "amountCents": 10000,
+    "product": "Plano Premium",
+    "quantity": 1,
+    "paidAt": "2026-01-16T10:05:00.000Z",
+    "refundedAt": null,
+    "createdAt": "2026-01-16T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:05:00.000Z",
+    "customer": {
+      "id": "cly1234567890",
+      "name": "João Silva",
+      "document": "12345678900",
+      "email": "joao@email.com",
+      "phone": "11999999999"
+    }
+  }
+}
+```
+
+<ResponseField name="data.status" type="string">
+  Status atual da transação. Valores possíveis: `waiting_payment`, `processing`, `paid`, `expired`, `cancelled`, `refunded`, `failed`.
+</ResponseField>
+<ResponseField name="data.paidAt" type="string | null">
+  Data/hora do pagamento (ISO 8601). `null` se não foi pago.
+</ResponseField>
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 401 | `ERR_AUTH_009` | Token inválido |
+| 403 | `ERR_TRANSACTION_003` | Transação pertence a outro projeto |
+| 404 | `ERR_TRANSACTION_001` | Transação não encontrada |
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

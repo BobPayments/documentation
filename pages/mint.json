@@ -1,0 +1,84 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Bob Payments",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0D9373",
+    "light": "#07C983",
+    "dark": "#0D9373"
+  },
+  "api": {
+    "baseUrl": "https://api.payments.bob.company",
+    "auth": {
+      "method": "bearer",
+      "name": "Authorization"
+    },
+    "playground": {
+      "mode": "show"
+    }
+  },
+  "navigation": [
+    {
+      "group": "Início",
+      "pages": ["introduction"]
+    },
+    {
+      "group": "Quickstart",
+      "pages": [
+        "quickstart/authentication",
+        "quickstart/first-transaction"
+      ]
+    },
+    {
+      "group": "Cobrança",
+      "pages": [
+        "reference/cobranca",
+        "reference/create-pix",
+        "reference/list-transactions",
+        "reference/check-status"
+      ]
+    },
+    {
+      "group": "Referência da API",
+      "pages": [
+        "reference/create-customer",
+        "reference/get-customer",
+        "reference/list-customers",
+        "reference/lookup-customer",
+        "reference/get-store",
+        "reference/simulate-payment"
+      ]
+    },
+    {
+      "group": "Guias",
+      "pages": [
+        "guides/environments",
+        "guides/complete-integration",
+        "guides/response-format",
+        "guides/idempotency",
+        "guides/rate-limiting",
+        "guides/production"
+      ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "webhooks/overview",
+        "webhooks/events",
+        "webhooks/signature-verification"
+      ]
+    },
+    {
+      "group": "Sandbox",
+      "pages": ["sandbox/simulate-payment"]
+    },
+    {
+      "group": "SDKs",
+      "pages": ["sdks/overview"]
+    }
+  ]
+}

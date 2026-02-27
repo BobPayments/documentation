@@ -1,0 +1,98 @@
+---
+title: "Buscar Cliente"
+api: "GET /api/customers/:id"
+description: "GET /api/customers/:id - Retorna detalhes completos de um cliente incluindo transações recentes e status de bloqueio"
+---
+
+# Buscar Cliente
+
+Retorna os detalhes completos de um cliente, incluindo endereço, status de bloqueio e as transações mais recentes.
+
+## Autenticação
+
+```
+Authorization: Bearer sk_test_xxx
+```
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  ID do cliente (formato CUID).
+</ParamField>
+
+## Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "cly1234567890",
+    "projectId": "clp1234567890",
+    "name": "João Silva",
+    "document": "12345678900",
+    "phone": "11999999999",
+    "email": "joao@email.com",
+    "street": "Rua Exemplo",
+    "streetNumber": "123",
+    "neighborhood": "Centro",
+    "complement": null,
+    "zipCode": "01310100",
+    "city": "São Paulo",
+    "state": "SP",
+    "country": "BR",
+    "isBlocked": false,
+    "blockedAt": null,
+    "blockedReason": null,
+    "blockExpiresAt": null,
+    "blockType": null,
+    "createdAt": "2026-01-16T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:00:00.000Z",
+    "recentTransactions": [
+      {
+        "id": "clx7a8b9c0d1e2f3g4h5",
+        "amountCents": 10000,
+        "status": "paid",
+        "product": "Plano Premium",
+        "createdAt": "2026-01-16T10:00:00.000Z",
+        "paidAt": "2026-01-16T10:05:00.000Z"
+      }
+    ],
+    "totalTransactions": 5
+  }
+}
+```
+
+<ResponseField name="data.isBlocked" type="boolean">
+  Indica se o cliente está bloqueado. Clientes bloqueados não podem criar novas transações.
+</ResponseField>
+<ResponseField name="data.blockedAt" type="string | null">
+  Data/hora do bloqueio (ISO 8601). `null` se não está bloqueado.
+</ResponseField>
+<ResponseField name="data.blockedReason" type="string | null">
+  Motivo do bloqueio. `null` se não está bloqueado.
+</ResponseField>
+<ResponseField name="data.blockExpiresAt" type="string | null">
+  Data/hora de expiração do bloqueio (ISO 8601). `null` se o bloqueio é permanente ou não está bloqueado.
+</ResponseField>
+<ResponseField name="data.blockType" type="string | null">
+  Tipo do bloqueio (ex: `manual`, `fraud`). `null` se não está bloqueado.
+</ResponseField>
+<ResponseField name="data.recentTransactions" type="array">
+  Últimas transações do cliente com id, valor, status, produto e datas.
+</ResponseField>
+<ResponseField name="data.totalTransactions" type="integer">
+  Número total de transações do cliente no projeto.
+</ResponseField>
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 401 | `ERR_AUTH_009` | Token inválido |
+| 404 | `ERR_CUSTOMER_001` | Cliente não encontrado |
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

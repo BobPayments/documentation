@@ -1,0 +1,57 @@
+---
+title: "Sandbox"
+description: "Teste sua integração com segurança antes de ir para produção."
+icon: "flask"
+---
+
+Quando você cria um projeto no Bob Payments, ele começa em modo sandbox automaticamente. Todas as transações são simuladas — nenhuma cobrança real é gerada.
+
+O ambiente é definido pela chave de API usada na requisição:
+
+- **`sk_test_...`** — sandbox. Pagamentos simulados, sem cobrança real.
+- **`sk_live_...`** — produção. Pagamentos reais via PIX.
+
+Não existe parâmetro extra. Basta trocar a chave.
+
+<Warning>
+  Use a Secret Key exclusivamente no backend. Nunca exponha em código frontend, apps mobile ou repositórios públicos.
+</Warning>
+
+Obtenha suas chaves no [dashboard](https://app.payments.bob.company) → seu projeto → **Configurações → Chaves de API**.
+
+---
+
+## O que você pode fazer no sandbox
+
+No sandbox, a API se comporta exatamente como em produção — com uma diferença: o pagamento não acontece de verdade. Isso significa que você pode:
+
+- Criar transações PIX e receber o `pixCode`
+- Simular um pagamento via endpoint dedicado
+- Receber os webhooks normalmente na sua URL configurada
+- Testar todo o fluxo sem precisar de uma conta bancária
+
+Para simular um pagamento, use:
+
+```bash
+POST /api/sandbox/transactions/:id/pay
+```
+
+Isso confirma a transação e dispara o evento `transaction_paid` via webhook — igual ao que aconteceria com um PIX real.
+
+O campo `isSandbox: true` na resposta indica que a transação é de teste. O `pixCode` gerado em sandbox não é válido para pagamento em apps bancários.
+
+---
+
+## Modo sandbox como kill switch
+
+O modo sandbox também é útil em produção. Se precisar pausar o processamento de pagamentos rapidamente — sem trocar chaves ou fazer deploy — basta reativar o modo sandbox pelo header do dashboard. Todas as transações voltam a ser simuladas instantaneamente.
+
+<Note>
+  Para voltar ao sandbox a qualquer momento, basta usar a chave `sk_test_*`. Os dois ambientes são completamente independentes.
+</Note>
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

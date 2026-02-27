@@ -1,0 +1,62 @@
+---
+title: "Detalhes da Loja"
+api: "GET /api/store"
+description: "GET /api/store - Retorna configurações do projeto como devMode, domínios registrados, expiração do PIX e limites"
+---
+
+# Detalhes da Loja
+
+Retorna informações do projeto (loja) vinculado à sua Secret Key.
+
+## Autenticação
+
+```
+Authorization: Bearer sk_test_xxx
+```
+
+## Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "clx1234567890",
+    "name": "Minha Loja",
+    "devMode": true,
+    "pixExpirationMinutes": 30,
+    "maxTransactionAmountCents": null,
+    "domains": [
+      {
+        "id": "cld1234567890",
+        "host": "minhaloja.com"
+      }
+    ]
+  }
+}
+```
+
+<ResponseField name="data.devMode" type="boolean">
+  `true` indica que o projeto está em modo desenvolvimento. Chaves `sk_live_*` são bloqueadas enquanto dev mode estiver ativo.
+</ResponseField>
+<ResponseField name="data.pixExpirationMinutes" type="integer">
+  Tempo de expiração do PIX em minutos (padrão: 30).
+</ResponseField>
+<ResponseField name="data.maxTransactionAmountCents" type="integer | null">
+  Valor máximo por transação em centavos. `null` = sem limite.
+</ResponseField>
+<ResponseField name="data.domains" type="array">
+  Domínios registrados para o projeto. Apenas requisições com `Origin` desses domínios são aceitas em produção.
+</ResponseField>
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 401 | `ERR_AUTH_009` | Token inválido |
+| 404 | `ERR_PROJECT_001` | Projeto não encontrado |
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

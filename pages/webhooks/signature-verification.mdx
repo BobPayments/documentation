@@ -1,0 +1,117 @@
+---
+title: "Verificação de Assinatura"
+description: "Validação de autenticidade de webhooks via HMAC-SHA256 com exemplos em Node.js, Python e PHP usando comparação timing-safe"
+---
+
+# Verificação de Assinatura
+
+Toda requisição de webhook inclui uma assinatura HMAC-SHA256 no header `X-Webhook-Signature`. Use essa assinatura para verificar que a requisição veio da Bob Payments.
+
+## Como funciona
+
+1. Extraia o header `X-Webhook-Signature` da requisição
+2. Compute o HMAC-SHA256 do body usando seu webhook secret
+3. Compare a assinatura computada com a recebida
+
+<Warning>
+  Sempre use comparação timing-safe para evitar ataques de timing.
+</Warning>
+
+## Exemplos
+
+<CodeGroup>
+
+```javascript Node.js
+import crypto from 'crypto';
+
+function verifyWebhookSignature(rawBody, signatureHeader, secret) {
+  const hmac = crypto.createHmac('sha256', secret);
+  hmac.update(rawBody);
+  const expected = hmac.digest('hex');
+
+  const expectedBuffer = Buffer.from(expected, 'utf8');
+  const receivedBuffer = Buffer.from(signatureHeader, 'utf8');
+
+  if (expectedBuffer.length !== receivedBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+}
+
+// Uso com Express
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-webhook-signature'];
+  const isValid = verifyWebhookSignature(req.body, signature, 'seu_webhook_secret');
+
+  if (!isValid) {
+    return res.status(401).json({ error: 'Invalid signature' });
+  }
+
+  const event = JSON.parse(req.body);
+  // Processar evento...
+
+  res.status(200).json({ received: true });
+});
+```
+
+```python Python
+import hmac
+import hashlib
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+def verify_webhook_signature(raw_body: bytes, signature: str, secret: str) -> bool:
+    expected = hmac.new(
+        secret.encode('utf-8'),
+        raw_body,
+        hashlib.sha256
+    ).hexdigest()
+
+    return hmac.compare_digest(expected, signature)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    signature = request.headers.get('X-Webhook-Signature')
+    raw_body = request.get_data()
+
+    if not verify_webhook_signature(raw_body, signature, 'seu_webhook_secret'):
+        return jsonify({'error': 'Invalid signature'}), 401
+
+    event = request.get_json()
+    # Processar evento...
+
+    return jsonify({'received': True}), 200
+```
+
+```php PHP
+<?php
+
+function verifyWebhookSignature(string $rawBody, string $signature, string $secret): bool
+{
+    $expected = hash_hmac('sha256', $rawBody, $secret);
+    return hash_equals($expected, $signature);
+}
+
+$rawBody = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
+
+if (!verifyWebhookSignature($rawBody, $signature, 'seu_webhook_secret')) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Invalid signature']);
+    exit;
+}
+
+$event = json_decode($rawBody, true);
+// Processar evento...
+
+http_response_code(200);
+echo json_encode(['received' => true]);
+```
+
+</CodeGroup>
+
+<Note>
+  O body usado na verificação deve ser o **raw body** (string/buffer original), não o JSON já parseado. Parsear e re-serializar pode alterar a formatação e invalidar a assinatura.
+</Note>

@@ -1,0 +1,120 @@
+---
+title: "Formato de Resposta"
+description: "Padrões de envelope, paginação, formato de erro RFC 7807, datas ISO 8601 e valores em centavos da API Bob Payments"
+---
+
+# Formato de Resposta
+
+Todas as respostas da API seguem padrões consistentes para facilitar a integração.
+
+## Envelope de sucesso
+
+Toda resposta bem-sucedida retorna um objeto com `success: true` e os dados em `data`:
+
+```json
+{
+  "success": true,
+  "message": "Transaction created successfully",
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "status": "waiting_payment"
+  }
+}
+```
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `success` | `boolean` | Sempre `true` em respostas bem-sucedidas |
+| `message` | `string` | Mensagem descritiva (opcional em GETs) |
+| `data` | `object \| array` | Dados retornados |
+
+## Paginação
+
+Endpoints que retornam listas usam paginação com o objeto `meta`:
+
+```json
+{
+  "success": true,
+  "data": [...],
+  "meta": {
+    "total": 42,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 5
+  }
+}
+```
+
+**Query parameters de paginação:**
+
+| Parâmetro | Tipo | Default | Descrição |
+|-----------|------|---------|-----------|
+| `page` | `integer` | `1` | Número da página |
+| `limit` | `integer` | `10` | Itens por página (máximo 100) |
+
+## Formato de erro (RFC 7807)
+
+Erros seguem o padrão [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) (`application/problem+json`):
+
+```json
+{
+  "type": "ERR_VALIDATION_001",
+  "title": "Erro de Validação",
+  "status": 400,
+  "detail": "Erro de validação nos dados de body.",
+  "instance": "/api/transactions"
+}
+```
+
+Erros de validação incluem detalhes dos campos com problemas:
+
+```json
+{
+  "type": "ERR_VALIDATION_001",
+  "title": "Erro de Validação",
+  "status": 400,
+  "detail": "Erro de validação nos dados de body.",
+  "instance": "/api/customers",
+  "details": {
+    "context": "body",
+    "issues": [
+      {
+        "path": "email",
+        "message": "Invalid email"
+      }
+    ]
+  }
+}
+```
+
+## Convenções
+
+### Datas
+
+Todas as datas seguem o formato **ISO 8601** com timezone UTC:
+
+```
+2026-01-16T10:00:00.000Z
+```
+
+### Valores monetários
+
+Todos os valores são expressos em **centavos** como `integer`:
+
+| Valor real | `amountCents` |
+|-----------|--------------|
+| R$ 1,00 | `100` |
+| R$ 99,90 | `9990` |
+| R$ 1.500,00 | `150000` |
+
+<Warning>
+  Nunca use valores decimais (float) para representar dinheiro. Use sempre centavos (integer).
+</Warning>
+
+### IDs
+
+Todos os IDs usam o formato **CUID** (ex: `clx7a8b9c0d1e2f3g4h5`).
+
+### Campos nulos
+
+Campos opcionais que não possuem valor são retornados como `null`, nunca omitidos.

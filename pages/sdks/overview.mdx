@@ -1,0 +1,193 @@
+---
+title: "SDKs e Bibliotecas"
+description: "Exemplos de integração HTTP em Node.js, Python, PHP e Go com a API Bob Payments - inclui geração de QR Code PIX"
+---
+
+# SDKs e Bibliotecas
+
+A API Bob Payments é uma API REST padrão que funciona com qualquer cliente HTTP. Abaixo estão exemplos completos de integração nas linguagens mais populares.
+
+## Fluxo completo por linguagem
+
+<CodeGroup>
+
+```javascript Node.js (fetch)
+// 1. Criar transação PIX
+const createTransaction = async (secretKey, customer, payment) => {
+  const response = await fetch('https://api.payments.bob.company/api/transactions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${secretKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ customer, payment }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`${error.type}: ${error.detail}`);
+  }
+
+  return response.json();
+};
+
+// 2. Consultar status
+const getTransaction = async (secretKey, transactionId) => {
+  const response = await fetch(
+    `https://api.payments.bob.company/api/transactions/${transactionId}`,
+    { headers: { 'Authorization': `Bearer ${secretKey}` } }
+  );
+  return response.json();
+};
+
+// 3. Uso
+const { data } = await createTransaction('sk_test_xxx', {
+  name: 'João Silva',
+  document: '12345678900',
+  documentType: 'CPF',
+  email: 'joao@email.com',
+  phone: '11999999999',
+  address: {
+    street: 'Rua Exemplo', streetNumber: '123',
+    neighborhood: 'Centro', zipCode: '01310100',
+    city: 'São Paulo', state: 'SP', country: 'BR',
+  },
+}, { amountCents: 10000, product: 'Plano Premium' });
+
+console.log('PIX:', data.pixCode);
+```
+
+```python Python (requests)
+import requests
+
+BASE_URL = 'https://api.payments.bob.company/api'
+
+def create_transaction(secret_key, customer, payment):
+    response = requests.post(
+        f'{BASE_URL}/transactions',
+        headers={'Authorization': f'Bearer {secret_key}'},
+        json={'customer': customer, 'payment': payment},
+    )
+    response.raise_for_status()
+    return response.json()
+
+def get_transaction(secret_key, transaction_id):
+    response = requests.get(
+        f'{BASE_URL}/transactions/{transaction_id}',
+        headers={'Authorization': f'Bearer {secret_key}'},
+    )
+    return response.json()
+
+# Uso
+result = create_transaction('sk_test_xxx', {
+    'name': 'João Silva',
+    'document': '12345678900',
+    'documentType': 'CPF',
+    'email': 'joao@email.com',
+    'phone': '11999999999',
+    'address': {
+        'street': 'Rua Exemplo', 'streetNumber': '123',
+        'neighborhood': 'Centro', 'zipCode': '01310100',
+        'city': 'São Paulo', 'state': 'SP', 'country': 'BR',
+    },
+}, {'amountCents': 10000, 'product': 'Plano Premium'})
+
+print('PIX:', result['data']['pixCode'])
+```
+
+```php PHP (cURL)
+<?php
+
+function createTransaction(string $secretKey, array $customer, array $payment): array
+{
+    $ch = curl_init('https://api.payments.bob.company/api/transactions');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer {$secretKey}",
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode([
+            'customer' => $customer,
+            'payment' => $payment,
+        ]),
+        CURLOPT_RETURNTRANSFER => true,
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+
+    if ($httpCode >= 400) {
+        throw new Exception("{$data['type']}: {$data['detail']}");
+    }
+
+    return $data;
+}
+
+// Uso
+$result = createTransaction('sk_test_xxx', [
+    'name' => 'João Silva',
+    'document' => '12345678900',
+    'documentType' => 'CPF',
+    'email' => 'joao@email.com',
+    'phone' => '11999999999',
+    'address' => [
+        'street' => 'Rua Exemplo', 'streetNumber' => '123',
+        'neighborhood' => 'Centro', 'zipCode' => '01310100',
+        'city' => 'São Paulo', 'state' => 'SP', 'country' => 'BR',
+    ],
+], ['amountCents' => 10000, 'product' => 'Plano Premium']);
+
+echo 'PIX: ' . $result['data']['pixCode'];
+```
+
+</CodeGroup>
+
+## Gerando QR Code a partir do pixCode
+
+O campo `pixCode` retornado ao criar uma transação contém o código PIX copia-e-cola. Para exibir como QR Code, use uma biblioteca de geração:
+
+<CardGroup cols={2}>
+  <Card title="Node.js" icon="js">
+    **qrcode** — `npm install qrcode`
+
+    ```javascript
+    import QRCode from 'qrcode';
+    const dataUrl = await QRCode.toDataURL(pixCode);
+    // Use dataUrl em <img src="...">
+    ```
+  </Card>
+  <Card title="Python" icon="python">
+    **qrcode** — `pip install qrcode[pil]`
+
+    ```python
+    import qrcode
+    img = qrcode.make(pix_code)
+    img.save('pix.png')
+    ```
+  </Card>
+  <Card title="PHP" icon="php">
+    **chillerlan/php-qrcode** — `composer require chillerlan/php-qrcode`
+
+    ```php
+    use chillerlan\QRCode\QRCode;
+    $qr = (new QRCode)->render($pixCode);
+    // $qr contém a imagem base64
+    ```
+  </Card>
+  <Card title="Frontend (JS)" icon="browser">
+    **qrcode.react** — `npm install qrcode.react`
+
+    ```jsx
+    import { QRCodeSVG } from 'qrcode.react';
+    <QRCodeSVG value={pixCode} size={256} />
+    ```
+  </Card>
+</CardGroup>
+
+<Note>
+  Além do QR Code, sempre exiba o código PIX copia-e-cola como texto. Alguns clientes preferem copiar manualmente.
+</Note>

@@ -1,0 +1,57 @@
+---
+title: "Links de Pagamento"
+description: "Crie páginas de checkout prontas para compartilhar, sem precisar de integração técnica."
+icon: "link"
+---
+
+Links de pagamento são páginas de checkout hospedadas pela Bob Payments. Basta criar um link e compartilhá-lo — seu cliente acessa, preenche os dados e paga via PIX.
+
+Cada link é associado a um **produto**, um ou mais **domínios** e uma **integração**. Você pode personalizar o visual, configurar order bumps e definir expiração.
+
+---
+
+## Autenticação
+
+Todas as rotas de links de pagamento exigem **Bearer Token** (JWT) no header:
+
+```
+Authorization: Bearer <seu_token>
+```
+
+---
+
+## Endpoints
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/api/payment-links` | Criar link de pagamento |
+| `GET` | `/api/payment-links` | Listar links de pagamento |
+| `GET` | `/api/payment-links/:id` | Buscar link por ID |
+| `PUT` | `/api/payment-links/:id` | Atualizar link |
+| `DELETE` | `/api/payment-links/:id` | Deletar link |
+| `POST` | `/api/payment-links/:id/bumps` | Adicionar order bump |
+| `DELETE` | `/api/payment-links/:id/bumps/:productId` | Remover order bump |
+| `PATCH` | `/api/payment-links/:id/bumps/reorder` | Reordenar order bumps |
+
+---
+
+## Layout e Tema
+
+Ao criar ou atualizar um link, você pode personalizar a aparência:
+
+| Campo | Opções | Padrão |
+|-------|--------|--------|
+| `layout` | `CLASSIC`, `MODERN` | `CLASSIC` |
+| `theme` | `DEFAULT`, `DARK`, `MINIMAL`, `VIBRANT` | `DEFAULT` |
+| `primaryColor` | Hex `#RRGGBB` | `#6366f1` |
+| `backgroundColor` | Hex `#RRGGBB` | `#ffffff` |
+
+---
+
+## Order Bumps
+
+Order bumps são produtos adicionais exibidos no checkout para aumentar o ticket médio. Cada link suporta até **5 order bumps**, com produto, valor, título e descrição personalizados.
+
+<Card title="Próximos passos">
+  Veja como criar seu primeiro link em [Criar Link de Pagamento](/docs/public/reference/create-payment-link).
+</Card>

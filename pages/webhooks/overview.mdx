@@ -1,0 +1,204 @@
+---
+title: "Webhooks"
+description: "Receba notificações em tempo real quando eventos acontecem no seu projeto."
+icon: "bell"
+---
+
+Webhooks permitem que sua aplicação seja notificada automaticamente quando eventos ocorrem — como um pagamento confirmado ou uma transação expirada. Em vez de ficar consultando o status, a gente avisa você.
+
+---
+
+## Configurando um webhook
+
+Acesse o [dashboard](https://app.payments.bob.company) → seu projeto → **Webhooks → Adicionar webhook**.
+
+Você vai precisar de:
+- Uma URL HTTPS pública que receberá os eventos
+- Um secret para validar a autenticidade das requisições
+
+<Note>
+  Webhooks funcionam nos dois ambientes. No sandbox, os eventos são disparados normalmente ao simular pagamentos — ideal para testar sua integração de ponta a ponta.
+</Note>
+
+---
+
+## Formato do payload
+
+Toda notificação chega como um `POST` com o seguinte formato:
+
+```json
+{
+  "event": "transaction.paid",
+  "type": "transaction",
+  "title": "Transação Paga",
+  "message": "Transação de R$ 100,00 confirmada",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100,
+    "product": "Plano Premium",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "complement": "Apt 456",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "gateway": "meu-gateway",
+    "originDomain": "loja.exemplo.com.br",
+    "isSandbox": false
+  },
+  "timestamp": "2026-01-16T10:05:01.000Z"
+}
+```
+
+| Campo | Descrição |
+|-------|-----------|
+| `event` | Tipo do evento em notação com ponto (ex: `transaction.paid`) |
+| `type` | Categoria do evento (`transaction`, `gateway`, `customer`, `fraud`) |
+| `title` | Título legível do evento em português |
+| `message` | Mensagem descritiva com detalhes do evento |
+| `data` | Dados específicos do evento (varia por tipo) |
+| `timestamp` | Data/hora do envio em formato ISO 8601 |
+
+Responda com `200 OK` assim que receber. Se demorar mais de 10 segundos ou retornar outro status, tentamos reenviar com backoff exponencial (até 5 tentativas).
+
+---
+
+## Eventos disponíveis
+
+### Transações
+
+| Evento | Quando é disparado |
+|--------|-------------------|
+| `transaction.created` | Transação PIX criada |
+| `transaction.paid` | Pagamento confirmado |
+| `transaction.expired` | PIX expirou sem pagamento |
+| `transaction.cancelled` | Transação cancelada |
+| `transaction.refunded` | Pagamento estornado |
+
+### Gateways
+
+| Evento | Quando é disparado |
+|--------|-------------------|
+| `gateway.circuit.open` | Gateway entrou em modo de proteção (circuit breaker aberto) |
+| `gateway.circuit.recovered` | Gateway foi recuperado |
+
+### Clientes e Fraude
+
+| Evento | Quando é disparado |
+|--------|-------------------|
+| `customer.blocked` | Cliente bloqueado por suspeita de fraude |
+| `customer.unblocked` | Cliente desbloqueado |
+| `fraud.detected` | Atividade suspeita detectada |
+
+---
+
+## Verificação de assinatura
+
+Toda requisição inclui o header `X-Webhook-Signature` com uma assinatura HMAC-SHA256 do body. Valide sempre para garantir que a requisição veio da Bob Payments.
+
+O header `X-Webhook-Timestamp` contém o mesmo valor do campo `timestamp` do payload — útil para rejeitar requisições muito antigas.
+
+<Warning>
+  Use comparação timing-safe para evitar ataques de timing. Exemplos abaixo já fazem isso corretamente.
+</Warning>
+
+<CodeGroup>
+
+```javascript Node.js
+import crypto from 'crypto';
+
+function verifyWebhookSignature(rawBody, signatureHeader, secret) {
+  const hmac = crypto.createHmac('sha256', secret);
+  hmac.update(rawBody);
+  const expected = hmac.digest('hex');
+
+  const expectedBuffer = Buffer.from(expected, 'utf8');
+  const receivedBuffer = Buffer.from(signatureHeader, 'utf8');
+
+  if (expectedBuffer.length !== receivedBuffer.length) return false;
+  return crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+}
+
+// Com Express
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const isValid = verifyWebhookSignature(
+    req.body,
+    req.headers['x-webhook-signature'],
+    'seu_webhook_secret'
+  );
+
+  if (!isValid) return res.status(401).json({ error: 'Invalid signature' });
+
+  const event = JSON.parse(req.body);
+  // processar evento...
+
+  res.status(200).json({ received: true });
+});
+```
+
+```python Python
+import hmac, hashlib
+
+def verify_webhook_signature(raw_body: bytes, signature: str, secret: str) -> bool:
+    expected = hmac.new(secret.encode(), raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, signature)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    if not verify_webhook_signature(request.get_data(), request.headers.get('X-Webhook-Signature'), 'seu_webhook_secret'):
+        return jsonify({'error': 'Invalid signature'}), 401
+
+    event = request.get_json()
+    # processar evento...
+    return jsonify({'received': True}), 200
+```
+
+```php PHP
+function verifyWebhookSignature(string $rawBody, string $signature, string $secret): bool {
+    return hash_equals(hash_hmac('sha256', $rawBody, $secret), $signature);
+}
+
+$rawBody = file_get_contents('php://input');
+if (!verifyWebhookSignature($rawBody, $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '', 'seu_webhook_secret')) {
+    http_response_code(401);
+    exit;
+}
+
+$event = json_decode($rawBody, true);
+// processar evento...
+http_response_code(200);
+```
+
+</CodeGroup>
+
+<Note>
+  Use o **raw body** para verificar a assinatura — nunca o JSON já parseado. Re-serializar o JSON pode alterar a formatação e invalidar a assinatura.
+</Note>
+
+---
+
+## Boas práticas e notas importantes
+
+- Valores monetários são expressos em reais (campo `amount`), exceto `fee.amount` que também está em reais
+- O campo `event` identifica o tipo de evento no formato `categoria.ação` (ex: `transaction.paid`)
+- Retorne `200` imediatamente e processe o evento em background
+- Implemente processamento idempotente — processe cada `id` de evento uma única vez
+- Registre falhas de verificação de assinatura e responda com `401` apropriadamente
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

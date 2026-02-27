@@ -1,0 +1,112 @@
+---
+title: "Idempotência e Deduplicação"
+description: "Como a API Bob Payments previne transações PIX duplicadas e garante segurança em retentativas automáticas"
+---
+
+# Idempotência e Deduplicação
+
+A API possui mecanismos automáticos para prevenir a criação de transações duplicadas, protegendo contra cliques repetidos e falhas de rede.
+
+## Deduplicação de transações
+
+Quando uma transação PIX é criada, a API gera uma chave de deduplicação baseada em:
+
+- **Projeto** (projectId)
+- **Cliente** (documento CPF/CNPJ)
+- **Valor** (amountCents)
+- **Produto** (product)
+
+Se uma transação com a mesma combinação já existir com status `waiting_payment`, a transação existente é retornada em vez de criar uma nova.
+
+### Comportamento
+
+| Cenário | Resultado | HTTP |
+|---------|-----------|------|
+| Transação pendente com mesma combinação | Retorna a transação existente | `200` |
+| Nenhuma transação pendente | Cria nova transação | `201` |
+| Transação em processamento com mesma combinação | Erro de duplicata | `409` |
+
+### Exemplo de resposta duplicada
+
+Ao enviar a mesma requisição duas vezes com transação pendente:
+
+```json
+{
+  "success": true,
+  "message": "Transaction created successfully",
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "pixCode": "00020126580014br.gov.bcb.pix...",
+    "status": "waiting_payment",
+    "amountCents": 10000
+  }
+}
+```
+
+O `id` retornado será o mesmo da transação original — nenhuma transação nova é criada.
+
+## Quando a deduplicação expira
+
+O cache de deduplicação é limpo automaticamente quando a transação atinge um status final:
+
+- `paid` — Pagamento confirmado
+- `expired` — PIX expirou
+- `cancelled` — Transação cancelada
+- `refunded` — Pagamento estornado
+- `failed` — Falha no processamento
+
+Após a limpeza, uma nova requisição com a mesma combinação criará uma nova transação.
+
+## Erro de duplicata em processamento
+
+Se uma transação idêntica estiver sendo processada simultaneamente, a API retorna HTTP `409`:
+
+```json
+{
+  "type": "ERR_TRANSACTION_010",
+  "title": "Transação Duplicada",
+  "status": 409,
+  "detail": "Já existe uma transação em processamento para este cliente e valor.",
+  "instance": "/api/transactions"
+}
+```
+
+<Note>
+  Este erro é temporário. Aguarde alguns segundos e consulte o status da transação original com `GET /api/transactions/:id`.
+</Note>
+
+## Idempotência de webhooks
+
+Cada notificação de webhook possui um `idempotencyKey` único. Ao processar webhooks, use esta chave para garantir que o mesmo evento não seja processado duas vezes:
+
+```javascript
+app.post('/webhook', (req, res) => {
+  const { event, data } = req.body;
+
+  // Use o ID do recurso como chave de idempotência
+  const alreadyProcessed = await checkIfProcessed(data.id, event);
+  if (alreadyProcessed) {
+    return res.status(200).json({ received: true });
+  }
+
+  // Processe o evento...
+  await processEvent(event, data);
+  await markAsProcessed(data.id, event);
+
+  res.status(200).json({ received: true });
+});
+```
+
+## Boas práticas para retry
+
+<AccordionGroup>
+  <Accordion title="Sempre trate HTTP 409">
+    Não crie nova transação ao receber 409. Consulte o status da transação existente.
+  </Accordion>
+  <Accordion title="Confie na deduplicação">
+    É seguro reenviar a mesma requisição de criação de transação. A API retornará a transação existente se uma pendente for encontrada.
+  </Accordion>
+  <Accordion title="Processe webhooks de forma idempotente">
+    Sempre verifique se o evento já foi processado antes de executar ações como liberar acesso ou enviar emails.
+  </Accordion>
+</AccordionGroup>

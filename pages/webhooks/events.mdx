@@ -1,0 +1,404 @@
+---
+title: "Eventos"
+description: "Lista completa de eventos de webhook com exemplos de payload JSON para transações, gateways e clientes."
+---
+
+# Eventos
+
+Estes são os eventos que podem ser enviados para sua URL de webhook.
+
+## Transações
+
+| Evento | Descrição |
+|--------|-----------|
+| `transaction.created` | Transação PIX criada |
+| `transaction.paid` | Pagamento confirmado |
+| `transaction.expired` | PIX expirou sem pagamento |
+| `transaction.cancelled` | Transação cancelada |
+| `transaction.refunded` | Pagamento estornado |
+
+### transaction.created
+
+Enviado quando uma nova transação PIX é criada. Inclui dados completos do cliente e o código PIX para pagamento.
+
+```json
+{
+  "event": "transaction.created",
+  "type": "transaction",
+  "title": "Transação Criada",
+  "message": "Nova transação de R$ 100,00 aguardando pagamento",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100,
+    "product": "Plano Premium",
+    "customerName": "João Silva",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "complement": "Apt 456",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "gateway": "meu-gateway",
+    "pixCode": "00020126580014br.gov.bcb.pix...",
+    "expirationDate": "2026-01-16T10:30:00.000Z",
+    "createdAt": "2026-01-16T10:00:00.000Z"
+  },
+  "timestamp": "2026-01-16T10:00:01.000Z"
+}
+```
+
+| Campo em `data` | Descrição |
+|-----------------|-----------|
+| `transactionId` | ID da transação |
+| `externalId` | ID externo informado na criação |
+| `amount` | Valor em reais |
+| `product` | Nome do produto |
+| `customerName` | Atalho com o nome do cliente |
+| `customer.name` | Nome completo do cliente |
+| `customer.email` | E-mail do cliente |
+| `customer.phone` | Telefone do cliente |
+| `customer.document` | Documento do cliente (CPF/CNPJ) |
+| `customer.documentType` | Tipo do documento (`CPF` ou `CNPJ`) |
+| `customer.address` | Endereço completo do cliente |
+| `gateway` | Alias do gateway utilizado |
+| `pixCode` | Código PIX copia-e-cola |
+| `expirationDate` | Data de expiração do PIX em ISO 8601 |
+| `createdAt` | Data de criação da transação em ISO 8601 |
+
+### transaction.paid
+
+Enviado quando o pagamento PIX é confirmado.
+
+```json
+{
+  "event": "transaction.paid",
+  "type": "transaction",
+  "title": "Transação Paga",
+  "message": "Transação de R$ 100,00 confirmada",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100,
+    "product": "Plano Premium",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "complement": "Apt 456",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "gateway": "meu-gateway",
+    "originDomain": "loja.exemplo.com.br",
+    "isSandbox": false
+  },
+  "timestamp": "2026-01-16T10:05:01.000Z"
+}
+```
+
+| Campo em `data` | Descrição |
+|-----------------|-----------|
+| `transactionId` | ID da transação |
+| `externalId` | ID externo informado na criação |
+| `amount` | Valor em reais |
+| `product` | Nome do produto |
+| `customer.name` | Nome do cliente |
+| `customer.email` | E-mail do cliente |
+| `customer.phone` | Telefone do cliente |
+| `customer.document` | Documento do cliente |
+| `customer.documentType` | Tipo do documento (`CPF` ou `CNPJ`) |
+| `customer.address` | Endereço completo do cliente |
+| `gateway` | Alias do gateway que processou o pagamento |
+| `originDomain` | Domínio de origem da transação (quando disponível) |
+| `isSandbox` | Indica se é uma transação de sandbox |
+
+### transaction.expired
+
+Enviado quando o PIX expira sem pagamento.
+
+```json
+{
+  "event": "transaction.expired",
+  "type": "transaction",
+  "title": "Transação Expirada",
+  "message": "Transação de R$ 100,00 expirou",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100,
+    "product": "Plano Premium",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "complement": "Apt 456",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "originDomain": "loja.exemplo.com.br",
+    "isSandbox": false
+  },
+  "timestamp": "2026-01-16T10:30:01.000Z"
+}
+```
+
+### transaction.cancelled
+
+Enviado quando uma transação é cancelada.
+
+```json
+{
+  "event": "transaction.cancelled",
+  "type": "transaction",
+  "title": "Transação Cancelada",
+  "message": "Transação de R$ 100,00 cancelada",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100,
+    "product": "Plano Premium",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "complement": "Apt 456",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "gateway": "meu-gateway",
+    "originDomain": "loja.exemplo.com.br",
+    "isSandbox": false
+  },
+  "timestamp": "2026-01-16T10:15:00.000Z"
+}
+```
+
+### transaction.refunded
+
+Enviado quando um pagamento confirmado é estornado.
+
+```json
+{
+  "event": "transaction.refunded",
+  "type": "transaction",
+  "title": "Transação Reembolsada",
+  "message": "Transação de R$ 100,00 reembolsada",
+  "data": {
+    "transactionId": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "amount": 100,
+    "product": "Plano Premium",
+    "customer": {
+      "name": "João Silva",
+      "email": "joao@email.com",
+      "phone": "11987654321",
+      "document": "12345678900",
+      "documentType": "CPF",
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "complement": "Apt 456",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    },
+    "gateway": "meu-gateway",
+    "originDomain": "loja.exemplo.com.br",
+    "isSandbox": false,
+    "fee": {
+      "amount": 1.50
+    }
+  },
+  "timestamp": "2026-01-17T14:00:01.000Z"
+}
+```
+
+| Campo em `data` | Descrição |
+|-----------------|-----------|
+| `fee.amount` | Valor da taxa da plataforma em reais (opcional, presente apenas quando aplicável) |
+
+---
+
+## Gateways
+
+| Evento | Descrição |
+|--------|-----------|
+| `gateway.circuit.open` | Gateway entrou em modo de proteção (circuit breaker aberto) |
+| `gateway.circuit.recovered` | Gateway foi recuperado |
+
+### gateway.circuit.open
+
+Enviado quando o circuit breaker de um gateway é acionado após muitas falhas consecutivas.
+
+```json
+{
+  "event": "gateway.circuit.open",
+  "type": "gateway",
+  "title": "Gateway com Problema",
+  "message": "Gateway entrou em modo de proteção",
+  "data": {
+    "gatewayId": "clg1234567890",
+    "gatewayAlias": "meu-gateway",
+    "gatewayProvider": "GHOSTSPAY",
+    "failedRequests": 5,
+    "errorRate": 0.83
+  },
+  "timestamp": "2026-01-16T10:00:01.000Z"
+}
+```
+
+| Campo em `data` | Descrição |
+|-----------------|-----------|
+| `gatewayId` | ID interno do gateway |
+| `gatewayAlias` | Alias configurado para o gateway |
+| `gatewayProvider` | Nome do provedor do gateway |
+| `failedRequests` | Número de requisições com falha que acionaram o circuit breaker |
+| `errorRate` | Taxa de erro no momento do disparo (0 a 1) |
+
+### gateway.circuit.recovered
+
+Enviado quando o gateway se recupera e volta a processar transações normalmente.
+
+```json
+{
+  "event": "gateway.circuit.recovered",
+  "type": "gateway",
+  "title": "Gateway Recuperado",
+  "message": "Gateway foi recuperado",
+  "data": {
+    "gatewayId": "clg1234567890",
+    "gatewayAlias": "meu-gateway",
+    "gatewayProvider": "GHOSTSPAY"
+  },
+  "timestamp": "2026-01-16T10:30:01.000Z"
+}
+```
+
+---
+
+## Clientes e Fraude
+
+| Evento | Descrição |
+|--------|-----------|
+| `customer.blocked` | Cliente bloqueado por suspeita de fraude |
+| `customer.unblocked` | Cliente desbloqueado |
+| `fraud.detected` | Atividade suspeita detectada |
+
+### customer.blocked
+
+Enviado quando um cliente é bloqueado pelo sistema antifraude.
+
+```json
+{
+  "event": "customer.blocked",
+  "type": "customer",
+  "title": "Cliente Bloqueado",
+  "message": "Cliente foi bloqueado por suspeita de fraude",
+  "data": {
+    "customerId": "cly1234567890",
+    "customerName": "João Silva",
+    "customerDocument": "12345678900",
+    "reason": "Velocidade de transações acima do limite",
+    "fraudType": "velocity"
+  },
+  "timestamp": "2026-01-16T10:00:01.000Z"
+}
+```
+
+| Campo em `data` | Descrição |
+|-----------------|-----------|
+| `customerId` | ID interno do cliente |
+| `customerName` | Nome do cliente |
+| `customerDocument` | Documento do cliente |
+| `reason` | Motivo do bloqueio |
+| `fraudType` | Tipo de fraude detectada (ex: `velocity`) |
+
+### customer.unblocked
+
+Enviado quando um cliente bloqueado é desbloqueado (manualmente ou pelo job automático).
+
+```json
+{
+  "event": "customer.unblocked",
+  "type": "customer",
+  "title": "Cliente Desbloqueado",
+  "message": "Cliente foi desbloqueado",
+  "data": {
+    "customerId": "cly1234567890",
+    "customerName": "João Silva",
+    "previousBlockReason": "Velocidade de transações acima do limite",
+    "unblockedBy": "cooldown_expired"
+  },
+  "timestamp": "2026-01-16T10:00:01.000Z"
+}
+```
+
+| Campo em `data` | Descrição |
+|-----------------|-----------|
+| `customerId` | ID interno do cliente |
+| `customerName` | Nome do cliente |
+| `previousBlockReason` | Motivo do bloqueio anterior |
+| `unblockedBy` | Origem do desbloqueio (`cooldown_expired` para desbloqueio automático) |
+
+### fraud.detected
+
+Enviado quando atividade suspeita é detectada em uma transação.
+
+```json
+{
+  "event": "fraud.detected",
+  "type": "fraud",
+  "title": "Fraude Detectada",
+  "message": "Atividade suspeita detectada",
+  "data": {
+    "customerId": "cly1234567890",
+    "customerName": "João Silva",
+    "customerDocument": "12345678900",
+    "reason": "Múltiplas transações em curto período",
+    "fraudType": "velocity"
+  },
+  "timestamp": "2026-01-16T10:00:01.000Z"
+}
+```

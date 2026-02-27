@@ -1,0 +1,54 @@
+---
+title: "Referência"
+description: "Consulte as configurações e o estado atual do seu projeto."
+icon: "store"
+---
+
+A **loja** representa o seu projeto no Bob Payments. Ela agrupa suas configurações, domínios autorizados e estado do ambiente (sandbox ou produção).
+
+---
+
+## O objeto loja
+
+```json
+{
+  "id": "clx1234567890",
+  "name": "Minha Loja",
+  "devMode": false,
+  "pixExpirationMinutes": 30,
+  "maxTransactionAmountCents": null,
+  "domains": [
+    {
+      "id": "cld1234567890",
+      "host": "minhaloja.com"
+    }
+  ]
+}
+```
+
+---
+
+## Campos
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | Identificador único do projeto (CUID) |
+| `name` | string | Nome do projeto |
+| `devMode` | boolean | `true` se o projeto está em modo sandbox — transações são simuladas mesmo com `sk_live_` |
+| `pixExpirationMinutes` | integer | Tempo de expiração do PIX em minutos. Default: `30`. Range: 5 a 1440 |
+| `maxTransactionAmountCents` | integer \| null | Valor máximo por transação em centavos. `null` = sem limite |
+| `domains` | array | Domínios autorizados a fazer requisições para o projeto |
+
+---
+
+## Regras importantes
+
+- **Dev mode como kill switch**: ativar o dev mode pausa instantaneamente o processamento de pagamentos reais, sem precisar trocar chaves ou fazer deploy.
+- **Domínios autorizados**: em produção, requisições de origens não cadastradas são bloqueadas. Configure seus domínios no dashboard antes de ir ao ar.
+- **Configurações por projeto**: `pixExpirationMinutes` e `maxTransactionAmountCents` são configuráveis via dashboard e afetam todas as transações futuras.
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

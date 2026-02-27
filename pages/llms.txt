@@ -1,0 +1,49 @@
+# Bob Payments API
+
+> Bob Payments é um orquestrador de pagamentos PIX que permite criar cobranças, gerenciar clientes e receber notificações de pagamento em tempo real via API REST.
+
+## Começando
+
+- [Introdução](/docs/public/introduction): Visão geral da API, recursos disponíveis, primeiros passos e URL base
+- [Autenticação](/docs/public/quickstart/authentication): Como autenticar via Bearer Token com Secret Key (sk_test para sandbox, sk_live para produção). Cada chave é associada a uma integração no momento da criação — não é necessário configurar domínios ou enviar header Origin
+- [Primeira Transação](/docs/public/quickstart/first-transaction): Tutorial rápido para criar um QR Code PIX e simular pagamento em 5 minutos
+- [Guia de Integração Completa](/docs/public/guides/complete-integration): Passo a passo do zero à produção com checklist pré-produção
+
+## Conceitos
+
+- [Formato de Resposta](/docs/public/guides/response-format): Envelope de resposta, paginação com meta, erros RFC 7807, datas ISO 8601 e valores em centavos
+- [Rate Limiting](/docs/public/guides/rate-limiting): Limites de requisição por cliente (documento), headers X-RateLimit, tratamento de HTTP 429 com retry
+- [Idempotência e Deduplicação](/docs/public/guides/idempotency): Deduplicação automática de transações por cliente+valor+produto, tratamento de HTTP 409
+- [Ciclo de Vida da Transação](/docs/public/api-reference/transaction-lifecycle): Status (waiting_payment, processing, paid, expired, cancelled, refunded, failed) e fluxo de transições
+
+## API Reference - Transações PIX
+
+- [Criar QR Code PIX](/docs/public/api-reference/create-pix): POST /api/transactions - Cria transação PIX com dados do cliente e valor em centavos, retorna pixCode copia-e-cola
+- [Checar Status](/docs/public/api-reference/check-status): GET /api/transactions/:id - Consulta status de pagamento e dados completos de uma transação
+- [Listar Transações](/docs/public/api-reference/list-transactions): GET /api/transactions - Lista paginada com filtros por status, data, valor e busca textual
+
+## API Reference - Clientes
+
+- [Criar Cliente](/docs/public/api-reference/create-customer): POST /api/customers - Cria ou atualiza cliente por CPF/CNPJ (upsert automático) com endereço completo
+- [Buscar Cliente](/docs/public/api-reference/get-customer): GET /api/customers/:id - Detalhes completos do cliente com transações recentes e status de bloqueio
+- [Listar Clientes](/docs/public/api-reference/list-customers): GET /api/customers - Lista paginada de clientes com filtros por data
+
+## API Reference - Loja
+
+- [Detalhes da Loja](/docs/public/api-reference/get-store): GET /api/store - Retorna configurações do projeto (devMode, domínios, expiração PIX, limites)
+
+## Webhooks
+
+- [Visão Geral](/docs/public/webhooks/overview): Como configurar webhooks, formato do payload JSON, headers de assinatura e retry com backoff exponencial
+- [Eventos](/docs/public/webhooks/events): Lista completa de eventos (transaction_created, transaction_paid, transaction_expired, transaction_cancelled, transaction_refunded) com exemplos de payload
+- [Verificação de Assinatura](/docs/public/webhooks/signature-verification): Validação HMAC-SHA256 com exemplos em Node.js, Python e PHP usando comparação timing-safe
+
+## Sandbox
+
+- [Visão Geral](/docs/public/sandbox/overview): Ambiente de testes com chaves sk_test, diferenças do ambiente de produção e fluxo de teste
+- [Simular Pagamento](/docs/public/sandbox/simulate-payment): POST /api/sandbox/transactions/:id/pay - Simula confirmação de pagamento PIX
+
+## Referência
+
+- [Códigos de Erro](/docs/public/api-reference/errors): Referência completa RFC 7807 com todos os códigos de erro (autenticação, validação, transações, rate limit, gateways, fraude, sandbox)
+- [SDKs e Bibliotecas](/docs/public/sdks/overview): Exemplos de integração HTTP em Node.js, Python, PHP e geração de QR Code a partir do pixCode

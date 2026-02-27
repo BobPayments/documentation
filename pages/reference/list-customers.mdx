@@ -1,0 +1,73 @@
+---
+title: "Listar Clientes"
+api: "GET /api/customers"
+description: "GET /api/customers - Lista clientes do projeto com paginação, filtros por data de criação e busca por nome, e-mail, CPF/CNPJ ou telefone"
+---
+
+# Listar Clientes
+
+Retorna uma lista paginada de todos os clientes do projeto.
+
+## Query Parameters
+
+<ParamField query="page" type="integer">
+  Número da página. Default: `1`.
+</ParamField>
+<ParamField query="limit" type="integer">
+  Itens por página (máximo 100). Default: `10`.
+</ParamField>
+<ParamField query="search" type="string">
+  Texto de busca (máximo 200 caracteres). Pesquisa por nome, e-mail, CPF/CNPJ ou telefone do cliente.
+</ParamField>
+<ParamField query="dateFrom" type="string">
+  Filtrar clientes criados a partir desta data (ISO 8601).
+</ParamField>
+<ParamField query="dateTo" type="string">
+  Filtrar clientes criados até esta data (ISO 8601).
+</ParamField>
+
+## Response (200)
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "cly1234567890",
+      "name": "João Silva",
+      "document": "12345678900",
+      "email": "joao@email.com",
+      "phone": "11999999999",
+      "street": "Rua Exemplo",
+      "streetNumber": "123",
+      "neighborhood": "Centro",
+      "complement": null,
+      "zipCode": "01310100",
+      "city": "São Paulo",
+      "state": "SP",
+      "country": "BR",
+      "isBlocked": false,
+      "createdAt": "2026-01-16T10:00:00.000Z",
+      "updatedAt": "2026-01-16T10:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
+```
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 401 | `ERR_AUTH_009` | Token inválido |
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

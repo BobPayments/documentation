@@ -1,0 +1,91 @@
+---
+title: "Referência"
+description: "Gerencie cobranças PIX — crie, consulte e acompanhe transações em tempo real."
+icon: "qrcode"
+---
+
+Uma **transação** representa uma cobrança PIX gerada pelo Bob Payments. Ela inclui o código copia-e-cola, dados do cliente, valor, status e qual gateway processou o pagamento.
+
+---
+
+## O objeto transação
+
+```json
+{
+  "id": "clx7a8b9c0d1e2f3g4h5",
+  "externalId": "pedido_123",
+  "pixCode": "00020126580014br.gov.bcb.pix...",
+  "status": "waiting_payment",
+  "amountCents": 10000,
+  "product": "Plano Premium",
+  "quantity": 1,
+  "expirationDate": "2026-01-16T10:30:00.000Z",
+  "paidAt": null,
+  "refundedAt": null,
+  "isSandbox": false,
+  "createdAt": "2026-01-16T10:00:00.000Z",
+  "updatedAt": "2026-01-16T10:00:00.000Z",
+  "customer": {
+    "id": "cly1234567890",
+    "name": "João Silva",
+    "document": "12345678900",
+    "email": "joao@email.com",
+    "phone": "11999999999"
+  }
+}
+```
+
+---
+
+## Campos
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | Identificador único da transação (CUID) |
+| `externalId` | string \| null | ID externo do seu sistema, se enviado |
+| `pixCode` | string | Código PIX copia-e-cola — exiba ao cliente ou converta em QR Code |
+| `status` | string | Status atual. Veja os [valores possíveis](#status) abaixo |
+| `amountCents` | integer | Valor da cobrança em centavos (`10000` = R$ 100,00) |
+| `product` | string | Nome do produto ou serviço |
+| `quantity` | integer | Quantidade. Default: `1` |
+| `expirationDate` | string | Data/hora de expiração do PIX (ISO 8601) |
+| `paidAt` | string \| null | Data/hora do pagamento confirmado. `null` se ainda não pago |
+| `refundedAt` | string \| null | Data/hora do estorno. `null` se não estornado |
+| `isSandbox` | boolean | `true` se a transação foi criada em sandbox |
+| `createdAt` | string | Data/hora de criação (ISO 8601) |
+| `updatedAt` | string | Data/hora da última atualização (ISO 8601) |
+| `customer` | object | Dados do cliente vinculado à transação |
+
+---
+
+## Status
+
+| Valor | Descrição | Final? |
+|-------|-----------|--------|
+| `waiting_payment` | PIX gerado, aguardando pagamento | Não |
+| `processing` | Pagamento em processamento | Não |
+| `paid` | Pagamento confirmado | Sim |
+| `expired` | PIX expirou sem pagamento | Sim |
+| `cancelled` | Transação cancelada | Sim |
+| `refunded` | Pagamento estornado | Sim |
+| `failed` | Falha no processamento | Sim |
+
+<Note>
+  Transações em status final não podem ser alteradas. Ao consultar uma transação expirada, o status é atualizado automaticamente.
+</Note>
+
+---
+
+## Regras importantes
+
+- **Idempotência**: se já existe uma transação `waiting_payment` com os mesmos dados (cliente, valor e produto), ela é retornada em vez de criar uma nova — sem cobrança duplicada.
+- **Expiração automática**: o tempo padrão é 30 minutos, configurável por projeto (5 a 1440 minutos).
+- **Gateway automático**: você não escolhe o gateway — o Bob roteia para o melhor disponível com failover automático.
+- **Valores em centavos**: `amountCents: 10000` = R$ 100,00.
+- **Ambiente pelo token**: use `sk_test_` para sandbox, `sk_live_` para produção. O campo `isSandbox` confirma o ambiente da transação.
+
+---
+
+<Card title="Precisa de ajuda?" icon="envelope">
+  Nossa equipe está disponível para auxiliar no processo de desenvolvimento. Entre em contato pelo e-mail [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>

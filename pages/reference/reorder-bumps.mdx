@@ -1,0 +1,57 @@
+---
+title: "Reordenar Order Bumps"
+api: "PATCH /api/payment-links/:id/bumps/reorder"
+description: "Altera a ordem de exibição dos order bumps no checkout."
+---
+
+# Reordenar Order Bumps
+
+Define a nova ordem de exibição dos order bumps. Envie todos os IDs dos bumps na sequência desejada.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  ID do link de pagamento.
+</ParamField>
+
+## Request Body
+
+<ParamField body="orderBumpIds" type="array" required>
+  Lista com os IDs dos order bumps na nova ordem desejada (do primeiro ao último).
+</ParamField>
+
+**Exemplo:**
+
+```json
+{
+  "orderBumpIds": ["bump_02", "bump_01", "bump_03"]
+}
+```
+
+## Response (200)
+
+```json
+{
+  "success": true,
+  "orderBumps": [
+    { "id": "bump_02", "position": 0 },
+    { "id": "bump_01", "position": 1 },
+    { "id": "bump_03", "position": 2 }
+  ]
+}
+```
+
+## Erros
+
+| HTTP | Código | Descrição |
+|------|--------|-----------|
+| 400 | `ERR_VALIDATION_001` | Body inválido |
+| 401 | `ERR_AUTH_009` | Token inválido |
+| 404 | — | Link de pagamento não encontrado |
+| 500 | — | Erro interno do servidor |
+
+---
+
+<Card title="Precisa de ajuda?">
+  Entre em contato com [suporte@payments.bob.company](mailto:suporte@payments.bob.company).
+</Card>
