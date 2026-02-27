@@ -1,0 +1,17 @@
+{
+  "name": "@bobpayments/documentation",
+  "version": "1.0.0",
+  "description": "Documentação pública da API Bob Payments",
+  "private": true,
+  "scripts": {
+    "dev": "mintlify dev",
+    "update-openapi": "./update-openapi.sh",
+    "release": "semantic-release"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "semantic-release": "^24.2.0"
+  }
+}
