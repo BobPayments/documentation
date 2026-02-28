@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.15](https://github.com/BobPayments/documentation/compare/v1.1.14...v1.1.15) (2026-02-28)
+
+### Correções
+
+* update webhooks.mdx based on actual backend implementation ([53011a2](https://github.com/BobPayments/documentation/commit/53011a2c9b98f754272e8073c32c1a7b3a71f252))
+
 ## [1.1.14](https://github.com/BobPayments/documentation/compare/v1.1.13...v1.1.14) (2026-02-28)
 
 ### Documentação
