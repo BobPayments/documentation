@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.19](https://github.com/BobPayments/documentation/compare/v1.1.18...v1.1.19) (2026-02-28)
+
+### Documentação
+
+* rename PIX section group and update transaction reference title ([429dda6](https://github.com/BobPayments/documentation/commit/429dda6f6766bf32e5aee6283b48292f14354520))
+
 ## [1.1.18](https://github.com/BobPayments/documentation/compare/v1.1.17...v1.1.18) (2026-02-28)
 
 ### Documentação
