@@ -4,25 +4,16 @@ description: "Como sair do sandbox e começar a processar pagamentos reais."
 icon: "rocket"
 ---
 
-Quando sua integração estiver funcionando perfeitamente no sandbox, siga os passos abaixo para ativar o ambiente de produção.
+Simples: quando a integração estiver funcionando no sandbox, é só trocar a chave. Sem processo de aprovação, sem burocracia.
 
-## Processo de ativação
+## Como ativar
 
 <Steps>
-  <Step title="Teste integralmente no sandbox">
-    Certifique-se de que todos os fluxos funcionam: criar cobrança, receber webhook, tratar erros.
+  <Step title="Teste no sandbox">
+    Garanta que todos os fluxos funcionam: criar cobrança, receber webhook, tratar erros.
   </Step>
-  <Step title="Acesse as configurações de produção">
-    No Dashboard, vá em **Configurações → Produção** e inicie o processo de ativação.
-  </Step>
-  <Step title="Envie a documentação da empresa">
-    Forneça os dados da empresa e dos sócios para verificação de identidade (KYB).
-  </Step>
-  <Step title="Aguarde a aprovação">
-    A análise leva até 24 horas úteis. Você receberá uma notificação por email.
-  </Step>
-  <Step title="Troque as chaves de API">
-    Substitua `sk_test_*` por `sk_live_*` nas variáveis de ambiente da sua aplicação.
+  <Step title="Troque a chave de API">
+    Substitua `sk_test_*` por `sk_live_*` nas variáveis de ambiente da sua aplicação. Só isso.
   </Step>
 </Steps>
 
@@ -33,7 +24,7 @@ Quando sua integração estiver funcionando perfeitamente no sandbox, siga os pa
     Cadastre o domínio da sua loja no Dashboard antes de criar transações em produção.
   </Card>
   <Card title="Webhook configurado" icon="bell">
-    Configure a URL de webhook de produção (diferente da URL de sandbox).
+    Configure a URL de webhook para receber notificações de pagamento.
   </Card>
   <Card title="Tratamento de erros" icon="triangle-exclamation">
     Implemente retry com backoff exponencial para erros `503` (gateways indisponíveis).
@@ -46,7 +37,3 @@ Quando sua integração estiver funcionando perfeitamente no sandbox, siga os pa
 <Warning>
   Nunca exponha `sk_live_*` no frontend, em repositórios públicos ou em logs de aplicação.
 </Warning>
-
-<Card title="Precisa de ajuda para ativar?" icon="envelope">
-  Entre em contato com [suporte@payments.bob.company](mailto:suporte@payments.bob.company)
-</Card>
