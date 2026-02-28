@@ -1,65 +1,12 @@
 ---
-title: "Entidade Customer"
-description: "Estrutura completa do objeto de cliente na Bob Payments."
-icon: "book"
+title: "Referência"
+description: "Gerencie os compradores do seu projeto com histórico de transações"
+icon: "book-open-cover"
 ---
 
-# Entidade Customer
+## <Icon icon="folder-tree" type="solid" /> Estrutura
 
-O objeto `Customer` representa um comprador cadastrado no seu projeto. Os clientes são criados ou atualizados automaticamente ao criar transações, ou diretamente pelo endpoint de clientes.
-
-## Atributos
-
-<AccordionGroup>
-  <Accordion title="id" icon="fingerprint">
-    **string** — Identificador único do cliente no formato CUID. Exemplo: `clx1a2b3c4d5e6f7g8h9`
-  </Accordion>
-
-  <Accordion title="name" icon="user">
-    **string** — Nome completo do cliente.
-  </Accordion>
-
-  <Accordion title="email" icon="envelope">
-    **string** — Endereço de e-mail do cliente.
-  </Accordion>
-
-  <Accordion title="phone" icon="phone">
-    **string** — Telefone do cliente com DDD, somente números. Exemplo: `11987654321`.
-  </Accordion>
-
-  <Accordion title="document" icon="id-card">
-    **string** — CPF ou CNPJ do cliente, somente números. Exemplo: `12345678900`.
-  </Accordion>
-
-  <Accordion title="documentType" icon="id-badge">
-    **string** — Tipo do documento. Valores possíveis: `CPF`, `CNPJ`.
-  </Accordion>
-
-  <Accordion title="address" icon="map-pin">
-    **object** — Endereço do cliente. Todos os campos são opcionais.
-
-    | Campo | Tipo | Descrição |
-    |-------|------|-----------|
-    | `street` | string | Logradouro |
-    | `streetNumber` | string | Número |
-    | `complement` | string | Complemento |
-    | `neighborhood` | string | Bairro |
-    | `zipCode` | string | CEP (somente números) |
-    | `city` | string | Cidade |
-    | `state` | string | UF (ex: `SP`) |
-    | `country` | string | País (ex: `BR`) |
-  </Accordion>
-
-  <Accordion title="createdAt" icon="calendar">
-    **string (ISO 8601)** — Data e hora de criação do registro.
-  </Accordion>
-
-  <Accordion title="updatedAt" icon="calendar-check">
-    **string (ISO 8601)** — Data e hora da última atualização.
-  </Accordion>
-</AccordionGroup>
-
-## Exemplo de objeto
+Um cliente é representado em nossa API pela seguinte estrutura:
 
 ```json
 {
@@ -79,11 +26,98 @@ O objeto `Customer` representa um comprador cadastrado no seu projeto. Os client
     "state": "SP",
     "country": "BR"
   },
-  "createdAt": "2026-02-27T09:00:00.000Z",
-  "updatedAt": "2026-02-27T09:00:00.000Z"
+  "createdAt": "2026-02-28T09:00:00.000Z",
+  "updatedAt": "2026-02-28T09:00:00.000Z"
 }
 ```
 
+## Atributos:
+
+<AccordionGroup>
+  <Accordion title="id:">
+    ```json
+    { "id": "clx1a2b3c4d5e6f7g8h9" }
+    ```
+    `id` : <u>string.</u><br />
+    Identificador único do cliente no formato CUID.
+  </Accordion>
+
+  <Accordion title="name:">
+    ```json
+    { "name": "João Silva" }
+    ```
+    `name` : <u>string.</u><br />
+    Nome completo do cliente.
+  </Accordion>
+
+  <Accordion title="email:">
+    ```json
+    { "email": "joao@email.com" }
+    ```
+    `email` : <u>string.</u><br />
+    Endereço de e-mail do cliente.
+  </Accordion>
+
+  <Accordion title="phone:">
+    ```json
+    { "phone": "11987654321" }
+    ```
+    `phone` : <u>string.</u><br />
+    Telefone com DDD, somente números.
+  </Accordion>
+
+  <Accordion title="document:">
+    ```json
+    { "document": "12345678900" }
+    ```
+    `document` : <u>string.</u><br />
+    CPF ou CNPJ do cliente, somente números. Usado como identificador único por projeto.
+  </Accordion>
+
+  <Accordion title="documentType:">
+    ```json
+    { "documentType": "CPF" }
+    ```
+    `documentType` : <u>string.</u><br />
+    Tipo do documento. Pode ser `CPF` ou `CNPJ`.
+  </Accordion>
+
+  <Accordion title="address:">
+    ```json
+    {
+      "address": {
+        "street": "Rua Exemplo",
+        "streetNumber": "123",
+        "complement": "Apto 4",
+        "neighborhood": "Centro",
+        "zipCode": "01234567",
+        "city": "São Paulo",
+        "state": "SP",
+        "country": "BR"
+      }
+    }
+    ```
+    `address` : <u>object.</u><br />
+    Endereço do cliente. Todos os campos são opcionais.
+  </Accordion>
+
+  <Accordion title="createdAt:">
+    ```json
+    { "createdAt": "2026-02-28T09:00:00.000Z" }
+    ```
+    `createdAt` : <u>date-time.</u><br />
+    Data e hora de criação do registro.
+  </Accordion>
+
+  <Accordion title="updatedAt:">
+    ```json
+    { "updatedAt": "2026-02-28T09:00:00.000Z" }
+    ```
+    `updatedAt` : <u>date-time.</u><br />
+    Data e hora da última atualização.
+  </Accordion>
+</AccordionGroup>
+
 <Note>
-  O campo `document` é usado como identificador único do cliente por projeto. Se você criar uma transação com um `document` já cadastrado, o registro do cliente é atualizado com os novos dados enviados.
+  O campo `document` é o identificador único do cliente por projeto. Se você criar uma transação com um `document` já cadastrado, o registro é atualizado automaticamente com os novos dados.
 </Note>

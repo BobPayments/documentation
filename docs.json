@@ -53,7 +53,12 @@
     "options": ["copy", "view", "chatgpt", "claude"]
   },
   "api": {
-    "baseUrl": "https://api.payments.bob.company"
+    "mdx": {
+      "server": "https://api.payments.bob.company",
+      "auth": {
+        "method": "bearer"
+      }
+    }
   },
   "navigation": {
     "tabs": [

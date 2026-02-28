@@ -1,59 +1,63 @@
 ---
 title: "Comece aqui"
-description: "Bob Payments é um orquestrador de pagamentos PIX para desenvolvedores."
+description: "Pegue seu café e aprenda sobre a Bob Payments!"
 icon: "house"
 ---
 
-# Bem-vindo à Bob Payments
+Nesta documentação você encontrará tudo o que precisa para integrar com a API da Bob Payments. Desenvolvida por desenvolvedores para desenvolvedores, nossa plataforma foi projetada para ser simples, previsível e fácil de usar.
 
-A Bob Payments é uma API de pagamentos PIX que permite criar cobranças, gerenciar clientes e receber notificações em tempo real via webhooks — com uma única integração.
+## <Icon icon="buildings" type="solid" /> O que é a Bob Payments?
 
-## O que você pode fazer
+A Bob Payments é um orquestrador de pagamentos PIX que surgiu da nossa necessidade de simplificar cobranças sem depender de um único gateway. Percebemos que integrar meios de pagamento era mais difícil do que precisava ser:
 
-<CardGroup cols={3}>
-  <Card title="Cobranças PIX" icon="qrcode">
-    Gere códigos PIX copia-e-cola em segundos e acompanhe o status em tempo real.
-  </Card>
-  <Card title="Clientes" icon="users">
-    Cadastre e gerencie os compradores do seu projeto com histórico de transações.
-  </Card>
-  <Card title="Webhooks" icon="bell">
-    Receba notificações automáticas quando um pagamento for confirmado ou expirar.
-  </Card>
-</CardGroup>
+- Documentações extensas e confusas
+- Múltiplos contratos e processos de homologação
+- Instabilidade de um único gateway sem fallback
+- Cada gateway com formato de API completamente diferente
 
-## Princípios da API
+Nossa solução? Uma API única que abstrai todos esses gateways e entrega QR Code + código copia-e-cola em uma chamada:
 
-A API foi desenhada para ser previsível e fácil de integrar:
+```javascript
+// Criar uma cobrança PIX
+const response = await fetch('https://api.payments.bob.company/api/transactions', {
+  method: 'POST',
+  headers: { 'Authorization': 'Bearer sk_test_sua_chave' },
+  body: JSON.stringify({ amount: 100.00, product: 'Plano Premium' })
+});
 
-- **Endpoints intencionais** — cada rota faz exatamente o que o nome sugere
-- **Autenticação simples** — Bearer Token em todos os endpoints
-- **Respostas consistentes** — sempre `success`, `message` e `data`
-
-```json
-{
-  "success": true,
-  "message": "Transaction created successfully",
-  "data": {
-    "id": "clx7a8b9c0d1e2f3g4h5",
-    "pixCode": "00020126580014br.gov.bcb.pix...",
-    "expirationDate": "2026-02-28T10:00:00.000Z",
-    "status": "waiting_payment"
-  }
-}
+const { data } = await response.json();
+console.log(data.pixCode);    // código copia-e-cola
+console.log(data.pixQrCode);  // QR Code em base64
 ```
 
-## Próximos passos
+## <Icon icon="laptop" type="solid" /> API descomplicada
 
-<CardGroup cols={2}>
-  <Card title="Autenticação" icon="key" href="/pages/authentication">
-    Gere sua chave de API e faça a primeira requisição.
-  </Card>
-  <Card title="Dev Mode" icon="flask" href="/pages/devmode">
-    Teste a integração no sandbox antes de ir a produção.
-  </Card>
-</CardGroup>
+Nossa API foi construída com três princípios fundamentais:
 
-<Card title="Precisa de ajuda?" icon="envelope">
-  Entre em contato com nosso time: [suporte@payments.bob.company](mailto:suporte@payments.bob.company)
-</Card>
+1. **Baseada em intenção** — cada endpoint representa exatamente o que você lê
+   ```
+   POST /api/transactions        // Cria uma cobrança PIX
+   GET  /api/transactions/:id    // Busca uma transação específica
+   GET  /api/customers/lookup    // Localiza um cliente por CPF ou e-mail
+   ```
+
+2. **Idempotente** — use `externalId` para reenviar requisições com segurança, sem criar duplicatas
+
+3. **Consistente** — todas as respostas seguem o mesmo formato:
+   ```json
+   {
+     "success": true,
+     "message": "Transaction created successfully",
+     "data": {
+       "id": "clx7a8b9c0d1e2f3g4h5",
+       "status": "waiting_payment",
+       "pixCode": "00020126580014br.gov.bcb.pix...",
+       "pixQrCode": "data:image/png;base64,iVBORw0KGgo...",
+       "expirationDate": "2026-02-28T10:00:00.000Z"
+     }
+   }
+   ```
+
+## <Icon icon="cloud" type="solid" /> Dúvidas?
+
+Nossa equipe está sempre pronta para ajudar! Entre em contato pelo e-mail <Icon icon="envelope" type="solid" /> [suporte@payments.bob.company](mailto:suporte@payments.bob.company)

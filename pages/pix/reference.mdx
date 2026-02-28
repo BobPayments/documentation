@@ -1,82 +1,12 @@
 ---
-title: "Entidade Transaction"
-description: "Estrutura completa do objeto de transação PIX."
-icon: "book"
+title: "Referência"
+description: "Gere um QR Code e um código copia-e-cola para o seu cliente"
+icon: "book-open-cover"
 ---
 
-# Entidade Transaction
+## <Icon icon="folder-tree" type="solid" /> Estrutura
 
-O objeto `Transaction` representa uma cobrança PIX criada na Bob Payments. Ele é retornado em todos os endpoints de transações.
-
-## Atributos
-
-<AccordionGroup>
-  <Accordion title="id" icon="fingerprint">
-    **string** — Identificador único da transação no formato CUID. Exemplo: `clx7a8b9c0d1e2f3g4h5`
-  </Accordion>
-
-  <Accordion title="externalId" icon="tag">
-    **string** — Identificador da transação no seu sistema. Útil para cruzar dados sem precisar armazenar o `id` interno.
-  </Accordion>
-
-  <Accordion title="amount" icon="brazilian-real-sign">
-    **number** — Valor da transação em reais (ex: `100.00` = R$ 100,00).
-  </Accordion>
-
-  <Accordion title="product" icon="box">
-    **string** — Nome ou descrição do produto/serviço sendo cobrado. Aparece na notificação do PIX.
-  </Accordion>
-
-  <Accordion title="status" icon="circle-half-stroke">
-    **string** — Status atual da transação. Valores possíveis:
-
-    | Valor | Descrição |
-    |-------|-----------|
-    | `waiting_payment` | Aguardando pagamento do cliente |
-    | `paid` | Pagamento confirmado |
-    | `expired` | Transação expirou sem pagamento |
-    | `refunded` | Valor estornado ao cliente |
-    | `cancelled` | Transação cancelada manualmente |
-  </Accordion>
-
-  <Accordion title="pixCode" icon="qrcode">
-    **string** — Código PIX copia-e-cola (Pix Payload Format Object). Presente apenas quando a transação está em `waiting_payment`.
-  </Accordion>
-
-  <Accordion title="pixQrCode" icon="image">
-    **string** — QR Code do PIX em formato base64. Pode ser exibido diretamente em uma tag `<img>`.
-  </Accordion>
-
-  <Accordion title="expirationDate" icon="clock">
-    **string (ISO 8601)** — Data e hora de expiração da transação. Após esse momento, o status muda para `expired`.
-  </Accordion>
-
-  <Accordion title="customer" icon="user">
-    **object** — Dados do comprador. Consulte a [entidade Customer](/pages/customers/reference) para ver a estrutura completa.
-  </Accordion>
-
-  <Accordion title="gateway" icon="server">
-    **string** — Alias do gateway PIX utilizado para processar a transação.
-  </Accordion>
-
-  <Accordion title="originDomain" icon="globe">
-    **string** — Domínio da loja que originou a transação. Deve ser cadastrado no Dashboard.
-  </Accordion>
-
-  <Accordion title="isSandbox" icon="flask">
-    **boolean** — `true` se a transação foi criada no ambiente sandbox (com `sk_test_*`).
-  </Accordion>
-
-  <Accordion title="createdAt" icon="calendar">
-    **string (ISO 8601)** — Data e hora de criação da transação.
-  </Accordion>
-
-  <Accordion title="updatedAt" icon="calendar-check">
-    **string (ISO 8601)** — Data e hora da última atualização.
-  </Accordion>
-</AccordionGroup>
-
-## Exemplo de objeto
+Uma transação PIX é representada em nossa API pela seguinte estrutura:
 
 ```json
 {
@@ -91,14 +21,127 @@ O objeto `Transaction` representa uma cobrança PIX criada na Bob Payments. Ele 
   "customer": {
     "name": "João Silva",
     "email": "joao@email.com",
-    "phone": "11987654321",
     "document": "12345678900",
     "documentType": "CPF"
   },
-  "gateway": "gateway-alias",
-  "originDomain": "loja.exemplo.com.br",
   "isSandbox": false,
-  "createdAt": "2026-02-27T09:00:00.000Z",
-  "updatedAt": "2026-02-27T09:00:00.000Z"
+  "createdAt": "2026-02-28T09:00:00.000Z",
+  "updatedAt": "2026-02-28T09:00:00.000Z"
 }
 ```
+
+## Atributos:
+
+<AccordionGroup>
+  <Accordion title="id:">
+    ```json
+    { "id": "clx7a8b9c0d1e2f3g4h5" }
+    ```
+    `id` : <u>string.</u><br />
+    Identificador único da transação no formato CUID.
+  </Accordion>
+
+  <Accordion title="externalId:">
+    ```json
+    { "externalId": "pedido_123" }
+    ```
+    `externalId` : <u>string.</u><br />
+    Identificador da transação no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
+  </Accordion>
+
+  <Accordion title="amount:">
+    ```json
+    { "amount": 100.00 }
+    ```
+    `amount` : <u>number.</u><br />
+    Valor da transação em reais. Exemplo: `100.00` = R$ 100,00.
+  </Accordion>
+
+  <Accordion title="product:">
+    ```json
+    { "product": "Plano Premium" }
+    ```
+    `product` : <u>string.</u><br />
+    Nome ou descrição do produto/serviço cobrado. Aparece na notificação do PIX para o pagador.
+  </Accordion>
+
+  <Accordion title="status:">
+    ```json
+    { "status": "waiting_payment" }
+    ```
+    `status` : <u>string.</u><br />
+    Status atual da transação. Pode ser `waiting_payment`, `paid`, `expired`, `refunded`, `cancelled`.
+    <Info>
+      | Status | Descrição |
+      |--------|-----------|
+      | `waiting_payment` | **Aguardando pagamento do cliente** |
+      | `paid` | **Pagamento confirmado** |
+      | `expired` | **O tempo limite de pagamento foi excedido** |
+      | `cancelled` | **A transação foi cancelada** |
+      | `refunded` | **O valor foi devolvido ao cliente** |
+    </Info>
+  </Accordion>
+
+  <Accordion title="pixCode:">
+    ```json
+    { "pixCode": "00020126580014br.gov.bcb.pix..." }
+    ```
+    `pixCode` : <u>string.</u><br />
+    Código PIX copia-e-cola (Pix Payload Format Object). Disponível apenas quando `status` é `waiting_payment`.
+  </Accordion>
+
+  <Accordion title="pixQrCode:">
+    ```json
+    { "pixQrCode": "data:image/png;base64,iVBORw0KGgo..." }
+    ```
+    `pixQrCode` : <u>string.</u><br />
+    QR Code do PIX em formato base64. Pode ser exibido diretamente em uma tag `<img src={data.pixQrCode} />`.
+  </Accordion>
+
+  <Accordion title="expirationDate:">
+    ```json
+    { "expirationDate": "2026-02-28T10:00:00.000Z" }
+    ```
+    `expirationDate` : <u>date-time.</u><br />
+    Data e hora de expiração da transação. Após esse momento, o status muda para `expired`.
+  </Accordion>
+
+  <Accordion title="customer:">
+    ```json
+    {
+      "customer": {
+        "name": "João Silva",
+        "email": "joao@email.com",
+        "document": "12345678900",
+        "documentType": "CPF"
+      }
+    }
+    ```
+    `customer` : <u>object.</u><br />
+    Dados do comprador vinculado à transação. Consulte a [entidade Customer](/pages/customers/reference).
+  </Accordion>
+
+  <Accordion title="isSandbox:">
+    ```json
+    { "isSandbox": true }
+    ```
+    `isSandbox` : <u>boolean.</u><br />
+    Indica se a transação foi criada no ambiente sandbox (`true`) ou produção (`false`).
+  </Accordion>
+
+  <Accordion title="createdAt:">
+    ```json
+    { "createdAt": "2026-02-28T09:00:00.000Z" }
+    ```
+    `createdAt` : <u>date-time.</u><br />
+    Data e hora de criação da transação.
+  </Accordion>
+
+  <Accordion title="updatedAt:">
+    ```json
+    { "updatedAt": "2026-02-28T09:05:32.000Z" }
+    ```
+    `updatedAt` : <u>date-time.</u><br />
+    Data e hora da última atualização.
+  </Accordion>
+</AccordionGroup>
