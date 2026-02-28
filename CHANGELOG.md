@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.13](https://github.com/BobPayments/documentation/compare/v1.1.12...v1.1.13) (2026-02-28)
+
+### Correções
+
+* remove domain registration requirement from production checklist ([080d433](https://github.com/BobPayments/documentation/commit/080d4336b20288d8c61411b97dbac339cec2111e))
+
 ## [1.1.12](https://github.com/BobPayments/documentation/compare/v1.1.11...v1.1.12) (2026-02-28)
 
 ### Correções
