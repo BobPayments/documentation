@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.0.7](https://github.com/BobPayments/documentation/compare/v1.0.6...v1.0.7) (2026-02-28)
+
+### Correções
+
+* remove corrupted npm header lines from openapi.yaml ([b84cec9](https://github.com/BobPayments/documentation/commit/b84cec98f97c0456fb0eb5b9a7aff4f807e23014))
+
 ## [1.0.6](https://github.com/BobPayments/documentation/compare/v1.0.5...v1.0.6) (2026-02-28)
 
 ### Correções
