@@ -101,7 +101,7 @@
       },
       {
         "tab": "Referência da API",
-        "openapi": "https://raw.githubusercontent.com/BobPayments/bob-payments-api-node/main/openapi.yaml"
+        "openapi": "openapi.yaml"
       }
     ]
   }

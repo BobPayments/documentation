@@ -1,3 +1,7 @@
+
+> bob-payments-backend@2.29.0 generate:openapi /Users/brunoalves/conductor/workspaces/back/san-antonio-v2
+> tsx --import ./src/scripts/env-openapi.ts ./src/scripts/generate-openapi.ts
+
 openapi: 3.0.3
 info:
   title: Bob Payments API
@@ -8,9 +12,7 @@ components:
     BasicAuth:
       type: http
       scheme: basic
-      description: >-
-        Basic authentication using project public key as username and secret key
-        as password
+      description: Basic authentication using project public key as username and secret key as password
     BearerAuth:
       type: http
       scheme: bearer
@@ -358,8 +360,7 @@ paths:
                     email:
                       type: string
                       format: email
-                      pattern: >-
-                        ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                      pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                     phone:
                       type: string
                       minLength: 10
@@ -650,9 +651,8 @@ paths:
       tags:
         - Authentication
       description: >-
-        Send a 6-digit OTP code to user email for passwordless authentication.
-        Rate limited to 5 requests per email per hour and 10 requests per IP per
-        hour.
+        Send a 6-digit OTP code to user email for passwordless authentication. Rate limited to 5 requests per email per
+        hour and 10 requests per IP per hour.
       requestBody:
         required: true
         content:
@@ -663,8 +663,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                 inviteToken:
                   type: string
                   format: uuid
@@ -965,9 +964,7 @@ paths:
       summary: Check OTP token status
       tags:
         - Authentication
-      description: >-
-        Check if OTP token is valid, expired, or used. Returns token status and
-        time remaining.
+      description: Check if OTP token is valid, expired, or used. Returns token status and time remaining.
       requestBody:
         required: true
         content:
@@ -1690,8 +1687,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                 googleId:
                   nullable: true
                   type: string
@@ -2073,8 +2069,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                 phone:
                   type: string
                   minLength: 1
@@ -3159,9 +3154,7 @@ paths:
       summary: Toggle dev mode
       tags:
         - Projects
-      description: >-
-        Toggle dev mode for the project. Disabling dev mode (production)
-        requires an active plan.
+      description: Toggle dev mode for the project. Disabling dev mode (production) requires an active plan.
       requestBody:
         required: true
         content:
@@ -3369,8 +3362,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
               required:
                 - email
       parameters:
@@ -4482,9 +4474,7 @@ paths:
       summary: Create API key
       tags:
         - API Keys
-      description: >-
-        Create a new API key for a project. The secret key is only visible once
-        at creation.
+      description: Create a new API key for a project. The secret key is only visible once at creation.
       requestBody:
         required: true
         content:
@@ -4847,9 +4837,7 @@ paths:
       summary: Update API key
       tags:
         - API Keys
-      description: >-
-        Update an API key name or integration. The secret key is always returned
-        masked.
+      description: Update an API key name or integration. The secret key is always returned masked.
       requestBody:
         required: true
         content:
@@ -5078,9 +5066,7 @@ paths:
       summary: Request API key reveal
       tags:
         - API Keys
-      description: >-
-        Request to reveal an API key. Sends a verification code to the user
-        email.
+      description: Request to reveal an API key. Sends a verification code to the user email.
       parameters:
         - schema:
             type: string
@@ -5209,9 +5195,7 @@ paths:
       summary: Confirm API key reveal
       tags:
         - API Keys
-      description: >-
-        Confirm API key reveal with the verification code. Returns the secret
-        key in plain text.
+      description: Confirm API key reveal with the verification code. Returns the secret key in plain text.
       requestBody:
         required: true
         content:
@@ -5654,8 +5638,8 @@ paths:
       tags:
         - Customers
       description: >-
-        Create or update a customer by document (CPF/CNPJ). If a customer with
-        the same document already exists, their data will be updated.
+        Create or update a customer by document (CPF/CNPJ). If a customer with the same document already exists, their
+        data will be updated.
       requestBody:
         required: true
         content:
@@ -5674,8 +5658,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                 phone:
                   type: string
                   minLength: 10
@@ -5956,9 +5939,7 @@ paths:
       summary: Lookup customer by phone, document or email
       tags:
         - Customers
-      description: >-
-        Find a specific customer by phone, document (CPF/CNPJ) or email. Provide
-        exactly one of the query parameters.
+      description: Find a specific customer by phone, document (CPF/CNPJ) or email. Provide exactly one of the query parameters.
       parameters:
         - schema:
             type: string
@@ -5978,8 +5959,7 @@ paths:
             type: string
             maxLength: 200
             format: email
-            pattern: >-
-              ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+            pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
           in: query
           name: email
           required: false
@@ -6526,9 +6506,7 @@ paths:
       summary: Block a customer
       tags:
         - Customers
-      description: >-
-        Block a customer manually. Blocked customers cannot create new
-        transactions.
+      description: Block a customer manually. Blocked customers cannot create new transactions.
       requestBody:
         required: true
         content:
@@ -6788,9 +6766,7 @@ paths:
       summary: Unblock a customer
       tags:
         - Customers
-      description: >-
-        Unblock a previously blocked customer, allowing them to create
-        transactions again.
+      description: Unblock a previously blocked customer, allowing them to create transactions again.
       parameters:
         - schema:
             type: string
@@ -7907,9 +7883,7 @@ paths:
       summary: Delete/deactivate a domain
       tags:
         - Domains
-      description: >-
-        Delete a domain by ID. Custom domains are soft-deleted (DEACTIVATED),
-        integration domains are hard-deleted.
+      description: Delete a domain by ID. Custom domains are soft-deleted (DEACTIVATED), integration domains are hard-deleted.
       parameters:
         - schema:
             type: string
@@ -8064,9 +8038,7 @@ paths:
       summary: Add a custom domain
       tags:
         - Custom Domains
-      description: >-
-        Add a custom domain to the project. SSL certificate will be provisioned
-        automatically.
+      description: Add a custom domain to the project. SSL certificate will be provisioned automatically.
       requestBody:
         required: true
         content:
@@ -9019,9 +8991,7 @@ paths:
       summary: Test gateway connection
       tags:
         - Gateway Accounts
-      description: >-
-        Test gateway credentials by creating a test PIX transaction without
-        persisting anything
+      description: Test gateway credentials by creating a test PIX transaction without persisting anything
       requestBody:
         required: true
         content:
@@ -11541,8 +11511,8 @@ paths:
       tags:
         - Transactions
       description: >-
-        Retrieve a paginated list of transactions with optional filters.
-        Supports Bearer Token (sk_live_xxx / sk_test_xxx) or JWT authentication.
+        Retrieve a paginated list of transactions with optional filters. Supports Bearer Token (sk_live_xxx /
+        sk_test_xxx) or JWT authentication.
       parameters:
         - schema:
             default: 1
@@ -11864,8 +11834,7 @@ paths:
                     email:
                       type: string
                       format: email
-                      pattern: >-
-                        ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                      pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                     phone:
                       type: string
                       minLength: 10
@@ -11944,17 +11913,15 @@ paths:
                     - product
                 originDomain:
                   description: >-
-                    Domínio da loja/site que originou a transação (ex:
-                    loja.exemplo.com.br). Obrigatório para rastreio de múltiplas
-                    lojas. Use apenas o hostname, sem protocolo ou caminho.
+                    Domínio da loja/site que originou a transação (ex: loja.exemplo.com.br). Obrigatório para rastreio
+                    de múltiplas lojas. Use apenas o hostname, sem protocolo ou caminho.
                   type: string
                   minLength: 1
                   maxLength: 253
                 customerIp:
                   description: >-
-                    IP do usuário final que originou a requisição (IPv4 ou
-                    IPv6). Quando informado, é usado para detecção de fraude e
-                    bloqueio de IPs.
+                    IP do usuário final que originou a requisição (IPv4 ou IPv6). Quando informado, é usado para
+                    detecção de fraude e bloqueio de IPs.
                   anyOf:
                     - type: string
                       format: ipv4
@@ -12210,9 +12177,7 @@ paths:
       summary: Get transaction by ID
       tags:
         - Transactions
-      description: >-
-        Retrieve a specific transaction by ID with full details (requires JWT
-        authentication)
+      description: Retrieve a specific transaction by ID with full details (requires JWT authentication)
       parameters:
         - schema:
             type: string
@@ -12456,9 +12421,7 @@ paths:
       summary: Get analytics summary
       tags:
         - Analytics
-      description: >-
-        Retrieve aggregated analytics summary for a project within a date range
-        (requires JWT authentication)
+      description: Retrieve aggregated analytics summary for a project within a date range (requires JWT authentication)
       parameters:
         - schema: {}
           in: query
@@ -12697,8 +12660,8 @@ paths:
       tags:
         - Analytics
       description: >-
-        Retrieve time series analytics data for charts within a date range with
-        configurable granularity (requires JWT authentication)
+        Retrieve time series analytics data for charts within a date range with configurable granularity (requires JWT
+        authentication)
       parameters:
         - schema: {}
           in: query
@@ -12955,8 +12918,8 @@ paths:
       tags:
         - Analytics
       description: >-
-        Retrieve sales distribution by hour of day (0-23), aggregating all
-        transactions in the period by their hour (requires JWT authentication)
+        Retrieve sales distribution by hour of day (0-23), aggregating all transactions in the period by their hour
+        (requires JWT authentication)
       parameters:
         - schema: {}
           in: query
@@ -13163,9 +13126,7 @@ paths:
       summary: Get top 5 domains and top 5 products
       tags:
         - Analytics
-      description: >-
-        Retrieve the top 5 domains and top 5 products by paid amount within a
-        date range (requires JWT authentication)
+      description: Retrieve the top 5 domains and top 5 products by paid amount within a date range (requires JWT authentication)
       parameters:
         - schema: {}
           in: query
@@ -14889,9 +14850,7 @@ paths:
       summary: Create a new payment link
       tags:
         - Payment Links
-      description: >-
-        Create a new payment link with product, branding, and optional order
-        bumps
+      description: Create a new payment link with product, branding, and optional order bumps
       requestBody:
         required: true
         content:
@@ -17111,9 +17070,8 @@ paths:
       tags:
         - Billing
       description: >-
-        Get current billing period usage: transaction count, volume, accrued
-        fees, projects and gateways limits. Pass projectId query param for
-        gateway count per project.
+        Get current billing period usage: transaction count, volume, accrued fees, projects and gateways limits. Pass
+        projectId query param for gateway count per project.
       parameters:
         - schema:
             type: string
@@ -17859,9 +17817,8 @@ paths:
       tags:
         - Billing
       description: >-
-        Upgrade or downgrade the active subscription to any paid plan via Stripe
-        API. The Stripe Customer Portal does not support plan switching for
-        metered subscriptions, so this endpoint handles it directly.
+        Upgrade or downgrade the active subscription to any paid plan via Stripe API. The Stripe Customer Portal does
+        not support plan switching for metered subscriptions, so this endpoint handles it directly.
       requestBody:
         required: true
         content:
@@ -18359,8 +18316,8 @@ paths:
       tags:
         - Notification Channels
       description: >-
-        Test a webhook or telegram configuration without saving. Use this to
-        validate settings before creating a channel.
+        Test a webhook or telegram configuration without saving. Use this to validate settings before creating a
+        channel.
       requestBody:
         required: true
         content:
@@ -19005,8 +18962,8 @@ paths:
       tags:
         - Upload
       description: >-
-        Upload an image file (JPG, PNG, WebP, GIF). Max size: 2MB. The image
-        will be stored and a public URL will be returned.
+        Upload an image file (JPG, PNG, WebP, GIF). Max size: 2MB. The image will be stored and a public URL will be
+        returned.
       parameters:
         - schema:
             type: string
@@ -20395,9 +20352,7 @@ paths:
       summary: List activity logs
       tags:
         - Activity Logs
-      description: >-
-        Retrieve a paginated list of activity logs with cursor-based pagination
-        and optional filters.
+      description: Retrieve a paginated list of activity logs with cursor-based pagination and optional filters.
       parameters:
         - schema:
             default: 20
@@ -21585,8 +21540,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                 phone:
                   nullable: true
                   type: string
@@ -22077,8 +22031,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                 phone:
                   nullable: true
                   type: string
@@ -22305,9 +22258,7 @@ paths:
       summary: Export transactions as CSV
       tags:
         - Exports
-      description: >-
-        Starts an async job to export transactions as CSV. A download link will
-        be sent via email.
+      description: Starts an async job to export transactions as CSV. A download link will be sent via email.
       requestBody:
         required: true
         content:
@@ -22437,9 +22388,7 @@ paths:
       summary: Export customers as CSV
       tags:
         - Exports
-      description: >-
-        Starts an async job to export customers as CSV. A download link will be
-        sent via email.
+      description: Starts an async job to export customers as CSV. A download link will be sent via email.
       requestBody:
         required: true
         content:
@@ -22703,9 +22652,7 @@ paths:
       summary: Receive gateway webhook
       tags:
         - Webhooks
-      description: >-
-        Endpoint para receber webhooks dos gateways quando o status de uma
-        transação muda.
+      description: Endpoint para receber webhooks dos gateways quando o status de uma transação muda.
       requestBody:
         required: true
         content:
@@ -22814,9 +22761,7 @@ paths:
       summary: Listar todas as transações da plataforma
       tags:
         - Admin
-      description: >-
-        Lista todas as transações de todos os projetos com filtros avançados
-        (requer role admin)
+      description: Lista todas as transações de todos os projetos com filtros avançados (requer role admin)
       parameters:
         - schema:
             default: 1
@@ -23154,9 +23099,7 @@ paths:
       summary: Listar todos os clientes da plataforma
       tags:
         - Admin
-      description: >-
-        Lista todos os clientes de todos os projetos com filtros avançados
-        (requer role admin)
+      description: Lista todos os clientes de todos os projetos com filtros avançados (requer role admin)
       parameters:
         - schema:
             default: 1
@@ -23841,8 +23784,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  pattern: >-
-                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                  pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                 phone:
                   type: string
                 document:
@@ -24063,8 +24005,8 @@ paths:
       tags:
         - Admin
       description: >-
-        Gera um token de acesso temporário (2h) para agir como o usuário
-        especificado. Não é possível impersonar outro admin.
+        Gera um token de acesso temporário (2h) para agir como o usuário especificado. Não é possível impersonar outro
+        admin.
       parameters:
         - schema:
             type: string
@@ -24909,9 +24851,7 @@ paths:
       summary: Block an IP address
       tags:
         - IP Blacklist
-      description: >-
-        Add an IP to the project blacklist. All transactions from this IP will
-        be rejected with 403.
+      description: Add an IP to the project blacklist. All transactions from this IP will be rejected with 403.
       requestBody:
         required: true
         content:
@@ -25772,8 +25712,8 @@ paths:
         '200':
           description: Default Response
 servers:
-  - url: http://localhost:3000
-    description: Development server
+  - url: https://api.payments.bob.company
+    description: Produção
 tags:
   - name: Authentication
     description: Authentication endpoints (Public - hidden from docs)
