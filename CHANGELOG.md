@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.11](https://github.com/BobPayments/documentation/compare/v1.1.10...v1.1.11) (2026-02-28)
+
+### Correções
+
+* simplify production activation — no KYB required, just swap the key ([e735191](https://github.com/BobPayments/documentation/commit/e7351914438a757158dfbe0ee60c06987babd835))
+
 ## [1.1.10](https://github.com/BobPayments/documentation/compare/v1.1.9...v1.1.10) (2026-02-28)
 
 ### Correções
