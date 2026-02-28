@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.14](https://github.com/BobPayments/documentation/compare/v1.1.13...v1.1.14) (2026-02-28)
+
+### Documentação
+
+* standardize help card across all introduction pages ([1e4f79e](https://github.com/BobPayments/documentation/commit/1e4f79e9c1ab6f5eed67e82592569917f3fafe79))
+
 ## [1.1.13](https://github.com/BobPayments/documentation/compare/v1.1.12...v1.1.13) (2026-02-28)
 
 ### Correções
