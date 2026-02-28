@@ -6,11 +6,14 @@
 
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/BobPayments/documentation/issues)
 
-Bob Payments é um orquestrador de pagamentos PIX para desenvolvedores.
+Bob Payments é um orquestrador de pagamentos PIX para desenvolvedores. Em vez de integrar e manter cada gateway individualmente, você conecta uma única API e nós cuidamos do roteamento, fallback e disponibilidade. Built by developers for developers, it offers:
 
-- **Cobranças PIX** — gere QR Code e código copia-e-cola em uma única chamada de API
-- **Webhooks em tempo real** — receba notificações instantâneas de pagamento com verificação HMAC-SHA256
-- **Sandbox completo** — simule pagamentos sem movimentar dinheiro real antes de ir a produção
+- Múltiplos gateways PIX por trás de uma única API
+- QR Code e código copia-e-cola gerados em uma chamada
+- Notificações em tempo real via webhooks com verificação HMAC-SHA256
+- Sandbox completo para simular pagamentos sem mover dinheiro real
+- Respostas JSON consistentes em todos os endpoints
+- Autenticação simples via Bearer Token
 
 ## 🚀 Quick Start
 
