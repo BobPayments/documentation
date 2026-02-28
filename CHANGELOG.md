@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.7](https://github.com/BobPayments/documentation/compare/v1.1.6...v1.1.7) (2026-02-28)
+
+### Correções
+
+* remove duplicate h1 headings from introduction pages ([6c46137](https://github.com/BobPayments/documentation/commit/6c46137bbce7683c19e758ea538976852ba1d082))
+
 ## [1.1.6](https://github.com/BobPayments/documentation/compare/v1.1.5...v1.1.6) (2026-02-28)
 
 ### Correções
