@@ -2,6 +2,17 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.6](https://github.com/BobPayments/documentation/compare/v1.1.5...v1.1.6) (2026-02-28)
+
+### Correções
+
+* redirect root to pages/introduction and remove default index.mdx ([53304c4](https://github.com/BobPayments/documentation/commit/53304c46ccf396bb39a77f335e11f27ce0efdc02))
+
+### Documentação
+
+* rename API Keys to Chaves de API in authentication flow ([b7d49da](https://github.com/BobPayments/documentation/commit/b7d49da3c3933cc7999183f68c5f039d2ea256ff))
+* update API key generation flow to dedicated sidebar page ([edc463d](https://github.com/BobPayments/documentation/commit/edc463d2183391abda375643c5b6f1d6262e3bf7))
+
 ## [1.1.5](https://github.com/BobPayments/documentation/compare/v1.1.4...v1.1.5) (2026-02-28)
 
 ### Documentação
