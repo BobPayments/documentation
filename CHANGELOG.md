@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.8](https://github.com/BobPayments/documentation/compare/v1.1.7...v1.1.8) (2026-02-28)
+
+### Correções
+
+* correct factual errors in documentation based on actual API responses ([84bc6e1](https://github.com/BobPayments/documentation/commit/84bc6e1e14aabfee323eacdea69710e4ff4d3198))
+
 ## [1.1.7](https://github.com/BobPayments/documentation/compare/v1.1.6...v1.1.7) (2026-02-28)
 
 ### Correções
