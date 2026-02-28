@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.12](https://github.com/BobPayments/documentation/compare/v1.1.11...v1.1.12) (2026-02-28)
+
+### Correções
+
+* remove unverified externalId idempotency claim from introduction ([7e9ae4a](https://github.com/BobPayments/documentation/commit/7e9ae4a414a2ae79d969522b78730ae4dd966a5d))
+
 ## [1.1.11](https://github.com/BobPayments/documentation/compare/v1.1.10...v1.1.11) (2026-02-28)
 
 ### Correções
