@@ -1,24 +1,18 @@
 ---
 title: "Comece aqui"
-description: "Pegue seu café e aprenda sobre a Bob Payments!"
+description: "Uma API PIX sem frescura. Integra em minutos, cobra na hora."
 icon: "house"
 ---
 
-Nesta documentação você encontrará tudo o que precisa para integrar com a API da Bob Payments. Desenvolvida por desenvolvedores para desenvolvedores, nossa plataforma foi projetada para ser simples, previsível e fácil de usar.
+A Bob Payments nasceu de um problema real: gateway caindo na hora errada, doc confusa, contrato que demora semanas. A gente resolveu isso construindo uma API que faz o que tem que fazer — gerar cobrança PIX e avisar quando pagou.
 
 ## <Icon icon="buildings" type="solid" /> O que é a Bob Payments?
 
-A Bob Payments é um orquestrador de pagamentos PIX que surgiu da nossa necessidade de simplificar cobranças sem depender de um único gateway. Percebemos que integrar meios de pagamento era mais difícil do que precisava ser:
+É um orquestrador de pagamentos PIX. Em vez de integrar com um gateway só e torcer pra ele não cair, você integra uma vez com a gente e a gente cuida do resto — múltiplos gateways, fallback automático, tudo no mesmo formato.
 
-- Documentações extensas e confusas
-- Múltiplos contratos e processos de homologação
-- Instabilidade de um único gateway sem fallback
-- Cada gateway com formato de API completamente diferente
-
-Nossa solução? Uma API única que abstrai todos esses gateways e entrega o código copia-e-cola em uma chamada:
+Uma chamada, um `pixCode`, dinheiro na conta:
 
 ```javascript
-// Criar uma cobrança PIX
 const response = await fetch('https://api.payments.bob.company/api/v1/transactions/', {
   method: 'POST',
   headers: { 'Authorization': 'Bearer sk_test_sua_chave' },
@@ -26,27 +20,26 @@ const response = await fetch('https://api.payments.bob.company/api/v1/transactio
 });
 
 const { data } = await response.json();
-console.log(data.pixCode); // código copia-e-cola
+console.log(data.pixCode); // manda isso pro seu cliente pagar
 ```
 
-## <Icon icon="laptop" type="solid" /> API descomplicada
+## <Icon icon="laptop" type="solid" /> Como funciona
 
-Nossa API foi construída com três princípios fundamentais:
+Três coisas que você vai notar rápido:
 
-1. **Baseada em intenção** — cada endpoint representa exatamente o que você lê
+1. **Endpoints que falam por si** — sem abstrações desnecessárias
    ```
-   POST /api/v1/transactions/      // Cria uma cobrança PIX
-   GET  /api/v1/transactions/{id}  // Busca uma transação específica
-   GET  /api/v1/customers/         // Lista os clientes do projeto
+   POST /api/v1/transactions/      // cria cobrança
+   GET  /api/v1/transactions/{id}  // checa status
+   GET  /api/v1/customers/         // lista clientes
    ```
 
-2. **Idempotente** — use `externalId` para reenviar requisições com segurança, sem criar duplicatas
+2. **`externalId` para idempotência** — manda a mesma requisição duas vezes, a gente não cobra duas vezes
 
-3. **Consistente** — todas as respostas seguem o mesmo formato:
+3. **Resposta sempre no mesmo formato**
    ```json
    {
      "success": true,
-     "message": "Transaction created successfully",
      "data": {
        "id": "clx7a8b9c0d1e2f3g4h5",
        "status": "waiting_payment",
@@ -56,6 +49,6 @@ Nossa API foi construída com três princípios fundamentais:
    }
    ```
 
-## <Icon icon="cloud" type="solid" /> Dúvidas?
+## <Icon icon="envelope" type="solid" /> Ficou travado?
 
-Nossa equipe está sempre pronta para ajudar! Entre em contato pelo e-mail <Icon icon="envelope" type="solid" /> [suporte@payments.bob.company](mailto:suporte@payments.bob.company)
+Fala com a gente: [suporte@payments.bob.company](mailto:suporte@payments.bob.company)
