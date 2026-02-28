@@ -89,10 +89,8 @@
             "group": "Clientes",
             "pages": [
               "pages/customers/reference",
-              "pages/customers/create",
               "pages/customers/get",
-              "pages/customers/list",
-              "pages/customers/lookup"
+              "pages/customers/list"
             ]
           },
           {
