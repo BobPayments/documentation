@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.0.4](https://github.com/BobPayments/documentation/compare/v1.0.3...v1.0.4) (2026-02-28)
+
+### Documentação
+
+* improve README description highlighting orchestrator value ([a469d7c](https://github.com/BobPayments/documentation/commit/a469d7c9a3374c289b809c812dcaeb746143c73e))
+
 ## [1.0.3](https://github.com/BobPayments/documentation/compare/v1.0.2...v1.0.3) (2026-02-28)
 
 ### Documentação
