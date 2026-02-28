@@ -381,7 +381,11 @@ paths:
                     type: string
                   details:
                     type: object
-                    additionalProperties: {}
+                    properties:
+                      retryAfterSeconds:
+                        type: integer
+                        description: Tempo recomendado de espera (em segundos) antes de tentar novamente
+                        example: 30
                 required:
                 - type
                 - title
