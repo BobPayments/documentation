@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.2](https://github.com/BobPayments/documentation/compare/v1.1.1...v1.1.2) (2026-02-28)
+
+### Correções
+
+* replace localhost with production server url in openapi.yaml ([31cb146](https://github.com/BobPayments/documentation/commit/31cb1467700665ba43d82bda60031134e239f864))
+
 ## [1.1.1](https://github.com/BobPayments/documentation/compare/v1.1.0...v1.1.1) (2026-02-28)
 
 ### Documentação
