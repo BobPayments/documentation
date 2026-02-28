@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.0.3](https://github.com/BobPayments/documentation/compare/v1.0.2...v1.0.3) (2026-02-28)
+
+### Documentação
+
+* simplify README feature list to core highlights ([b8a81b9](https://github.com/BobPayments/documentation/commit/b8a81b97c7cf03577e9532d9c19e0ca3b4e9ac03))
+
 ## [1.0.2](https://github.com/BobPayments/documentation/compare/v1.0.1...v1.0.2) (2026-02-27)
 
 ### Documentação
