@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.17](https://github.com/BobPayments/documentation/compare/v1.1.16...v1.1.17) (2026-02-28)
+
+### Documentação
+
+* remove checklist from production page ([b64ec0b](https://github.com/BobPayments/documentation/commit/b64ec0b75818ce41682cd151042a4c452273d2d5))
+
 ## [1.1.16](https://github.com/BobPayments/documentation/compare/v1.1.15...v1.1.16) (2026-02-28)
 
 ### Documentação
