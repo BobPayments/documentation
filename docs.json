@@ -49,6 +49,12 @@
   "seo": {
     "indexing": "navigable"
   },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/pages/introduction"
+    }
+  ],
   "contextual": {
     "options": ["copy", "view", "chatgpt", "claude"]
   },
