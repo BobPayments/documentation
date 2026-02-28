@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.1](https://github.com/BobPayments/documentation/compare/v1.1.0...v1.1.1) (2026-02-28)
+
+### Documentação
+
+* rewrite pages in AbacatePay style with inline icons and field accordions ([79d4216](https://github.com/BobPayments/documentation/commit/79d42165bd789c34ac4a404b7c0a138e7eb1ddb0))
+
 ## [1.1.0](https://github.com/BobPayments/documentation/compare/v1.0.7...v1.1.0) (2026-02-28)
 
 ### Novidades
