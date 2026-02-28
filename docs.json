@@ -101,7 +101,7 @@
       },
       {
         "tab": "Referência da API",
-        "openapi": "https://raw.githubusercontent.com/BobPayments/irvine-v1/main/openapi.yaml"
+        "openapi": "https://raw.githubusercontent.com/BobPayments/bob-payments-api-node/main/openapi.yaml"
       }
     ]
   }
