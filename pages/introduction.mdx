@@ -25,7 +25,7 @@ console.log(data.pixCode); // manda isso pro seu cliente pagar
 
 ## <Icon icon="laptop" type="solid" /> Como funciona
 
-Três coisas que você vai notar rápido:
+Duas coisas que você vai notar rápido:
 
 1. **Endpoints que falam por si** — sem abstrações desnecessárias
    ```
@@ -34,9 +34,7 @@ Três coisas que você vai notar rápido:
    GET  /api/v1/customers/         // lista clientes
    ```
 
-2. **`externalId` para idempotência** — manda a mesma requisição duas vezes, a gente não cobra duas vezes
-
-3. **Resposta sempre no mesmo formato**
+2. **Resposta sempre no mesmo formato**
    ```json
    {
      "success": true,
