@@ -1,6 +1,6 @@
 ---
 title: "Referência"
-description: "Gere um QR Code e um código copia-e-cola para o seu cliente"
+description: "Gere um código PIX copia-e-cola para o seu cliente"
 icon: "book-open-cover"
 ---
 
@@ -12,19 +12,16 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
 {
   "id": "clx7a8b9c0d1e2f3g4h5",
   "externalId": "pedido_123",
-  "amount": 100.00,
+  "amountCents": 10000,
   "product": "Plano Premium",
   "status": "waiting_payment",
   "pixCode": "00020126580014br.gov.bcb.pix...",
-  "pixQrCode": "data:image/png;base64,iVBORw0KGgo...",
   "expirationDate": "2026-02-28T10:00:00.000Z",
   "customer": {
     "name": "João Silva",
     "email": "joao@email.com",
-    "document": "12345678900",
-    "documentType": "CPF"
+    "document": "12345678900"
   },
-  "isSandbox": false,
   "createdAt": "2026-02-28T09:00:00.000Z",
   "updatedAt": "2026-02-28T09:00:00.000Z"
 }
@@ -49,12 +46,12 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     Identificador da transação no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
   </Accordion>
 
-  <Accordion title="amount:">
+  <Accordion title="amountCents:">
     ```json
-    { "amount": 100.00 }
+    { "amountCents": 10000 }
     ```
-    `amount` : <u>number.</u><br />
-    Valor da transação em reais. Exemplo: `100.00` = R$ 100,00.
+    `amountCents` : <u>integer.</u><br />
+    Valor da transação em centavos. Exemplo: `10000` = R$ 100,00.
   </Accordion>
 
   <Accordion title="product:">
@@ -70,11 +67,12 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     { "status": "waiting_payment" }
     ```
     `status` : <u>string.</u><br />
-    Status atual da transação. Pode ser `waiting_payment`, `paid`, `expired`, `refunded`, `cancelled`.
+    Status atual da transação.
     <Info>
       | Status | Descrição |
       |--------|-----------|
       | `waiting_payment` | **Aguardando pagamento do cliente** |
+      | `processing` | **Pagamento recebido, aguardando confirmação** |
       | `paid` | **Pagamento confirmado** |
       | `expired` | **O tempo limite de pagamento foi excedido** |
       | `cancelled` | **A transação foi cancelada** |
@@ -88,14 +86,6 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     ```
     `pixCode` : <u>string.</u><br />
     Código PIX copia-e-cola (Pix Payload Format Object). Disponível apenas quando `status` é `waiting_payment`.
-  </Accordion>
-
-  <Accordion title="pixQrCode:">
-    ```json
-    { "pixQrCode": "data:image/png;base64,iVBORw0KGgo..." }
-    ```
-    `pixQrCode` : <u>string.</u><br />
-    QR Code do PIX em formato base64. Pode ser exibido diretamente em uma tag `<img src={data.pixQrCode} />`.
   </Accordion>
 
   <Accordion title="expirationDate:">
@@ -112,21 +102,12 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
       "customer": {
         "name": "João Silva",
         "email": "joao@email.com",
-        "document": "12345678900",
-        "documentType": "CPF"
+        "document": "12345678900"
       }
     }
     ```
     `customer` : <u>object.</u><br />
     Dados do comprador vinculado à transação. Consulte a [entidade Customer](/pages/customers/reference).
-  </Accordion>
-
-  <Accordion title="isSandbox:">
-    ```json
-    { "isSandbox": true }
-    ```
-    `isSandbox` : <u>boolean.</u><br />
-    Indica se a transação foi criada no ambiente sandbox (`true`) ou produção (`false`).
   </Accordion>
 
   <Accordion title="createdAt:">

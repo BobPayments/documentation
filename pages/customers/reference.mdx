@@ -15,17 +15,19 @@ Um cliente é representado em nossa API pela seguinte estrutura:
   "email": "joao@email.com",
   "phone": "11987654321",
   "document": "12345678900",
-  "documentType": "CPF",
-  "address": {
-    "street": "Rua Exemplo",
-    "streetNumber": "123",
-    "complement": "Apto 4",
-    "neighborhood": "Centro",
-    "zipCode": "01234567",
-    "city": "São Paulo",
-    "state": "SP",
-    "country": "BR"
-  },
+  "street": "Rua Exemplo",
+  "streetNumber": "123",
+  "complement": null,
+  "neighborhood": "Centro",
+  "zipCode": "01234567",
+  "city": "São Paulo",
+  "state": "SP",
+  "country": "BR",
+  "isBlocked": false,
+  "blockedAt": null,
+  "blockedReason": null,
+  "blockExpiresAt": null,
+  "blockType": null,
   "createdAt": "2026-02-28T09:00:00.000Z",
   "updatedAt": "2026-02-28T09:00:00.000Z"
 }
@@ -74,31 +76,108 @@ Um cliente é representado em nossa API pela seguinte estrutura:
     CPF ou CNPJ do cliente, somente números. Usado como identificador único por projeto.
   </Accordion>
 
-  <Accordion title="documentType:">
+  <Accordion title="street:">
     ```json
-    { "documentType": "CPF" }
+    { "street": "Rua Exemplo" }
     ```
-    `documentType` : <u>string.</u><br />
-    Tipo do documento. Pode ser `CPF` ou `CNPJ`.
+    `street` : <u>string.</u><br />
+    Nome da rua ou logradouro.
   </Accordion>
 
-  <Accordion title="address:">
+  <Accordion title="streetNumber:">
     ```json
-    {
-      "address": {
-        "street": "Rua Exemplo",
-        "streetNumber": "123",
-        "complement": "Apto 4",
-        "neighborhood": "Centro",
-        "zipCode": "01234567",
-        "city": "São Paulo",
-        "state": "SP",
-        "country": "BR"
-      }
-    }
+    { "streetNumber": "123" }
     ```
-    `address` : <u>object.</u><br />
-    Endereço do cliente. Todos os campos são opcionais.
+    `streetNumber` : <u>string.</u><br />
+    Número do endereço.
+  </Accordion>
+
+  <Accordion title="complement:">
+    ```json
+    { "complement": null }
+    ```
+    `complement` : <u>string | null.</u><br />
+    Complemento do endereço (ex: `Apto 4`). Opcional.
+  </Accordion>
+
+  <Accordion title="neighborhood:">
+    ```json
+    { "neighborhood": "Centro" }
+    ```
+    `neighborhood` : <u>string.</u><br />
+    Bairro do cliente.
+  </Accordion>
+
+  <Accordion title="zipCode:">
+    ```json
+    { "zipCode": "01234567" }
+    ```
+    `zipCode` : <u>string.</u><br />
+    CEP somente números.
+  </Accordion>
+
+  <Accordion title="city:">
+    ```json
+    { "city": "São Paulo" }
+    ```
+    `city` : <u>string.</u><br />
+    Cidade do cliente.
+  </Accordion>
+
+  <Accordion title="state:">
+    ```json
+    { "state": "SP" }
+    ```
+    `state` : <u>string.</u><br />
+    Sigla do estado (UF).
+  </Accordion>
+
+  <Accordion title="country:">
+    ```json
+    { "country": "BR" }
+    ```
+    `country` : <u>string.</u><br />
+    Código do país no formato ISO 3166-1 alpha-2.
+  </Accordion>
+
+  <Accordion title="isBlocked:">
+    ```json
+    { "isBlocked": false }
+    ```
+    `isBlocked` : <u>boolean.</u><br />
+    Indica se o cliente está bloqueado. Clientes bloqueados não podem gerar novas transações.
+  </Accordion>
+
+  <Accordion title="blockedAt:">
+    ```json
+    { "blockedAt": "2026-02-28T10:00:00.000Z" }
+    ```
+    `blockedAt` : <u>date-time | null.</u><br />
+    Data e hora em que o bloqueio foi aplicado.
+  </Accordion>
+
+  <Accordion title="blockedReason:">
+    ```json
+    { "blockedReason": "Suspeita de fraude" }
+    ```
+    `blockedReason` : <u>string | null.</u><br />
+    Motivo registrado para o bloqueio do cliente.
+  </Accordion>
+
+  <Accordion title="blockExpiresAt:">
+    ```json
+    { "blockExpiresAt": null }
+    ```
+    `blockExpiresAt` : <u>date-time | null.</u><br />
+    Data de expiração do bloqueio. `null` indica bloqueio permanente até desbloqueio manual.
+  </Accordion>
+
+  <Accordion title="blockType:">
+    ```json
+    { "blockType": null }
+    ```
+    `blockType` : <u>string | null.</u><br />
+    Tipo de bloqueio aplicado.
   </Accordion>
 
   <Accordion title="createdAt:">
@@ -117,7 +196,3 @@ Um cliente é representado em nossa API pela seguinte estrutura:
     Data e hora da última atualização.
   </Accordion>
 </AccordionGroup>
-
-<Note>
-  O campo `document` é o identificador único do cliente por projeto. Se você criar uma transação com um `document` já cadastrado, o registro é atualizado automaticamente com os novos dados.
-</Note>
