@@ -1,7 +1,8 @@
 openapi: 3.0.3
 info:
   title: Bob Payments API
-  description: API de Gerenciamento e Monitoramento Bob Payments - Transações PIX
+  description: Orquestrador de pagamentos PIX para criar cobranças, gerenciar clientes
+    e receber notificações em tempo real.
   version: 1.0.0
 components:
   securitySchemes:
@@ -9,21 +10,22 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: JWT token for authenticated dashboard endpoints
+      description: Token JWT para endpoints autenticados do dashboard.
     ApiKeyAuth:
       type: http
       scheme: bearer
       bearerFormat: API Key
-      description: 'API Key authentication using SK token (sk_live_xxx or sk_test_xxx).
-        Pass as: Authorization: Bearer sk_live_xxx'
+      description: 'Autenticação via SK token (sk_live_xxx ou sk_test_xxx). Envie
+        como: Authorization: Bearer sk_live_xxx'
   schemas: {}
 paths:
   /api/transactions/:
     post:
-      summary: Create a new transaction
+      summary: Criar cobrança PIX
       tags:
       - Transactions
-      description: Create a new PIX transaction using parallel gateway execution strategy.
+      description: Cria uma nova cobrança PIX e retorna o código copia-e-cola e o
+        QR Code para pagamento.
       requestBody:
         required: true
         content:
@@ -153,7 +155,7 @@ paths:
       - ApiKeyAuth: []
       responses:
         '201':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -186,7 +188,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -215,7 +217,7 @@ paths:
                 - instance
                 additionalProperties: false
         '401':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -244,7 +246,7 @@ paths:
                 - instance
                 additionalProperties: false
         '403':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -273,7 +275,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -302,7 +304,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -331,7 +333,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -360,7 +362,7 @@ paths:
                 - instance
                 additionalProperties: false
         '503':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -389,7 +391,7 @@ paths:
                 - instance
                 additionalProperties: false
     get:
-      summary: Get all transactions
+      summary: Listar transações
       tags:
       - Transactions
       description: Retrieve a paginated list of transactions with optional filters.
@@ -505,7 +507,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -630,7 +632,7 @@ paths:
                 - meta
                 additionalProperties: false
         '401':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -659,7 +661,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -689,7 +691,7 @@ paths:
                 additionalProperties: false
   /api/transactions/{id}:
     get:
-      summary: Get transaction by ID
+      summary: Buscar transação por ID
       tags:
       - Transactions
       description: Retrieve a specific transaction by ID with full details (requires
@@ -707,7 +709,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -820,7 +822,7 @@ paths:
                 - data
                 additionalProperties: false
         '401':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -849,7 +851,7 @@ paths:
                 - instance
                 additionalProperties: false
         '403':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -878,7 +880,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -907,7 +909,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -937,7 +939,7 @@ paths:
                 additionalProperties: false
   /api/customers/:
     post:
-      summary: Create a new customer
+      summary: Criar ou atualizar cliente
       tags:
       - Customers
       description: Create or update a customer by document (CPF/CNPJ). If a customer
@@ -1012,7 +1014,7 @@ paths:
       - ApiKeyAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1082,7 +1084,7 @@ paths:
                 - data
                 additionalProperties: false
         '201':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1152,7 +1154,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1181,7 +1183,7 @@ paths:
                 - instance
                 additionalProperties: false
         '401':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1210,7 +1212,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1239,10 +1241,10 @@ paths:
                 - instance
                 additionalProperties: false
     get:
-      summary: Get all customers
+      summary: Listar clientes
       tags:
       - Customers
-      description: Retrieve a list of all customers with optional filtering by project.
+      description: Retorna uma lista paginada de todos os clientes do projeto.
       parameters:
       - schema:
           default: 1
@@ -1280,7 +1282,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1394,7 +1396,7 @@ paths:
                 - meta
                 additionalProperties: false
         '400':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1423,7 +1425,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1452,7 +1454,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1481,7 +1483,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1511,7 +1513,7 @@ paths:
                 additionalProperties: false
   /api/customers/lookup:
     get:
-      summary: Lookup customer by phone, document or email
+      summary: Buscar cliente por documento, email ou telefone
       tags:
       - Customers
       description: Find a specific customer by phone, document (CPF/CNPJ) or email.
@@ -1544,7 +1546,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1689,7 +1691,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1718,7 +1720,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1747,7 +1749,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1776,7 +1778,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1806,7 +1808,7 @@ paths:
                 additionalProperties: false
   /api/customers/{id}:
     get:
-      summary: Get customer by ID
+      summary: Buscar cliente por ID
       tags:
       - Customers
       description: Retrieve a specific customer by ID
@@ -1823,7 +1825,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1968,7 +1970,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -1997,7 +1999,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2026,7 +2028,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2055,7 +2057,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2085,7 +2087,7 @@ paths:
                 additionalProperties: false
   /api/sandbox/transactions/{transactionId}/pay:
     post:
-      summary: Simulate payment for a sandbox transaction
+      summary: Simular pagamento
       tags:
       - Sandbox
       description: "\n          Simulates the payment of a transaction in sandbox\
@@ -2104,7 +2106,7 @@ paths:
       - ApiKeyAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2134,7 +2136,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2163,7 +2165,7 @@ paths:
                 - instance
                 additionalProperties: false
         '401':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2192,7 +2194,7 @@ paths:
                 - instance
                 additionalProperties: false
         '403':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2221,7 +2223,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2250,7 +2252,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2280,7 +2282,7 @@ paths:
                 additionalProperties: false
   /api/store/:
     get:
-      summary: Get store details
+      summary: Dados da loja
       tags:
       - Store
       description: Retrieve the store details associated with the authenticated API
@@ -2289,7 +2291,7 @@ paths:
       - ApiKeyAuth: []
       responses:
         '200':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2340,7 +2342,7 @@ paths:
                 - data
                 additionalProperties: false
         '401':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2369,7 +2371,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
@@ -2398,7 +2400,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Default Response
+          description: Resposta padrão
           content:
             application/json:
               schema:
