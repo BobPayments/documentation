@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.9](https://github.com/BobPayments/documentation/compare/v1.1.8...v1.1.9) (2026-02-28)
+
+### Documentação
+
+* rewrite introduction with authentic Bob Payments voice ([f03ecf8](https://github.com/BobPayments/documentation/commit/f03ecf8e1c0fcfb434f5bb9df56c8d417a70948b))
+
 ## [1.1.8](https://github.com/BobPayments/documentation/compare/v1.1.7...v1.1.8) (2026-02-28)
 
 ### Correções
