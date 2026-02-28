@@ -1,7 +1,3 @@
-
-> bob-payments-backend@2.29.0 generate:openapi /Users/brunoalves/conductor/workspaces/back/san-antonio-v2
-> tsx --import ./src/scripts/env-openapi.ts ./src/scripts/generate-openapi.ts
-
 openapi: 3.0.3
 info:
   title: Bob Payments API
