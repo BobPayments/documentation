@@ -17,20 +17,6 @@ Simples: quando a integração estiver funcionando no sandbox, é só trocar a c
   </Step>
 </Steps>
 
-## Checklist antes de ir a produção
-
-<CardGroup cols={2}>
-  <Card title="Webhook configurado" icon="bell">
-    Configure a URL de webhook para receber notificações de pagamento.
-  </Card>
-  <Card title="Tratamento de erros" icon="triangle-exclamation">
-    Implemente retry com backoff exponencial para erros `503` (gateways indisponíveis).
-  </Card>
-  <Card title="Variáveis de ambiente" icon="lock">
-    Nunca commite `sk_live_*` no código. Use variáveis de ambiente seguras.
-  </Card>
-</CardGroup>
-
 <Warning>
   Nunca exponha `sk_live_*` no frontend, em repositórios públicos ou em logs de aplicação.
 </Warning>
