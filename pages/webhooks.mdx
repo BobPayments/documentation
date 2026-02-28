@@ -49,58 +49,56 @@ Toda notificação chega como um `POST` com o seguinte formato:
 {
   "event": "transaction.paid",
   "type": "transaction",
+  "title": "Transação Paga",
+  "message": "Transação de R$ 100,00 confirmada",
   "data": {
     "transactionId": "clx7a8b9c0d1e2f3g4h5",
-    "externalId": "pedido_123",
     "amount": 100.00,
     "product": "Plano Premium",
     "customer": {
       "name": "João Silva",
       "email": "joao@email.com",
       "phone": "11987654321",
-      "document": "12345678900",
-      "documentType": "CPF",
-      "address": {
-        "street": "Rua Exemplo",
-        "streetNumber": "123",
-        "neighborhood": "Centro",
-        "zipCode": "01234567",
-        "city": "São Paulo",
-        "state": "SP",
-        "country": "BR"
-      }
+      "document": "12345678900"
     },
     "gateway": "gateway-alias",
-    "originDomain": "loja.exemplo.com.br",
-    "isSandbox": false
-  }
+    "originDomain": "loja.exemplo.com.br"
+  },
+  "timestamp": "2026-02-28T10:05:01.000Z"
 }
 ```
 
 ## Verificando a assinatura
 
-Cada requisição inclui o header `X-Webhook-Signature` com um HMAC-SHA256 do payload. Verifique sempre para garantir que a requisição veio da Bob Payments.
+Cada requisição inclui dois headers de segurança:
+
+| Header | Descrição |
+|--------|-----------|
+| `X-Webhook-Signature` | HMAC-SHA256 do payload em hex |
+| `X-Webhook-Timestamp` | ISO 8601 do momento do envio |
+
+Verifique a assinatura sempre para garantir que a requisição veio da Bob Payments.
 
 <CodeGroup>
 ```javascript JavaScript
 const crypto = require('crypto');
 
-function verifyWebhook(payload, signature, secret) {
-  const expected = crypto
-    .createHmac('sha256', secret)
-    .update(JSON.stringify(payload))
-    .digest('hex');
-
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expected)
-  );
-}
-
 app.post('/webhooks/bob', (req, res) => {
   const sig = req.headers['x-webhook-signature'];
+  const secret = process.env.BOB_WEBHOOK_SECRET;
 
-  if (!verifyWebhook(req.body, sig, process.env.BOB_WEBHOOK_SECRET)) {
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(req.body))
+    .digest('hex');
+
+  const sigBuffer = Buffer.from(sig ?? '', 'utf8');
+  const expectedBuffer = Buffer.from(expected, 'utf8');
+
+  if (
+    sigBuffer.length !== expectedBuffer.length ||
+    !crypto.timingSafeEqual(sigBuffer, expectedBuffer)
+  ) {
     return res.status(401).send('Assinatura inválida');
   }
 
