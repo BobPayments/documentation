@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.5](https://github.com/BobPayments/documentation/compare/v1.1.4...v1.1.5) (2026-02-28)
+
+### Documentação
+
+* merge PIX and Cobranças into Transações group ([61a312d](https://github.com/BobPayments/documentation/commit/61a312d22a0fd065e50f593289ecf9cc8f184d7f))
+
 ## [1.1.4](https://github.com/BobPayments/documentation/compare/v1.1.3...v1.1.4) (2026-02-28)
 
 ### Documentação
