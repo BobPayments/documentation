@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.3](https://github.com/BobPayments/documentation/compare/v1.1.2...v1.1.3) (2026-02-28)
+
+### Documentação
+
+* rename PIX group to Cobranças and update page titles ([8045918](https://github.com/BobPayments/documentation/commit/8045918d57ab52414fbedaaa96c1d8eb51a15634))
+
 ## [1.1.2](https://github.com/BobPayments/documentation/compare/v1.1.1...v1.1.2) (2026-02-28)
 
 ### Correções
