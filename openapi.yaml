@@ -2429,8 +2429,8 @@ paths:
                 - instance
                 additionalProperties: false
 servers:
-- url: http://localhost:3000
-  description: Development server
+- url: https://api.payments.bob.company
+  description: Production server
 tags:
 - name: Authentication
   description: Authentication endpoints (Public - hidden from docs)
