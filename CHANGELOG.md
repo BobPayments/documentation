@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.4](https://github.com/BobPayments/documentation/compare/v1.1.3...v1.1.4) (2026-02-28)
+
+### Documentação
+
+* split PIX and Cobranças into separate nav groups ([1e1070f](https://github.com/BobPayments/documentation/commit/1e1070f5b0112f9f76262c2f7e251afef572aa9c))
+
 ## [1.1.3](https://github.com/BobPayments/documentation/compare/v1.1.2...v1.1.3) (2026-02-28)
 
 ### Documentação
