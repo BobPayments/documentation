@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.0.5](https://github.com/BobPayments/documentation/compare/v1.0.4...v1.0.5) (2026-02-28)
+
+### Correções
+
+* correct openapi URL to point to bob-payments-api-node repo ([8292f57](https://github.com/BobPayments/documentation/commit/8292f57b3e382f17f5f73dfd64a79e817796aab5))
+
 ## [1.0.4](https://github.com/BobPayments/documentation/compare/v1.0.3...v1.0.4) (2026-02-28)
 
 ### Documentação
