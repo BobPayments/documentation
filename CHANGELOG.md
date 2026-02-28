@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.10](https://github.com/BobPayments/documentation/compare/v1.1.9...v1.1.10) (2026-02-28)
+
+### Correções
+
+* replace AbacatePay email and template copy across all pages ([827d2eb](https://github.com/BobPayments/documentation/commit/827d2eb9c1b78541245786f16b14b6f8715fc008))
+
 ## [1.1.9](https://github.com/BobPayments/documentation/compare/v1.1.8...v1.1.9) (2026-02-28)
 
 ### Documentação
