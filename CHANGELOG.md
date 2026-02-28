@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.18](https://github.com/BobPayments/documentation/compare/v1.1.17...v1.1.18) (2026-02-28)
+
+### Documentação
+
+* **openapi:** add retryAfterSeconds to 503 error schema ([582f611](https://github.com/BobPayments/documentation/commit/582f6115de0cea53744343caf244274238aee9cb))
+
 ## [1.1.17](https://github.com/BobPayments/documentation/compare/v1.1.16...v1.1.17) (2026-02-28)
 
 ### Documentação
