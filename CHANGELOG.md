@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.0](https://github.com/BobPayments/documentation/compare/v1.0.7...v1.1.0) (2026-02-28)
+
+### Novidades
+
+* filter openapi.yaml to public routes only with ApiKeyAuth security ([b6f94cf](https://github.com/BobPayments/documentation/commit/b6f94cfc94b5d0c7307f6498bf4ba6fe2f0a78b1))
+
 ## [1.0.7](https://github.com/BobPayments/documentation/compare/v1.0.6...v1.0.7) (2026-02-28)
 
 ### Correções
