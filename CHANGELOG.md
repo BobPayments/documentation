@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.16](https://github.com/BobPayments/documentation/compare/v1.1.15...v1.1.16) (2026-02-28)
+
+### Documentação
+
+* remove help card from introduction page ([f3431b2](https://github.com/BobPayments/documentation/commit/f3431b2ace29224c9fad1c47e935723f8fbf2d51))
+
 ## [1.1.15](https://github.com/BobPayments/documentation/compare/v1.1.14...v1.1.15) (2026-02-28)
 
 ### Correções
