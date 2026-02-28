@@ -1,12 +1,12 @@
 ---
-title: "Referência"
-description: "Gere um código PIX copia-e-cola para o seu cliente"
+title: "Cobrança PIX"
+description: "Estrutura e atributos de uma cobrança PIX na API Bob Payments"
 icon: "book-open-cover"
 ---
 
 ## <Icon icon="folder-tree" type="solid" /> Estrutura
 
-Uma transação PIX é representada em nossa API pela seguinte estrutura:
+Uma cobrança PIX é representada pela seguinte estrutura:
 
 ```json
 {
@@ -35,7 +35,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     { "id": "clx7a8b9c0d1e2f3g4h5" }
     ```
     `id` : <u>string.</u><br />
-    Identificador único da transação no formato CUID.
+    Identificador único da cobrança no formato CUID.
   </Accordion>
 
   <Accordion title="externalId:">
@@ -43,7 +43,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     { "externalId": "pedido_123" }
     ```
     `externalId` : <u>string.</u><br />
-    Identificador da transação no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
+    Identificador da cobrança no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
   </Accordion>
 
   <Accordion title="amountCents:">
@@ -51,7 +51,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     { "amountCents": 10000 }
     ```
     `amountCents` : <u>integer.</u><br />
-    Valor da transação em centavos. Exemplo: `10000` = R$ 100,00.
+    Valor da cobrança em centavos. Exemplo: `10000` = R$ 100,00.
   </Accordion>
 
   <Accordion title="product:">
@@ -67,7 +67,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     { "status": "waiting_payment" }
     ```
     `status` : <u>string.</u><br />
-    Status atual da transação.
+    Status atual da cobrança.
     <Info>
       | Status | Descrição |
       |--------|-----------|
@@ -75,7 +75,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
       | `processing` | **Pagamento recebido, aguardando confirmação** |
       | `paid` | **Pagamento confirmado** |
       | `expired` | **O tempo limite de pagamento foi excedido** |
-      | `cancelled` | **A transação foi cancelada** |
+      | `cancelled` | **A cobrança foi cancelada** |
       | `refunded` | **O valor foi devolvido ao cliente** |
     </Info>
   </Accordion>
@@ -93,7 +93,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     { "expirationDate": "2026-02-28T10:00:00.000Z" }
     ```
     `expirationDate` : <u>date-time.</u><br />
-    Data e hora de expiração da transação. Após esse momento, o status muda para `expired`.
+    Data e hora de expiração da cobrança. Após esse momento, o status muda para `expired`.
   </Accordion>
 
   <Accordion title="customer:">
@@ -107,7 +107,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     }
     ```
     `customer` : <u>object.</u><br />
-    Dados do comprador vinculado à transação. Consulte a [entidade Customer](/pages/customers/reference).
+    Dados do comprador vinculado à cobrança. Consulte a [entidade Customer](/pages/customers/reference).
   </Accordion>
 
   <Accordion title="createdAt:">
@@ -115,7 +115,7 @@ Uma transação PIX é representada em nossa API pela seguinte estrutura:
     { "createdAt": "2026-02-28T09:00:00.000Z" }
     ```
     `createdAt` : <u>date-time.</u><br />
-    Data e hora de criação da transação.
+    Data e hora de criação da cobrança.
   </Accordion>
 
   <Accordion title="updatedAt:">

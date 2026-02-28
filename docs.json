@@ -82,7 +82,7 @@
             ]
           },
           {
-            "group": "Transações",
+            "group": "PIX",
             "pages": [
               "pages/pix/reference",
               "pages/pix/create",
