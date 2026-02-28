@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.0.6](https://github.com/BobPayments/documentation/compare/v1.0.5...v1.0.6) (2026-02-28)
+
+### Correções
+
+* use local openapi.yaml since backend repo is private ([77ef452](https://github.com/BobPayments/documentation/commit/77ef45266a6e4d0e47cf0debf9c23da2a2e7f730))
+
 ## [1.0.5](https://github.com/BobPayments/documentation/compare/v1.0.4...v1.0.5) (2026-02-28)
 
 ### Correções
