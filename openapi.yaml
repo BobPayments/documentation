@@ -1,8 +1,7 @@
 openapi: 3.0.3
 info:
   title: Bob Payments API
-  description: Orquestrador de pagamentos PIX para criar cobranças, gerenciar clientes
-    e receber notificações em tempo real.
+  description: API de Gerenciamento e Monitoramento Bob Payments - Transações PIX
   version: 1.0.0
 components:
   securitySchemes:
@@ -10,22 +9,22 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: Token JWT para endpoints autenticados do dashboard.
+      description: Token JWT para endpoints autenticados do dashboard
     ApiKeyAuth:
       type: http
       scheme: bearer
       bearerFormat: API Key
-      description: 'Autenticação via SK token (sk_live_xxx ou sk_test_xxx). Envie
-        como: Authorization: Bearer sk_live_xxx'
+      description: 'Autenticação por API Key usando token SK (sk_live_xxx ou sk_test_xxx).
+        Envie como: Authorization: Bearer sk_live_xxx'
   schemas: {}
 paths:
   /api/transactions/:
     post:
-      summary: Criar cobrança PIX
+      summary: Criar nova transação
       tags:
       - Transactions
-      description: Cria uma nova cobrança PIX e retorna o código copia-e-cola e o
-        QR Code para pagamento.
+      description: Cria uma nova transação PIX utilizando a estratégia de execução
+        paralela de gateways.
       requestBody:
         required: true
         content:
@@ -155,7 +154,7 @@ paths:
       - ApiKeyAuth: []
       responses:
         '201':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -188,7 +187,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -217,7 +216,7 @@ paths:
                 - instance
                 additionalProperties: false
         '401':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -246,7 +245,7 @@ paths:
                 - instance
                 additionalProperties: false
         '403':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -275,7 +274,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -304,7 +303,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -333,7 +332,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -362,7 +361,7 @@ paths:
                 - instance
                 additionalProperties: false
         '503':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -391,11 +390,11 @@ paths:
                 - instance
                 additionalProperties: false
     get:
-      summary: Listar transações
+      summary: Listar todas as transações
       tags:
       - Transactions
-      description: Retrieve a paginated list of transactions with optional filters.
-        Supports Bearer Token (sk_live_xxx / sk_test_xxx) or JWT authentication.
+      description: Retorna uma lista paginada de transações com filtros opcionais.
+        Suporta Bearer Token (sk_live_xxx / sk_test_xxx) ou autenticação JWT.
       parameters:
       - schema:
           default: 1
@@ -507,7 +506,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -632,7 +631,7 @@ paths:
                 - meta
                 additionalProperties: false
         '401':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -661,7 +660,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -694,8 +693,8 @@ paths:
       summary: Buscar transação por ID
       tags:
       - Transactions
-      description: Retrieve a specific transaction by ID with full details (requires
-        JWT authentication)
+      description: Retorna uma transação específica por ID com todos os detalhes (requer
+        autenticação JWT)
       parameters:
       - schema:
           type: string
@@ -709,7 +708,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -822,7 +821,7 @@ paths:
                 - data
                 additionalProperties: false
         '401':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -851,7 +850,7 @@ paths:
                 - instance
                 additionalProperties: false
         '403':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -880,7 +879,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -909,7 +908,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -939,11 +938,11 @@ paths:
                 additionalProperties: false
   /api/customers/:
     post:
-      summary: Criar ou atualizar cliente
+      summary: Criar novo cliente
       tags:
       - Customers
-      description: Create or update a customer by document (CPF/CNPJ). If a customer
-        with the same document already exists, their data will be updated.
+      description: Cria ou atualiza um cliente pelo documento (CPF/CNPJ). Se já existir
+        um cliente com o mesmo documento, os dados serão atualizados.
       requestBody:
         required: true
         content:
@@ -1014,7 +1013,7 @@ paths:
       - ApiKeyAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1084,7 +1083,7 @@ paths:
                 - data
                 additionalProperties: false
         '201':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1154,7 +1153,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1183,7 +1182,7 @@ paths:
                 - instance
                 additionalProperties: false
         '401':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1212,7 +1211,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1241,10 +1240,11 @@ paths:
                 - instance
                 additionalProperties: false
     get:
-      summary: Listar clientes
+      summary: Listar todos os clientes
       tags:
       - Customers
-      description: Retorna uma lista paginada de todos os clientes do projeto.
+      description: Retorna uma lista de todos os clientes com filtro opcional por
+        projeto.
       parameters:
       - schema:
           default: 1
@@ -1282,7 +1282,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1396,7 +1396,7 @@ paths:
                 - meta
                 additionalProperties: false
         '400':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1425,7 +1425,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1454,7 +1454,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1483,7 +1483,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1513,11 +1513,11 @@ paths:
                 additionalProperties: false
   /api/customers/lookup:
     get:
-      summary: Buscar cliente por documento, email ou telefone
+      summary: Buscar cliente por telefone, documento ou e-mail
       tags:
       - Customers
-      description: Find a specific customer by phone, document (CPF/CNPJ) or email.
-        Provide exactly one of the query parameters.
+      description: Localiza um cliente específico por telefone, documento (CPF/CNPJ)
+        ou e-mail. Informe exatamente um dos parâmetros de consulta.
       parameters:
       - schema:
           type: string
@@ -1546,7 +1546,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1691,7 +1691,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1720,7 +1720,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1749,7 +1749,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1778,7 +1778,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1811,7 +1811,7 @@ paths:
       summary: Buscar cliente por ID
       tags:
       - Customers
-      description: Retrieve a specific customer by ID
+      description: Retorna um cliente específico por ID.
       parameters:
       - schema:
           type: string
@@ -1825,7 +1825,7 @@ paths:
       - BearerAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1970,7 +1970,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -1999,7 +1999,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2028,7 +2028,7 @@ paths:
                 - instance
                 additionalProperties: false
         '429':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2057,7 +2057,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2087,12 +2087,12 @@ paths:
                 additionalProperties: false
   /api/sandbox/transactions/{transactionId}/pay:
     post:
-      summary: Simular pagamento
+      summary: Simular pagamento de transação sandbox
       tags:
       - Sandbox
-      description: "\n          Simulates the payment of a transaction in sandbox\
-        \ mode.\n          Only works with transactions created using test API keys\
-        \ (sk_test_*).\n          The transaction must be in 'waiting_payment' status.\n\
+      description: "\n          Simula o pagamento de uma transação em modo sandbox.\n\
+        \          Funciona apenas com transações criadas usando chaves de API de\
+        \ teste (sk_test_*).\n          A transação deve estar no status 'waiting_payment'.\n\
         \        "
       parameters:
       - schema:
@@ -2106,7 +2106,7 @@ paths:
       - ApiKeyAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2136,7 +2136,7 @@ paths:
                 - data
                 additionalProperties: false
         '400':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2165,7 +2165,7 @@ paths:
                 - instance
                 additionalProperties: false
         '401':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2194,7 +2194,7 @@ paths:
                 - instance
                 additionalProperties: false
         '403':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2223,7 +2223,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2252,7 +2252,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2282,16 +2282,15 @@ paths:
                 additionalProperties: false
   /api/store/:
     get:
-      summary: Dados da loja
+      summary: Buscar detalhes da loja
       tags:
       - Store
-      description: Retrieve the store details associated with the authenticated API
-        key.
+      description: Retorna os detalhes da loja associados à API Key autenticada.
       security:
       - ApiKeyAuth: []
       responses:
         '200':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2342,7 +2341,7 @@ paths:
                 - data
                 additionalProperties: false
         '401':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2371,7 +2370,7 @@ paths:
                 - instance
                 additionalProperties: false
         '404':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2400,7 +2399,7 @@ paths:
                 - instance
                 additionalProperties: false
         '500':
-          description: Resposta padrão
+          description: Default Response
           content:
             application/json:
               schema:
@@ -2430,38 +2429,38 @@ paths:
                 additionalProperties: false
 servers:
 - url: https://api.payments.bob.company
-  description: Production server
+  description: Servidor de produção
 tags:
 - name: Authentication
-  description: Authentication endpoints (Public - hidden from docs)
+  description: Endpoints de autenticação (Público - ocultado da documentação)
 - name: Transactions
-  description: Transaction management endpoints
+  description: Endpoints de gerenciamento de transações
 - name: Projects
-  description: Project management endpoints (Private)
+  description: Endpoints de gerenciamento de projetos (Privado)
 - name: Customers
-  description: Customer management endpoints (Private)
+  description: Endpoints de gerenciamento de clientes (Privado)
 - name: Domains
-  description: Domain management endpoints (Private)
+  description: Endpoints de gerenciamento de domínios (Privado)
 - name: Gateway Accounts
-  description: Gateway account management endpoints (Private)
+  description: Endpoints de gerenciamento de contas de gateway (Privado)
 - name: Integrations
-  description: Integration management endpoints (Private)
+  description: Endpoints de gerenciamento de integrações (Privado)
 - name: Users
-  description: User profile and account management endpoints (Private - hidden from
-    docs)
+  description: Endpoints de gerenciamento de perfil e conta do usuário (Privado -
+    ocultado da documentação)
 - name: Providers
-  description: Payment provider management endpoints (Private)
+  description: Endpoints de gerenciamento de provedores de pagamento (Privado)
 - name: Checkout
-  description: Public checkout endpoints
+  description: Endpoints públicos de checkout
 - name: Webhooks
-  description: Webhook endpoints for payment notifications
+  description: Endpoints de webhook para notificações de pagamento
 - name: Sandbox
-  description: Sandbox/test mode endpoints
+  description: Endpoints de modo sandbox/teste
 - name: Analytics
-  description: Analytics and reporting endpoints (Private)
+  description: Endpoints de analytics e relatórios (Privado)
 - name: Products
-  description: Product management endpoints (Private)
+  description: Endpoints de gerenciamento de produtos (Privado)
 - name: Payment Links
-  description: Payment link management endpoints (Private)
+  description: Endpoints de gerenciamento de links de pagamento (Privado)
 - name: Tags
-  description: Tag management endpoints (Private)
+  description: Endpoints de gerenciamento de tags (Privado)
