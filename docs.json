@@ -86,9 +86,14 @@
             "pages": [
               "pages/pix/reference",
               "pages/pix/create",
-              "pages/pix/check-status",
-              "pages/pix/list",
               "pages/pix/simulate-payment"
+            ]
+          },
+          {
+            "group": "Transações",
+            "pages": [
+              "pages/pix/check-status",
+              "pages/pix/list"
             ]
           },
           {
