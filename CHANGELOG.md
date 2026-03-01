@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.21](https://github.com/BobPayments/documentation/compare/v1.1.20...v1.1.21) (2026-03-01)
+
+### Documentação
+
+* rename PIX page titles ([ea921e0](https://github.com/BobPayments/documentation/commit/ea921e0b26487787dfed57dfe8c478f5456d658d))
+
 ## [1.1.20](https://github.com/BobPayments/documentation/compare/v1.1.19...v1.1.20) (2026-03-01)
 
 ### Documentação
