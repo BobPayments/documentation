@@ -16,14 +16,14 @@
   "navbar": {
     "links": [
       {
-        "label": "Dashboard",
-        "href": "https://app.payments.bob.company"
+        "label": "Repositório",
+        "href": "https://github.com/BobPayments/documentation"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Criar conta",
-      "href": "https://app.payments.bob.company/register"
+      "label": "Dashboard",
+      "href": "https://app.payments.bob.company"
     }
   },
   "footer": {
