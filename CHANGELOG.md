@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.23](https://github.com/BobPayments/documentation/compare/v1.1.22...v1.1.23) (2026-03-01)
+
+### Documentação
+
+* flatten API reference into single nav group ([69d67b6](https://github.com/BobPayments/documentation/commit/69d67b672a756f101561ab0dcd4cc983ea94152d))
+
 ## [1.1.22](https://github.com/BobPayments/documentation/compare/v1.1.21...v1.1.22) (2026-03-01)
 
 ### Documentação
