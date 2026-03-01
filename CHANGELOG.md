@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.24](https://github.com/BobPayments/documentation/compare/v1.1.23...v1.1.24) (2026-03-01)
+
+### Documentação
+
+* update navbar links and primary button ([1baef02](https://github.com/BobPayments/documentation/commit/1baef02c80b5529c0a922c7ef3819e77be8e604b))
+
 ## [1.1.23](https://github.com/BobPayments/documentation/compare/v1.1.22...v1.1.23) (2026-03-01)
 
 ### Documentação
