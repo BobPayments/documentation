@@ -21,8 +21,6 @@ paths:
   /api/v1/transactions/:
     post:
       summary: Criar nova transação
-      tags:
-      - Transactions
       description: Cria uma nova transação PIX utilizando a estratégia de execução
         paralela de gateways.
       requestBody:
@@ -384,7 +382,8 @@ paths:
                     properties:
                       retryAfterSeconds:
                         type: integer
-                        description: Tempo recomendado de espera (em segundos) antes de tentar novamente
+                        description: Tempo recomendado de espera (em segundos) antes
+                          de tentar novamente
                         example: 30
                 required:
                 - type
@@ -395,8 +394,6 @@ paths:
                 additionalProperties: false
     get:
       summary: Listar todas as transações
-      tags:
-      - Transactions
       description: Retorna uma lista paginada de transações com filtros opcionais.
         Suporta Bearer Token (sk_live_xxx / sk_test_xxx) ou autenticação JWT.
       parameters:
@@ -695,8 +692,6 @@ paths:
   /api/v1/transactions/{id}:
     get:
       summary: Buscar transação por ID
-      tags:
-      - Transactions
       description: Retorna uma transação específica por ID com todos os detalhes (requer
         autenticação JWT)
       parameters:
@@ -943,8 +938,6 @@ paths:
   /api/v1/customers/:
     get:
       summary: Listar todos os clientes
-      tags:
-      - Customers
       description: Retorna uma lista de todos os clientes com filtro opcional por
         projeto.
       parameters:
@@ -1238,8 +1231,6 @@ paths:
   /api/v1/customers/{id}:
     get:
       summary: Buscar cliente por ID
-      tags:
-      - Customers
       description: Retorna um cliente específico por ID.
       parameters:
       - schema:
@@ -1517,8 +1508,6 @@ paths:
   /api/v1/sandbox/transactions/{transactionId}/pay:
     post:
       summary: Simular pagamento de transação sandbox
-      tags:
-      - Sandbox
       description: "\n          Simula o pagamento de uma transação em modo sandbox.\n\
         \          Funciona apenas com transações criadas usando chaves de API de\
         \ teste (sk_test_*).\n          A transação deve estar no status 'waiting_payment'.\n\
@@ -1712,8 +1701,6 @@ paths:
   /api/v1/store/:
     get:
       summary: Buscar detalhes da loja
-      tags:
-      - Store
       description: Retorna os detalhes da loja associados à API Key autenticada.
       security:
       - ApiKeyAuth: []
@@ -1859,37 +1846,3 @@ paths:
 servers:
 - url: https://api.payments.bob.company
   description: Servidor de produção
-tags:
-- name: Authentication
-  description: Endpoints de autenticação (Público - ocultado da documentação)
-- name: Transactions
-  description: Endpoints de gerenciamento de transações
-- name: Projects
-  description: Endpoints de gerenciamento de projetos (Privado)
-- name: Customers
-  description: Endpoints de gerenciamento de clientes (Privado)
-- name: Domains
-  description: Endpoints de gerenciamento de domínios (Privado)
-- name: Gateway Accounts
-  description: Endpoints de gerenciamento de contas de gateway (Privado)
-- name: Integrations
-  description: Endpoints de gerenciamento de integrações (Privado)
-- name: Users
-  description: Endpoints de gerenciamento de perfil e conta do usuário (Privado -
-    ocultado da documentação)
-- name: Providers
-  description: Endpoints de gerenciamento de provedores de pagamento (Privado)
-- name: Checkout
-  description: Endpoints públicos de checkout
-- name: Webhooks
-  description: Endpoints de webhook para notificações de pagamento
-- name: Sandbox
-  description: Endpoints de modo sandbox/teste
-- name: Analytics
-  description: Endpoints de analytics e relatórios (Privado)
-- name: Products
-  description: Endpoints de gerenciamento de produtos (Privado)
-- name: Payment Links
-  description: Endpoints de gerenciamento de links de pagamento (Privado)
-- name: Tags
-  description: Endpoints de gerenciamento de tags (Privado)
