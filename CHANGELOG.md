@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.25](https://github.com/BobPayments/documentation/compare/v1.1.24...v1.1.25) (2026-03-01)
+
+### Documentação
+
+* rename devmode to sandbox ([9c3c6ea](https://github.com/BobPayments/documentation/commit/9c3c6eaa55457b7cc676a9f5b67eed02e00edbc6))
+
 ## [1.1.24](https://github.com/BobPayments/documentation/compare/v1.1.23...v1.1.24) (2026-03-01)
 
 ### Documentação
