@@ -176,8 +176,6 @@ paths:
                         type: string
                     required:
                     - id
-                    - pixCode
-                    - expirationDate
                     - status
                     additionalProperties: false
                 required:
@@ -382,8 +380,7 @@ paths:
                     properties:
                       retryAfterSeconds:
                         type: integer
-                        description: Tempo recomendado de espera (em segundos) antes
-                          de tentar novamente
+                        description: Tempo recomendado de espera (em segundos) antes de tentar novamente
                         example: 30
                 required:
                 - type
@@ -729,8 +726,10 @@ paths:
                         nullable: true
                         type: string
                       pixCode:
+                        nullable: true
                         type: string
                       expirationDate:
+                        nullable: true
                         type: string
                       status:
                         type: string
