@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.26](https://github.com/BobPayments/documentation/compare/v1.1.25...v1.1.26) (2026-03-01)
+
+### Documentação
+
+* restore separate nav groups in Documentação tab ([5ab3d81](https://github.com/BobPayments/documentation/commit/5ab3d81e0af0010058fbb007548d55a4c80075bc))
+
 ## [1.1.25](https://github.com/BobPayments/documentation/compare/v1.1.24...v1.1.25) (2026-03-01)
 
 ### Documentação
