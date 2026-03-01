@@ -75,7 +75,7 @@
             "group": "Introdução",
             "pages": [
               "pages/introduction",
-              "pages/devmode",
+              "pages/sandbox",
               "pages/authentication",
               "pages/webhooks",
               "pages/production"
