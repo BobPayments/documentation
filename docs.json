@@ -82,31 +82,16 @@
             ]
           },
           {
-            "group": "PIX",
+            "group": "Referência da API",
             "pages": [
               "pages/pix/reference",
               "pages/pix/create",
-              "pages/pix/simulate-payment"
-            ]
-          },
-          {
-            "group": "Transações",
-            "pages": [
+              "pages/pix/simulate-payment",
               "pages/pix/check-status",
-              "pages/pix/list"
-            ]
-          },
-          {
-            "group": "Clientes",
-            "pages": [
+              "pages/pix/list",
               "pages/customers/reference",
               "pages/customers/get",
-              "pages/customers/list"
-            ]
-          },
-          {
-            "group": "Loja",
-            "pages": [
+              "pages/customers/list",
               "pages/store/reference",
               "pages/store/get"
             ]
