@@ -14,10 +14,7 @@ A loja representa o projeto associado à sua chave de API:
   "name": "Minha Loja",
   "devMode": false,
   "pixExpirationMinutes": 60,
-  "maxTransactionAmountCents": null,
-  "domains": [
-    { "id": "clw1a2b3c4d5e6f7g8h9", "host": "loja.exemplo.com.br" }
-  ]
+  "maxTransactionAmountCents": null
 }
 ```
 
@@ -64,15 +61,4 @@ A loja representa o projeto associado à sua chave de API:
     Valor máximo permitido por transação, em centavos. `null` indica que não há limite configurado.
   </Accordion>
 
-  <Accordion title="domains:">
-    ```json
-    {
-      "domains": [
-        { "id": "clw1a2b3c4d5e6f7g8h9", "host": "loja.exemplo.com.br" }
-      ]
-    }
-    ```
-    `domains` : <u>object[].</u><br />
-    Lista de domínios autorizados para criar transações em produção. Cada entrada contém `id` (CUID) e `host` (domínio). Obrigatório para ir a produção.
-  </Accordion>
 </AccordionGroup>
