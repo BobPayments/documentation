@@ -17,6 +17,8 @@ Uma cobrança PIX é representada pela seguinte estrutura:
   "status": "waiting_payment",
   "pixCode": "00020126580014br.gov.bcb.pix...",
   "expirationDate": "2026-02-28T10:00:00.000Z",
+  "customerEmail": "joao@email.com",
+  "customerName": "João Silva",
   "customer": {
     "name": "João Silva",
     "email": "joao@email.com",
@@ -94,6 +96,22 @@ Uma cobrança PIX é representada pela seguinte estrutura:
     ```
     `expirationDate` : <u>date-time.</u><br />
     Data e hora de expiração da cobrança. Após esse momento, o status muda para `expired`.
+  </Accordion>
+
+  <Accordion title="customerEmail:">
+    ```json
+    { "customerEmail": "joao@email.com" }
+    ```
+    `customerEmail` : <u>string | null.</u><br />
+    E-mail do comprador. Atalho direto ao campo `customer.email`, disponível no nível raiz da transação.
+  </Accordion>
+
+  <Accordion title="customerName:">
+    ```json
+    { "customerName": "João Silva" }
+    ```
+    `customerName` : <u>string | null.</u><br />
+    Nome do comprador. Atalho direto ao campo `customer.name`, disponível no nível raiz da transação.
   </Accordion>
 
   <Accordion title="customer:">

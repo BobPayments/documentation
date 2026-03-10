@@ -460,7 +460,7 @@ paths:
           format: cuid
           pattern: ^[cC][^\s-]{8,}$
         in: query
-        name: gatewayId
+        name: connectionId
         required: false
       - schema:
           type: integer
@@ -498,6 +498,13 @@ paths:
       - schema: {}
         in: query
         name: expiredAtTo
+        required: false
+      - schema:
+          type: string
+          format: email
+          pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+        in: query
+        name: customerEmail
         required: false
       security:
       - ApiKeyAuth: []
@@ -563,7 +570,7 @@ paths:
                           - name
                           - email
                           additionalProperties: false
-                        gateway:
+                        connection:
                           type: object
                           properties:
                             id:
@@ -583,6 +590,12 @@ paths:
                         originDomain:
                           nullable: true
                           type: string
+                        customerEmail:
+                          nullable: true
+                          type: string
+                        customerName:
+                          nullable: true
+                          type: string
                       required:
                       - id
                       - externalId
@@ -595,8 +608,10 @@ paths:
                       - createdAt
                       - updatedAt
                       - customer
-                      - gateway
+                      - connection
                       - originDomain
+                      - customerEmail
+                      - customerName
                       additionalProperties: false
                   meta:
                     type: object
@@ -796,6 +811,12 @@ paths:
                       originDomain:
                         nullable: true
                         type: string
+                      customerEmail:
+                        nullable: true
+                        type: string
+                      customerName:
+                        nullable: true
+                        type: string
                     required:
                     - id
                     - externalId
@@ -813,6 +834,8 @@ paths:
                     - customer
                     - gateway
                     - originDomain
+                    - customerEmail
+                    - customerName
                     additionalProperties: false
                 required:
                 - success
