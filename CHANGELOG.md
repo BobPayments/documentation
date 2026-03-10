@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.27](https://github.com/BobPayments/documentation/compare/v1.1.26...v1.1.27) (2026-03-10)
+
+### Documentação
+
+* update webhooks with real payload examples per event ([71d7dd2](https://github.com/BobPayments/documentation/commit/71d7dd2ad194bd062d45ead2708807235f3ca698))
+
 ## [1.1.26](https://github.com/BobPayments/documentation/compare/v1.1.25...v1.1.26) (2026-03-01)
 
 ### Documentação
