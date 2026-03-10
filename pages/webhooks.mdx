@@ -27,46 +27,191 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
 ## Eventos disponíveis
 
 <AccordionGroup>
+  <Accordion title="transaction.created" icon="plus">
+    Disparado quando uma cobrança PIX é criada. Inclui `pixCode` e `expirationDate`.
+
+    ```json
+    {
+      "event": "transaction.created",
+      "type": "transaction",
+      "title": "Transação Criada",
+      "message": "Nova transação de R$ 150,00 aguardando pagamento",
+      "data": {
+        "transactionId": "clx1abc123",
+        "externalId": "pedido-001",
+        "amount": 150.00,
+        "product": "Plano Premium",
+        "customerName": "João Silva",
+        "customer": {
+          "name": "João Silva",
+          "email": "joao@email.com",
+          "phone": "11999990000",
+          "document": "12345678901",
+          "documentType": "CPF",
+          "address": {
+            "street": "Rua das Flores",
+            "streetNumber": "123",
+            "neighborhood": "Centro",
+            "complement": "",
+            "zipCode": "01310100",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BR"
+          }
+        },
+        "gateway": "meu-gateway",
+        "pixCode": "00020126580014br.gov.bcb.pix...",
+        "expirationDate": "2026-03-10T15:30:00.000Z",
+        "createdAt": "2026-03-10T14:30:00.000Z"
+      },
+      "timestamp": "2026-03-10T14:30:00.000Z"
+    }
+    ```
+  </Accordion>
+
   <Accordion title="transaction.paid" icon="circle-check">
-    Disparado quando um pagamento PIX é confirmado. Use para liberar o produto ou serviço ao cliente.
+    Disparado quando um pagamento PIX é confirmado. Use para liberar o produto ou serviço ao cliente. Inclui `fee` quando há taxa.
+
+    ```json
+    {
+      "event": "transaction.paid",
+      "type": "transaction",
+      "title": "Transação Paga",
+      "message": "Transação de R$ 150,00 confirmada",
+      "data": {
+        "transactionId": "clx1abc123",
+        "externalId": "pedido-001",
+        "amount": 150.00,
+        "product": "Plano Premium",
+        "customer": {
+          "name": "João Silva",
+          "email": "joao@email.com",
+          "phone": "11999990000",
+          "document": "12345678901",
+          "documentType": "CPF",
+          "address": {
+            "street": "Rua das Flores",
+            "streetNumber": "123",
+            "neighborhood": "Centro",
+            "complement": "",
+            "zipCode": "01310100",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BR"
+          }
+        },
+        "gateway": "meu-gateway",
+        "originDomain": "meusite.com.br",
+        "isSandbox": false,
+        "fee": { "amount": 3.50 }
+      },
+      "timestamp": "2026-03-10T14:35:00.000Z"
+    }
+    ```
   </Accordion>
+
   <Accordion title="transaction.expired" icon="clock">
-    Disparado quando uma transação expira sem pagamento. Use para notificar o cliente ou criar nova cobrança.
+    Disparado quando uma transação expira sem pagamento. Use para notificar o cliente ou criar nova cobrança. Não inclui `gateway`.
+
+    ```json
+    {
+      "event": "transaction.expired",
+      "type": "transaction",
+      "title": "Transação Expirada",
+      "message": "Transação de R$ 150,00 expirou",
+      "data": {
+        "transactionId": "clx1abc123",
+        "externalId": "pedido-001",
+        "amount": 150.00,
+        "product": "Plano Premium",
+        "customer": {
+          "name": "João Silva",
+          "email": "joao@email.com",
+          "phone": "11999990000",
+          "document": "12345678901",
+          "documentType": "CPF",
+          "address": { "...": "..." }
+        },
+        "originDomain": "meusite.com.br",
+        "isSandbox": true
+      },
+      "timestamp": "2026-03-11T03:00:00.000Z"
+    }
+    ```
   </Accordion>
+
   <Accordion title="transaction.refunded" icon="rotate-left">
     Disparado quando uma transação é estornada.
+
+    ```json
+    {
+      "event": "transaction.refunded",
+      "type": "transaction",
+      "title": "Transação Reembolsada",
+      "message": "Transação de R$ 150,00 reembolsada",
+      "data": {
+        "transactionId": "clx1abc123",
+        "externalId": "pedido-001",
+        "amount": 150.00,
+        "product": "Plano Premium",
+        "customer": { "...": "igual ao paid" },
+        "gateway": "meu-gateway",
+        "originDomain": "meusite.com.br",
+        "isSandbox": false
+      },
+      "timestamp": "2026-03-10T15:00:00.000Z"
+    }
+    ```
   </Accordion>
+
   <Accordion title="transaction.cancelled" icon="circle-xmark">
     Disparado quando uma transação é cancelada manualmente.
+
+    ```json
+    {
+      "event": "transaction.cancelled",
+      "type": "transaction",
+      "title": "Transação Cancelada",
+      "message": "Transação de R$ 150,00 cancelada",
+      "data": {
+        "transactionId": "clx1abc123",
+        "externalId": "pedido-001",
+        "amount": 150.00,
+        "product": "Plano Premium",
+        "customer": { "...": "igual ao paid" },
+        "gateway": "meu-gateway",
+        "originDomain": "meusite.com.br",
+        "isSandbox": false
+      },
+      "timestamp": "2026-03-10T14:40:00.000Z"
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="transaction.failed" icon="triangle-exclamation">
+    Disparado quando uma transação falha no processamento.
+
+    ```json
+    {
+      "event": "transaction.failed",
+      "type": "transaction",
+      "title": "transaction_failed",
+      "message": "transaction_failed",
+      "data": {
+        "transactionId": "clx1abc123",
+        "externalId": "pedido-001",
+        "amount": 150.00,
+        "product": "Plano Premium",
+        "customer": { "...": "igual ao paid" },
+        "gateway": "meu-gateway",
+        "originDomain": "meusite.com.br",
+        "isSandbox": false
+      },
+      "timestamp": "2026-03-10T14:33:00.000Z"
+    }
+    ```
   </Accordion>
 </AccordionGroup>
-
-## Formato do payload
-
-Toda notificação chega como um `POST` com o seguinte formato:
-
-```json
-{
-  "event": "transaction.paid",
-  "type": "transaction",
-  "title": "Transação Paga",
-  "message": "Transação de R$ 100,00 confirmada",
-  "data": {
-    "transactionId": "clx7a8b9c0d1e2f3g4h5",
-    "amount": 100.00,
-    "product": "Plano Premium",
-    "customer": {
-      "name": "João Silva",
-      "email": "joao@email.com",
-      "phone": "11987654321",
-      "document": "12345678900"
-    },
-    "gateway": "gateway-alias",
-    "originDomain": "loja.exemplo.com.br"
-  },
-  "timestamp": "2026-02-28T10:05:01.000Z"
-}
-```
 
 ## Verificando a assinatura
 
