@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.28](https://github.com/BobPayments/documentation/compare/v1.1.27...v1.1.28) (2026-03-26)
+
+### Correções
+
+* swap titles between pix create and reference pages ([3ab2e6c](https://github.com/BobPayments/documentation/commit/3ab2e6c14a7af9d31436642dc6c5533cdef1fd0b))
+
 ## [1.1.27](https://github.com/BobPayments/documentation/compare/v1.1.26...v1.1.27) (2026-03-10)
 
 ### Documentação
