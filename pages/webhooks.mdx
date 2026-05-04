@@ -60,6 +60,8 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
           }
         },
         "gateway": "meu-gateway",
+        "originDomain": "meusite.com.br",
+        "isSandbox": false,
         "pixCode": "00020126580014br.gov.bcb.pix...",
         "expirationDate": "2026-03-10T15:30:00.000Z",
         "createdAt": "2026-03-10T14:30:00.000Z"
@@ -83,6 +85,7 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
         "externalId": "pedido-001",
         "amount": 150.00,
         "product": "Plano Premium",
+        "customerName": "João Silva",
         "customer": {
           "name": "João Silva",
           "email": "joao@email.com",
@@ -103,7 +106,8 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
         "gateway": "meu-gateway",
         "originDomain": "meusite.com.br",
         "isSandbox": false,
-        "fee": { "amount": 3.50 }
+        "fee": { "amount": 3.50 },
+        "createdAt": "2026-03-10T14:30:00.000Z"
       },
       "timestamp": "2026-03-10T14:35:00.000Z"
     }
@@ -111,7 +115,7 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
   </Accordion>
 
   <Accordion title="transaction.expired" icon="clock">
-    Disparado quando uma transação expira sem pagamento. Use para notificar o cliente ou criar nova cobrança. Não inclui `gateway`.
+    Disparado quando uma transação expira sem pagamento. Use para notificar o cliente ou criar nova cobrança.
 
     ```json
     {
@@ -124,6 +128,7 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
         "externalId": "pedido-001",
         "amount": 150.00,
         "product": "Plano Premium",
+        "customerName": "João Silva",
         "customer": {
           "name": "João Silva",
           "email": "joao@email.com",
@@ -132,8 +137,10 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
           "documentType": "CPF",
           "address": { "...": "..." }
         },
+        "gateway": "meu-gateway",
         "originDomain": "meusite.com.br",
-        "isSandbox": true
+        "isSandbox": true,
+        "createdAt": "2026-03-10T14:30:00.000Z"
       },
       "timestamp": "2026-03-11T03:00:00.000Z"
     }
@@ -154,10 +161,12 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
         "externalId": "pedido-001",
         "amount": 150.00,
         "product": "Plano Premium",
+        "customerName": "João Silva",
         "customer": { "...": "igual ao paid" },
         "gateway": "meu-gateway",
         "originDomain": "meusite.com.br",
-        "isSandbox": false
+        "isSandbox": false,
+        "createdAt": "2026-03-10T14:30:00.000Z"
       },
       "timestamp": "2026-03-10T15:00:00.000Z"
     }
@@ -178,10 +187,12 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
         "externalId": "pedido-001",
         "amount": 150.00,
         "product": "Plano Premium",
+        "customerName": "João Silva",
         "customer": { "...": "igual ao paid" },
         "gateway": "meu-gateway",
         "originDomain": "meusite.com.br",
-        "isSandbox": false
+        "isSandbox": false,
+        "createdAt": "2026-03-10T14:30:00.000Z"
       },
       "timestamp": "2026-03-10T14:40:00.000Z"
     }
@@ -202,10 +213,12 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
         "externalId": "pedido-001",
         "amount": 150.00,
         "product": "Plano Premium",
+        "customerName": "João Silva",
         "customer": { "...": "igual ao paid" },
         "gateway": "meu-gateway",
         "originDomain": "meusite.com.br",
-        "isSandbox": false
+        "isSandbox": false,
+        "createdAt": "2026-03-10T14:30:00.000Z"
       },
       "timestamp": "2026-03-10T14:33:00.000Z"
     }
