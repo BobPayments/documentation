@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.29](https://github.com/BobPayments/documentation/compare/v1.1.28...v1.1.29) (2026-05-04)
+
+### Documentação
+
+* add missing fields to webhook payload examples ([#1](https://github.com/BobPayments/documentation/issues/1)) ([89e3285](https://github.com/BobPayments/documentation/commit/89e32855484ebd3661b6c2b49c259f342b80f536))
+
 ## [1.1.28](https://github.com/BobPayments/documentation/compare/v1.1.27...v1.1.28) (2026-03-26)
 
 ### Correções
