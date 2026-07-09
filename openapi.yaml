@@ -970,6 +970,216 @@ paths:
                 - detail
                 - instance
                 additionalProperties: false
+  /api/v1/checkout-sessions/:
+    post:
+      summary: Criar sessão de checkout
+      description: Cria uma sessão de checkout hospedado. Redirecione o comprador para a `checkoutUrl`
+        retornada — a Bob cuida da tela de pagamento, geração do PIX e confirmação. Requer API
+        key (Bearer).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amountCents:
+                  type: integer
+                  minimum: 1
+                  maximum: 50000000
+                  description: Valor total em centavos (ex. 10000 = R$ 100,00)
+                currency:
+                  type: string
+                  enum:
+                  - BRL
+                  default: BRL
+                customer:
+                  type: object
+                  description: Dados do comprador para pré-preencher o checkout (opcional)
+                  properties:
+                    name:
+                      type: string
+                      minLength: 1
+                      maxLength: 255
+                    email:
+                      type: string
+                      format: email
+                    document:
+                      type: string
+                      minLength: 11
+                      maxLength: 14
+                    documentType:
+                      type: string
+                      enum:
+                      - CPF
+                      - CNPJ
+                    phone:
+                      type: string
+                      minLength: 8
+                      maxLength: 25
+                items:
+                  type: array
+                  description: Itens exibidos no resumo do pedido (metadado de exibição — o
+                    catálogo é seu)
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        minLength: 1
+                        maxLength: 255
+                      quantity:
+                        type: integer
+                        minimum: 1
+                      unitAmountCents:
+                        type: integer
+                        minimum: 0
+                    required:
+                    - name
+                    - quantity
+                    - unitAmountCents
+                paymentMethods:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum:
+                    - pix
+                    - credit_card
+                    - boleto
+                  description: Métodos aceitos no checkout. Default [pix].
+                metadata:
+                  type: object
+                  additionalProperties: true
+                successUrl:
+                  type: string
+                  format: uri
+                cancelUrl:
+                  type: string
+                  format: uri
+                webhookUrl:
+                  type: string
+                  format: uri
+                  description: URL que recebe os webhooks desta sessão. Quando presente, a resposta
+                    traz o `webhookSecret` de assinatura.
+                webhookVersion:
+                  type: string
+                  enum:
+                  - v1
+                  - v2
+                  default: v1
+                  description: Versão do payload/assinatura do webhook. Recomendado v2 (valores
+                    em centavos + assinatura anti-replay). O SDK oficial envia v2 por padrão.
+                expiresAt:
+                  type: string
+                  format: date-time
+                  description: Expiração do LINK de checkout (default 24h). Não confundir com
+                    a expiração do PIX gerado dentro dele.
+              required:
+              - amountCents
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    default: true
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      sessionId:
+                        type: string
+                      checkoutToken:
+                        type: string
+                      checkoutUrl:
+                        type: string
+                        description: URL do checkout hospedado — redirecione o comprador para
+                          cá
+                      status:
+                        type: string
+                        enum: &id001
+                        - PENDING
+                        - PAID
+                        - EXPIRED
+                        - CANCELLED
+                        - FAILED
+                        - REFUNDED
+                      expiresAt:
+                        type: string
+                        nullable: true
+                      webhookSecret:
+                        type: string
+                        nullable: true
+                        description: Secret HMAC dos webhooks desta sessão — exibido apenas
+                          aqui, guarde com segurança (null quando webhookUrl não foi enviado)
+                      webhookApiVersion:
+                        type: string
+                        enum:
+                        - v1
+                        - v2
+                    required:
+                    - sessionId
+                    - checkoutToken
+                    - checkoutUrl
+                    - status
+                    - expiresAt
+                    - webhookSecret
+                    - webhookApiVersion
+                required:
+                - success
+                - message
+                - data
+      tags:
+      - Checkout
+      security:
+      - BearerAuth: []
+  /api/v1/checkout-sessions/{token}/status:
+    get:
+      summary: Consultar status da sessão
+      description: Endpoint PÚBLICO de polling do status da sessão (não requer autenticação;
+        rate limit por IP de 120 req/min). Prefira webhooks para confirmação em tempo real e
+        use este endpoint como complemento.
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+        description: O `checkoutToken` retornado na criação da sessão
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    default: true
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: *id001
+                      paidAt:
+                        type: string
+                        nullable: true
+                    required:
+                    - status
+                    - paidAt
+                required:
+                - success
+                - data
+      tags:
+      - Checkout
   /api/v1/customers/:
     get:
       summary: Listar todos os clientes

@@ -4,22 +4,41 @@ description: "Como sair do sandbox e começar a processar pagamentos reais."
 icon: "rocket"
 ---
 
-Simples: quando a integração estiver funcionando no sandbox, é só trocar a chave. Sem processo de aprovação, sem burocracia.
+Simples: quando a integração estiver funcionando no sandbox, é só trocar a chave. Sem processo de aprovação, sem burocracia. Antes de trocar, passe pelo checklist — são os pontos que separam uma integração que funciona de uma integração que aguenta produção.
 
-## Como ativar
+## Checklist de go-live
 
 <Steps>
-  <Step title="Teste no sandbox">
-    Garanta que todos os fluxos funcionam: criar cobrança, receber webhook, tratar erros.
+  <Step title="Fluxo completo validado no sandbox">
+    Criar cobrança → receber webhook `transaction.paid` → liberar o pedido. Teste também os caminhos tristes: expiração (`transaction.expired`) e cancelamento. No [sandbox](/pages/sandbox) dá pra simular todos.
   </Step>
-  <Step title="Troque a chave de API">
-    Substitua `sk_test_*` por `sk_live_*` nas variáveis de ambiente da sua aplicação. Só isso.
+  <Step title="Assinatura de webhook verificada">
+    Sua aplicação **rejeita** webhooks com assinatura inválida? Teste mandando um POST forjado no seu endpoint. Use o [SDK ou os exemplos de verificação](/pages/webhooks#verificando-a-assinatura) — sempre com o corpo bruto. Canais novos usam o formato **v2** (anti-replay).
+  </Step>
+  <Step title="Consumo de webhook idempotente">
+    Entregas podem se repetir (retry da plataforma). Processar o mesmo `transaction.paid` duas vezes não pode liberar o pedido duas vezes — deduplique por `transactionId`.
+  </Step>
+  <Step title="Criação com Idempotency-Key">
+    Timeout na criação não pode virar PIX duplicado. Envie [`Idempotency-Key`](/pages/idempotency) (o SDK já faz sozinho) e repita com a mesma chave após falhas de rede.
+  </Step>
+  <Step title="HTTP 202 tratado">
+    Em degradação rara, a criação responde `202` com `id: null` — o PIX é **válido**, entregue ao comprador e use `externalId` como referência. Veja [Erros](/pages/errors).
+  </Step>
+  <Step title="Erros tratados pelo código, não pela mensagem">
+    Trate por `status` + `type` (ex.: `ERR_ALL_GATEWAYS_FAILED` → retry com backoff). A [página de erros](/pages/errors) diz o que fazer com cada um.
+  </Step>
+  <Step title="Troque a chave">
+    Substitua `sk_test_*` por `sk_live_*` nas variáveis de ambiente. Só isso — mesma API, mesmos endpoints.
   </Step>
 </Steps>
 
 <Warning>
-  Nunca exponha `sk_live_*` no frontend, em repositórios públicos ou em logs de aplicação.
+  Nunca exponha `sk_live_*` no frontend, em repositórios públicos ou em logs de aplicação. Em caso de vazamento, revogue no Dashboard imediatamente.
 </Warning>
+
+<Note>
+  Transações de sandbox e produção são totalmente isoladas — nada do que você criou com `sk_test_` aparece nos números reais do projeto.
+</Note>
 
 <Card title="Ficou travado?" icon="envelope" href="mailto:suporte@payments.bob.company">
   Fala com a gente: suporte@payments.bob.company

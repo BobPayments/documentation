@@ -24,7 +24,7 @@ Cada projeto tem duas chaves de API:
 No sandbox, confirme uma transação sem precisar de um PIX real:
 
 ```bash cURL
-curl -X POST https://api.payments.bob.company/api/sandbox/transactions/TRANSACTION_ID/pay \
+curl -X POST https://api.payments.bob.company/api/v1/sandbox/transactions/TRANSACTION_ID/pay \
   -H "Authorization: Bearer sk_test_sua_chave"
 ```
 
@@ -33,6 +33,18 @@ Após a simulação, o webhook configurado no projeto é disparado automaticamen
 <Note>
   Webhooks funcionam normalmente no sandbox — ideal para testar o fluxo completo de ponta a ponta.
 </Note>
+
+## Desfecho automático pelos centavos
+
+Se o seu projeto usa o gateway de teste **Bob Sandbox** (configurável no Dashboard em **Conexões**), o desfecho da cobrança é controlado pelos **dois últimos dígitos** do valor — sem precisar chamar o endpoint de simulação:
+
+| Centavos do valor | Desfecho |
+|---|---|
+| `.01` (ex.: `10001`) | Expira em ~5 segundos (`transaction.expired`) |
+| `.02` (ex.: `10002`) | Fica pendente até expirar naturalmente |
+| Qualquer outro (ex.: `10000`) | Pago em ~5 segundos (`transaction.paid`) |
+
+Ideal para testes automatizados: crie três cobranças e valide os três fluxos de webhook de uma vez.
 
 ## Identificando transações sandbox
 

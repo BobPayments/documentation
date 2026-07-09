@@ -92,6 +92,7 @@
               "pages/sandbox",
               "pages/authentication",
               "pages/webhooks",
+              "pages/errors",
               "pages/production"
             ]
           },
@@ -115,6 +116,14 @@
             "pages": [
               "pages/pix/check-status",
               "pages/pix/list"
+            ]
+          },
+          {
+            "group": "Checkout",
+            "pages": [
+              "pages/checkout/overview",
+              "pages/checkout/create",
+              "pages/checkout/status"
             ]
           },
           {

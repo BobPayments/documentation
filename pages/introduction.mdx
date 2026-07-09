@@ -15,13 +15,57 @@ Uma chamada, um `pixCode`, dinheiro na conta:
 ```javascript
 const response = await fetch('https://api.payments.bob.company/api/v1/transactions/', {
   method: 'POST',
-  headers: { 'Authorization': 'Bearer sk_test_sua_chave' },
-  body: JSON.stringify({ amountCents: 10000, product: 'Plano Premium' })
+  headers: {
+    'Authorization': 'Bearer sk_test_sua_chave',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    customer: {
+      name: 'João Silva',
+      document: '12345678901',
+      documentType: 'CPF',
+      email: 'joao@example.com',
+      address: {
+        street: 'Rua das Flores', streetNumber: '123', neighborhood: 'Centro',
+        zipCode: '01310-100', city: 'São Paulo', state: 'SP',
+      },
+    },
+    payment: { amountCents: 10000, product: 'Plano Premium' }, // R$ 100,00 — sempre centavos
+    originDomain: 'loja.example.com',
+  }),
 });
 
 const { data } = await response.json();
 console.log(data.pixCode); // manda isso pro seu cliente pagar
 ```
+
+```json
+{
+  "success": true,
+  "message": "Transaction created successfully",
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "abc123",
+    "pixCode": "00020126580014br.gov.bcb.pix...",
+    "expirationDate": "2026-02-28T10:00:00.000Z",
+    "status": "waiting_payment"
+  }
+}
+```
+
+## <Icon icon="signs-post" type="solid" /> Escolha o seu caminho
+
+<CardGroup cols={3}>
+  <Card title="API direta" icon="code" href="/pages/pix/create">
+    Você recebe o `pixCode` e monta a experiência de pagamento do seu jeito. Controle total.
+  </Card>
+  <Card title="Checkout hospedado" icon="cart-shopping" href="/pages/checkout/overview">
+    Uma chamada + redirect. A Bob cuida da tela de pagamento, QR Code e confirmação.
+  </Card>
+  <Card title="SDK Node.js" icon="node-js" href="/pages/sdk/node">
+    Tipos completos, idempotência automática e webhooks verificados em uma biblioteca oficial.
+  </Card>
+</CardGroup>
 
 ## <Icon icon="laptop" type="solid" /> Como funciona
 
@@ -29,20 +73,27 @@ Duas coisas que você vai notar rápido:
 
 1. **Endpoints que falam por si** — sem abstrações desnecessárias
    ```
-   POST /api/v1/transactions/      // cria cobrança
-   GET  /api/v1/transactions/{id}  // checa status
-   GET  /api/v1/customers/         // lista clientes
+   POST /api/v1/transactions/        // cria cobrança
+   GET  /api/v1/transactions/{id}    // checa status
+   POST /api/v1/checkout-sessions/   // checkout hospedado
+   GET  /api/v1/customers/           // lista clientes
    ```
 
-2. **Resposta sempre no mesmo formato**
-   ```json
-   {
-     "success": true,
-     "data": {
-       "id": "clx7a8b9c0d1e2f3g4h5",
-       "status": "waiting_payment",
-       "pixCode": "00020126580014br.gov.bcb.pix...",
-       "expirationDate": "2026-02-28T10:00:00.000Z"
-     }
-   }
-   ```
+2. **Valores sempre em centavos, resposta sempre no mesmo formato** — `10000` = R$ 100,00, em toda a API. Sucesso vem em `{ success, data }`; erro vem em [RFC 7807](/pages/errors) com código estável.
+
+## <Icon icon="list-check" type="solid" /> Próximos passos
+
+<Steps>
+  <Step title="Gere sua chave de teste">
+    [Autenticação](/pages/authentication) — crie a `sk_test_` no Dashboard.
+  </Step>
+  <Step title="Rode o fluxo no sandbox">
+    [Sandbox](/pages/sandbox) — crie, pague e expire cobranças sem dinheiro real.
+  </Step>
+  <Step title="Configure webhooks">
+    [Webhooks](/pages/webhooks) — saiba na hora quando o pagamento cair.
+  </Step>
+  <Step title="Vá para produção">
+    [Indo para produção](/pages/production) — o checklist antes de trocar a chave.
+  </Step>
+</Steps>
