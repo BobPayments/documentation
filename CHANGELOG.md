@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.30](https://github.com/BobPayments/documentation/compare/v1.1.29...v1.1.30) (2026-07-09)
+
+### Documentação
+
+* webhooks v2 (centavos + anti-replay), idempotência e SDK Node.js ([42abd72](https://github.com/BobPayments/documentation/commit/42abd7251302c7d312a06e9d159c0effe36548cf))
+
 ## [1.1.29](https://github.com/BobPayments/documentation/compare/v1.1.28...v1.1.29) (2026-05-04)
 
 ### Documentação
