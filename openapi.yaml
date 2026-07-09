@@ -22,7 +22,20 @@ paths:
     post:
       summary: Criar nova transação
       description: Cria uma nova transação PIX utilizando a estratégia de execução
-        paralela de gateways.
+        paralela de gateways. Aceita o header opcional `Idempotency-Key` para
+        repetição segura — a resposta 2xx original é replayada por 1 hora
+        (com o header `x-idempotent-replayed`); requisição em voo com a mesma
+        chave retorna 409; reusar a chave com body diferente retorna 422.
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        description: Identificador único da operação (até 256 caracteres, ex.
+          UUID ou ID do pedido). Torna a criação segura de repetir em timeout
+          ou falha de rede, sem risco de PIX duplicado.
+        schema:
+          type: string
+          maxLength: 256
       requestBody:
         required: true
         content:

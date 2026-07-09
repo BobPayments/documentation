@@ -1,0 +1,51 @@
+---
+title: "Idempotência"
+description: "Repita requisições de criação com segurança — sem risco de PIX duplicado."
+icon: "rotate"
+---
+
+Timeouts e falhas de rede deixam uma dúvida perigosa: *a cobrança foi criada ou não?* Repetir às cegas pode gerar **dois PIX** para o mesmo pedido. O header `Idempotency-Key` resolve isso: com ele, repetir a mesma requisição é sempre seguro.
+
+## Como funciona
+
+Envie um identificador único por operação no header `Idempotency-Key` do `POST /api/v1/transactions`:
+
+```bash
+curl -X POST https://api.payments.bob.company/api/v1/transactions \
+  -H "Authorization: Bearer $BOB_API_KEY" \
+  -H "Idempotency-Key: pedido-8f14e45f" \
+  -H "Content-Type: application/json" \
+  -d '{ ... }'
+```
+
+| Cenário | O que acontece |
+|---|---|
+| Primeira requisição com a chave | Processada normalmente; a resposta 2xx fica guardada por **1 hora** |
+| Repetição com a mesma chave e mesmo body | A API **replaya a resposta original** (com header `x-idempotent-replayed: true`) — nenhum PIX novo é criado |
+| Repetição enquanto a original ainda processa | `409 Conflict` — aguarde um instante e repita |
+| Mesma chave com **body diferente** | `422` — cada requisição distinta precisa de uma chave nova |
+| Requisição que terminou em erro (4xx/5xx) | A chave é liberada; repetir **re-executa** a criação |
+
+<Note>
+  O escopo da chave é o seu **projeto** — chaves de projetos diferentes nunca colidem. Use até 256 caracteres; um UUID ou o ID do seu pedido são boas escolhas.
+</Note>
+
+## Com o SDK Node.js
+
+O SDK envia uma chave automaticamente (UUID por chamada) e, graças a ela, faz **retry seguro** em timeout, falha de rede, 429 e 5xx:
+
+```typescript
+const tx = await bob.transactions.create(params);
+tx.idempotencyKey; // chave usada — guarde para repetir manualmente se precisar
+tx.replayed;       // true = esta resposta veio do replay de uma criação anterior
+
+// Amarrando ao seu pedido (repetições do mesmo pedido nunca duplicam):
+await bob.transactions.create(params, { idempotencyKey: `pedido-${orderId}` });
+```
+
+## Boas práticas
+
+- **Gere uma chave nova por operação de negócio** (por pedido, por tentativa de cobrança) — nunca reuse uma chave fixa.
+- Ao repetir após timeout, **use a mesma chave** da tentativa original.
+- A janela de replay é de **1 hora** — depois disso, a mesma chave cria uma transação nova.
+- A idempotência complementa (não substitui) a deduplicação automática da plataforma, que já bloqueia PIX repetido do mesmo comprador para o mesmo valor/produto enquanto a cobrança anterior não expira.

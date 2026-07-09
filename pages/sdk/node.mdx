@@ -1,0 +1,142 @@
+---
+title: "SDK Node.js"
+description: "Biblioteca oficial TypeScript/Node.js — tipos completos, idempotência automática e webhooks verificados."
+icon: "node-js"
+---
+
+O [`@bobpayments/sdk`](https://github.com/BobPayments/bob-payments-sdk-node) é a forma recomendada de integrar em Node.js: zero dependências (usa `fetch` nativo e `node:crypto`), tipos TypeScript do contrato completo da API, ESM + CJS.
+
+<Warning>
+  Server-side only: a API key `sk_live_`/`sk_test_` é secreta e **nunca** deve ir para o browser.
+</Warning>
+
+## Instalação
+
+```bash
+pnpm add @bobpayments/sdk
+# npm install @bobpayments/sdk · yarn add @bobpayments/sdk
+```
+
+Requer Node.js >= 18.17.
+
+## Cliente
+
+```typescript
+import { BobPayments } from '@bobpayments/sdk';
+
+const bob = new BobPayments({
+  apiKey: process.env.BOB_API_KEY!, // sk_live_... ou sk_test_...
+  // timeoutMs: 35_000,             // timeout por tentativa
+  // maxRetries: 2,                 // retries automáticos; 0 desliga
+});
+
+bob.environment; // 'live' | 'sandbox' — detectado pelo prefixo da chave
+```
+
+## Criar uma cobrança PIX
+
+```typescript
+const tx = await bob.transactions.create({
+  customer: {
+    name: 'João Silva',
+    document: '12345678901',
+    documentType: 'CPF',
+    email: 'joao@example.com',
+    address: {
+      street: 'Rua das Flores',
+      streetNumber: '123',
+      neighborhood: 'Centro',
+      zipCode: '01310-100',
+      city: 'São Paulo',
+      state: 'SP',
+    },
+  },
+  payment: { amountCents: 10_000, product: 'Assinatura Pro' }, // sempre centavos
+  originDomain: 'loja.example.com',
+});
+
+tx.pixCode;        // PIX copia-e-cola (EMV)
+tx.expirationDate; // quando o PIX expira
+tx.persisted;      // false = HTTP 202 (reconciliação pendente; PIX válido)
+tx.replayed;       // true = resposta replayada por idempotência
+```
+
+Todo `create` envia um header [`Idempotency-Key`](/pages/idempotency) automaticamente, o que torna a chamada segura de repetir — o SDK faz retry com backoff em timeout, falha de rede, 429 e 5xx sem risco de PIX duplicado.
+
+## Consultas
+
+```typescript
+const detail = await bob.transactions.get('clx1abc123');
+
+const page = await bob.transactions.list({
+  status: 'paid',
+  dateFrom: new Date('2026-07-01'),
+  limit: 50,
+}); // { data, meta: { total, page, limit, totalPages } }
+
+const customers = await bob.customers.list({ email: 'joao@example.com' });
+const customer = await bob.customers.get(customers.data[0].id);
+```
+
+## Webhooks
+
+`constructWebhookEvent` verifica a assinatura (v1 e v2, em tempo constante, com anti-replay) e retorna o evento tipado:
+
+```typescript
+import { constructWebhookEvent, BobPaymentsWebhookVerificationError } from '@bobpayments/sdk';
+
+app.post('/webhooks/bob', express.raw({ type: 'application/json' }), (req, res) => {
+  try {
+    const event = constructWebhookEvent(
+      req.body, // corpo BRUTO (Buffer)
+      req.headers['x-webhook-signature'],
+      process.env.BOB_WEBHOOK_SECRET!,
+    );
+
+    if (event.event === 'transaction.paid') {
+      // v2: event.data.amountCents · v1: event.data.amount
+    }
+    res.status(200).send('ok');
+  } catch (error) {
+    if (error instanceof BobPaymentsWebhookVerificationError) {
+      return res.status(401).send('invalid signature');
+    }
+    throw error;
+  }
+});
+```
+
+Detalhes de payload e assinatura: [Webhooks](/pages/webhooks).
+
+## Tratamento de erros
+
+Toda resposta não-2xx vira `BobPaymentsApiError` com os campos RFC 7807 da API:
+
+```typescript
+import { BobPaymentsApiError, BobPaymentsTimeoutError } from '@bobpayments/sdk';
+
+try {
+  await bob.transactions.create(params);
+} catch (error) {
+  if (error instanceof BobPaymentsApiError) {
+    error.status;            // 400, 401, 422, 429, 503...
+    error.code;              // 'ERR_INTEGRATION_006', ...
+    error.detail;            // mensagem descritiva
+    error.retryAfterSeconds; // em 429/503 quando a API envia Retry-After
+  } else if (error instanceof BobPaymentsTimeoutError) {
+    // excedeu o timeout do cliente
+  }
+}
+```
+
+## Sandbox
+
+Com `sk_test_` e o gateway **Bob Sandbox** configurado no projeto, o desfecho é controlado pelos centavos do valor — veja [Sandbox](/pages/sandbox):
+
+```typescript
+await bob.transactions.create({ payment: { amountCents: 10_001, ... }, ... }); // expira em ~5s
+```
+
+<Card title="Código-fonte e releases" icon="github" href="https://github.com/BobPayments/bob-payments-sdk-node">
+  github.com/BobPayments/bob-payments-sdk-node — CHANGELOG e versões via semantic-release
+</Card>
