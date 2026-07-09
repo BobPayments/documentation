@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.31](https://github.com/BobPayments/documentation/compare/v1.1.30...v1.1.31) (2026-07-09)
+
+### Documentação
+
+* checkout hospedado, catálogo de erros e revisão geral de clareza ([7462b0c](https://github.com/BobPayments/documentation/commit/7462b0cf7da51dd87e8043a1dcd7885952df616d))
+
 ## [1.1.30](https://github.com/BobPayments/documentation/compare/v1.1.29...v1.1.30) (2026-07-09)
 
 ### Documentação
