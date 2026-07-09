@@ -99,7 +99,8 @@
           {
             "group": "SDKs",
             "pages": [
-              "pages/sdk/node"
+              "pages/sdk/node",
+              "pages/sdk/php"
             ]
           },
           {
