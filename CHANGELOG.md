@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.32](https://github.com/BobPayments/documentation/compare/v1.1.31...v1.1.32) (2026-07-09)
+
+### Documentação
+
+* página do SDK PHP (bob-payments/sdk) ([d36a33c](https://github.com/BobPayments/documentation/commit/d36a33c0aabe9543b76f128313b504787ff2b7d5))
+
 ## [1.1.31](https://github.com/BobPayments/documentation/compare/v1.1.30...v1.1.31) (2026-07-09)
 
 ### Documentação
