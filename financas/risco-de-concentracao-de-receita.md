@@ -7,9 +7,23 @@
 
 ## O fato
 
-**1 cliente (plano Exclusive, ~R$5.000/mês) representa ~85% do MRR.**
+**1 cliente (plano Exclusive) representa ~85% do MRR.**
 
-Faturamento observado:
+## Série de MRR — sempre em duas linhas
+
+A segunda linha é a que mede se o negócio está crescendo. Fonte: Stripe livemode,
+assinaturas com status `active`.
+
+| Data da leitura | MRR total | MRR ex-Exclusive | Concentração |
+|---|---|---|---|
+| 2026-07-25 | R$ 5.902,77 | **R$ 897,77** | 84,8% |
+
+Composição em 25/07: 4 assinaturas ativas — Exclusive R$5.005, Scale R$499,19,
+Growth R$199,29, Growth R$199,29. **Fora do MRR** por não estarem pagando: 1 Scale
+`past_due` (R$499,19) e 1 Scale `trialing` (R$499 — ver
+[trial-de-2028-caso-isolado.md](trial-de-2028-caso-isolado.md)).
+
+Faturamento observado (caixa, não MRR):
 
 | Período | Faturado | Faturas pagas |
 |---|---|---|
@@ -17,7 +31,7 @@ Faturamento observado:
 | Jul/2026 (parcial até 24/jul) | R$ 7.107,22 | 11 |
 
 Ou seja: tirando o Exclusive, a operação inteira — todos os demais clientes somados —
-gira em torno de **~R$1.000 a R$2.000/mês**.
+gira abaixo de R$1.000/mês de receita recorrente.
 
 ## Por que isso importa
 

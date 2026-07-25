@@ -30,7 +30,9 @@ livemode e do banco de produção em **2026-07-24**, salvo indicação em contr�
 
 | Métrica | Valor |
 |---|---|
-| MRR — concentração | ~85% em 1 cliente (Exclusive, ~R$5k/mês) |
+| MRR total (25/jul) | R$ 5.902,77 |
+| MRR ex-Exclusive (25/jul) | **R$ 897,77** |
+| MRR — concentração | 84,8% em 1 cliente (Exclusive) |
 | Faturamento Jun/2026 (fechado) | R$ 6.895,10 (13 faturas) |
 | Faturamento Jul/2026 (parcial até 24) | R$ 7.107,22 (11 faturas) |
 | ARPU SMB (ex-Exclusive, só pagantes) | R$ 349 |
