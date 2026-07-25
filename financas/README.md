@@ -19,10 +19,11 @@ livemode e do banco de produção em **2026-07-24**, salvo indicação em contr�
 - **[Base de winback e segmentação do churn](base-winback-e-segmentacao-do-churn.md)** —
   os 19 cancelados abertos em 2 involuntários / 4 winback / 13 trials.
 - **[Funil de ativação medido](funil-de-ativacao-medido.md)** —
-  3 de 11 usuários sem plano nenhum, 2 já com projeto e presos no sandbox. O degrau invisível
+  3 de 10 usuários sem plano nenhum, 2 já com projeto e presos no sandbox. O degrau invisível
   existe. Inclui a armadilha da não-monotonicidade e o custo real do conserto.
-- **[Trial de Scale até 2028](trial-de-2028-caso-isolado.md)** —
-  R$499/mês em trial por 631 dias. Real, confirmado no Stripe, mas caso isolado (1 em 25).
+- **[Conta de teste interna em produção](trial-de-2028-caso-isolado.md)** —
+  A assinatura Scale em trial até 2028 é CONTA DE TESTE INTERNA do Bruno, não cliente. O que
+  ela distorceu, e a ressalva de que pode não ser a única conta interna na base.
 - **[Como consultar a réplica de leitura](consultar-a-replica-de-leitura.md)** —
   receita operacional: Prisma do container Fly, `pgbouncer=true` obrigatório, e o que não tentar.
 
@@ -40,8 +41,8 @@ livemode e do banco de produção em **2026-07-24**, salvo indicação em contr�
 | CAC-teto de trabalho | R$ 100–150 |
 | Budget de aquisição recomendado | R$ 25/dia |
 | Alvo real de dunning | 2 assinaturas (MRR R$698) |
-| Usuários sem plano nenhum | 3 de 11 (27%), sendo 2 já com projeto criado |
-| Preço médio contratado (ex-Exclusive) | R$ 329 |
+| Usuários sem plano nenhum | 3 de 10 (30%), sendo 2 já com projeto criado |
+| Preço médio contratado (ex-Exclusive, ex-teste) | R$ 295 |
 | Ritmo de signup (últimos 3 meses) | ~0,7/mês, em queda |
 
 ## Armadilhas conhecidas
@@ -54,3 +55,6 @@ livemode e do banco de produção em **2026-07-24**, salvo indicação em contr�
 4. **Não infira configuração do Stripe a partir de eventos antigos** — a régua de dunning
    inferida via API refletia abril, não o estado atual.
 5. **Não sonde API com verbo destrutivo em produção** — no Stripe o estrago não se desfaz.
+6. **Exclua a conta de teste interna** de qualquer contagem de usuários, assinaturas ou
+   médias de preço. Ela é livemode e não tem marcação — e pode não ser a única. Ver
+   [trial-de-2028-caso-isolado.md](trial-de-2028-caso-isolado.md).

@@ -20,8 +20,11 @@ assinaturas com status `active`.
 
 Composição em 25/07: 4 assinaturas ativas — Exclusive R$5.005, Scale R$499,19,
 Growth R$199,29, Growth R$199,29. **Fora do MRR** por não estarem pagando: 1 Scale
-`past_due` (R$499,19) e 1 Scale `trialing` (R$499 — ver
-[trial-de-2028-caso-isolado.md](trial-de-2028-caso-isolado.md)).
+`past_due` (R$499,19) e 1 Scale `trialing` que é **conta de teste interna**, não cliente
+(ver [trial-de-2028-caso-isolado.md](trial-de-2028-caso-isolado.md)).
+
+**A correção da conta de teste não alterou o MRR**, porque `trialing` nunca foi contado como
+receita ativa. Os dois números acima valem como estavam.
 
 Faturamento observado (caixa, não MRR):
 

@@ -29,7 +29,7 @@ Comparando Stripe × `user_plans`:
 |---|---|---|---|
 | `active` | 4 | 4 | ✅ |
 | `past_due` | 1 | 1 | ✅ |
-| `trialing` | 1 | 1 | ✅ |
+| `trialing` | 1 | 1 | ✅ (é conta de teste interna, não cliente) |
 | `canceled` | 19 | 1 | ❌ (esperado) |
 
 Os 7 `subscription_id` presentes no banco são um **subconjunto** dos 25 do Stripe.

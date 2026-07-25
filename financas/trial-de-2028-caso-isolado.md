@@ -1,81 +1,67 @@
-# Trial de Scale válido até 2028 — real, e caso isolado
+# Conta de teste interna em produção (o "trial de 2028")
 
-**Área:** Finanças · **Confirmado em:** 2026-07-25 · **Fontes:** Stripe (livemode) + réplica
+**Área:** Finanças · **Apurado em:** 2026-07-25 · **Corrigido em:** 2026-07-25
+**Fontes:** Stripe (livemode) + réplica
 
-## O fato
+> **Correção.** A versão anterior deste documento tratava esta assinatura como receita sendo
+> regalada por erro humano no Dashboard. **Está errado.** O Bruno confirmou que **é a conta de
+> teste dele**. Não é receita perdida, não é erro, não é caso a resolver. O documento foi
+> mantido — em vez de apagado — porque a conta continua existindo em livemode e continua
+> contaminando métricas se ninguém souber que ela está lá.
 
-Existe **uma** assinatura Scale (R$499/mês) em `trialing` com **`trial_end` em 2028-04-15** —
-**631 dias no futuro** a partir da confirmação. `livemode: true`,
-`cancel_at_period_end: false`, `expires_at` e `cut_at` nulos.
+## O que é
 
-Um trial de dois anos não é trial: é assinatura gratuita.
+Uma assinatura Scale (R$499/mês) em `trialing` com `trial_end` em **2028-04-15**, criada em
+2026-04-26. `livemode: true`, `cancel_at_period_end: false`.
 
-É o usuário chamado **REF 1** em
-[funil-de-ativacao-medido.md](funil-de-ativacao-medido.md) — o que rodou 12.751 transações em
-sandbox e parou.
+**É conta de teste interna do Bruno.** O trial longo é proposital: mantém a conta utilizável
+sem gerar cobrança. Os 720 dias exatos, que pareciam digitação equivocada, são só isso — um
+prazo redondo escolhido de propósito.
 
-## É real, não artefato do banco
+As **12.751 transações em sandbox** registradas nessa conta, que pareciam um lead altamente
+engajado, são tráfego de teste.
 
-A suspeita inicial era de dessincronização: a linha em `user_plans` não era atualizada desde
-2026-04-26. A comparação status a status das 7 linhas que têm assinatura no Stripe deu
-**zero divergência**:
+## Por que isso importa mesmo não sendo problema
 
-| Plano | Banco | Stripe |
-|---|---|---|
-| exclusive | active | active |
-| scale | past_due | past_due |
-| scale | **trialing** | **trialing** |
-| scale | active | active |
-| growth | active | active |
-| growth | active | active |
-| starter | canceled | canceled |
+**Uma conta interna em livemode entra em toda contagem que não a exclua explicitamente.**
+Ela já havia distorcido três leituras antes da correção:
 
-O banco não estava desatualizado — nada aconteceu com essa assinatura desde abril, o que é
-coerente com um trial de dois anos, que não gera evento.
+1. **Funil de ativação** — contava como 1 dos 11 usuários, e como "pagante preso no sandbox".
+   Corrigido: o funil real tem **10 usuários**. Ver
+   [funil-de-ativacao-medido.md](funil-de-ativacao-medido.md).
+2. **Base de leads** — era apontada como "o melhor lead da base, disparado", com prioridade 1
+   na fila de toque. **Esse lead não existe.**
+3. **Preço médio contratado** — entrava na média das assinaturas pagas, puxando-a para cima.
 
-## Tamanho: 1 em 25. Não é padrão
+**Não afeta o MRR**, porque `trialing` nunca foi contado como receita ativa. Ver
+[risco-de-concentracao-de-receita.md](risco-de-concentracao-de-receita.md).
 
-- No Stripe: **25 assinaturas** em todo o histórico. Com `trial_end` no futuro: **uma**.
-- No banco: das 8 linhas de `user_plans`, só 1 tem `trial_ends_at` preenchido.
+## ⚠️ Ressalva aberta: pode não ser a única
 
-**Sobre o critério "`expires_at` NULL com plano pago":** são 6 de 8, **mas isso não aponta
-nada**. `expires_at` NULL é o estado normal de assinatura recorrente em curso — ela não expira,
-renova. Das 6, cinco são legítimas (4 `active` + 1 `past_due`) e a sexta é a própria trialing.
-Reportar as 6 como suspeitas seria alarme falso. Fica registrado para que ninguém refaça a
-consulta achando que encontrou um buraco.
+Esta conta só foi identificada como interna porque alguém perguntou. **Não existe marcação no
+banco nem no Stripe que distinga conta interna de cliente real** — nenhuma flag, nenhum
+metadata, nenhum padrão de e-mail verificável a partir dos dados agregados.
 
-## Causa provável: erro humano no Dashboard, não bug de código
+Consequência: **não é possível afirmar que as outras 24 assinaturas do Stripe são todas de
+clientes reais.** Se houver outras contas de teste, elas estão hoje dentro do churn histórico
+(os 19 cancelados), do funil e das médias — em todos os documentos desta pasta.
 
-Dois indícios convergentes:
+**Recomendação:** marcar contas internas de forma legível por consulta — `metadata` no customer
+do Stripe, ou uma flag em `users`. Enquanto não existir, toda apuração desta pasta carrega essa
+incerteza, e a única forma de resolver é o Bruno listar quais contas são dele.
 
-1. **A data é exatamente 720 dias após o início** (2026-04-26 + 720 = 2028-04-15). Número
-   redondo demais para ter sido escolhido como data — parece alguém digitando `720` num campo
-   de dias.
-2. **O código nunca cria trial.** Não existe `trial_period_days` em lugar nenhum do back; o
-   único ponto que toca isso é `stripe-billing-provider.ts:379`, que apenas **lê** o
-   `trial_end` vindo do Stripe.
+## Tamanho, para referência
 
-Portanto o trial foi criado à mão no Dashboard, não pelo checkout do produto — e **não há risco
-de se replicar sozinho** em novos clientes.
+- Stripe: **25 assinaturas** no histórico, das quais 1 é esta conta de teste → **24** a
+  investigar como reais.
+- Assinaturas em `trialing`: **apenas esta**. Nenhum outro trial existe, e o código nunca cria
+  trial (`stripe-billing-provider.ts:379` apenas lê o `trial_end` vindo do Stripe), então não
+  nascem novos sozinhos.
+- **Decisão do Bruno em 25/07: a Bob não terá trial.** Como não há trial em código nem outro
+  trial ativo, não há nada a encerrar além do que se decidir sobre esta conta interna.
 
-## Quanto custa
+## Registro metodológico
 
-R$499/mês não faturados enquanto durar; até abril/2028, ~R$10.500. O número que importa é o de
-curto prazo: **3 meses ≈ R$1.500**, da mesma ordem do MRR SMB inteiro (a base sem o Exclusive
-gira R$1–2k/mês — ver
-[risco-de-concentracao-de-receita.md](risco-de-concentracao-de-receita.md)).
-
-**Ressalva honesta:** só vira receita se essa pessoa fosse converter, e hoje ela está travada
-no sandbox com zero transações de produção. Não é dinheiro perdido — é o preço de não ter
-percebido.
-
-## O que NÃO foi feito, de propósito
-
-**Nada foi alterado.** Encurtar o trial é escrita em produção afetando um cliente real, e no
-Stripe não se desfaz. A ordem recomendada:
-
-1. O Fecho conversa com a pessoa — o gancho é destravar produção, **nunca** prazo. O argumento
-   "seu teste acaba em X dias" não existe; se usado, o cliente confere e a credibilidade cai.
-2. Só se houver interesse, encurta-se o trial de comum acordo.
-
-Mexer antes do toque queima o único bom lead da base.
+O critério "`expires_at` NULL com plano pago" foi testado como sinal de anomalia e **não serve**:
+dá 6 de 8 linhas porque `expires_at` NULL é o estado normal de assinatura recorrente em curso.
+Fica registrado para ninguém refazer a consulta achando que encontrou um buraco.
