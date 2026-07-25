@@ -17,7 +17,14 @@ livemode e do banco de produção em **2026-07-24**, salvo indicação em contr�
   estado antes/depois, o desfecho `unpaid` → `past_due`, e o fato de que essas settings
   só existem no Dashboard (sem API de escrita).
 - **[Base de winback e segmentação do churn](base-winback-e-segmentacao-do-churn.md)** —
-  os 19 cancelados abertos em 2 involuntários / 4 winback / 13 trials, com IDs.
+  os 19 cancelados abertos em 2 involuntários / 4 winback / 13 trials.
+- **[Funil de ativação medido](funil-de-ativacao-medido.md)** —
+  3 de 11 usuários sem plano nenhum, 2 já com projeto e presos no sandbox. O degrau invisível
+  existe. Inclui a armadilha da não-monotonicidade e o custo real do conserto.
+- **[Trial de Scale até 2028](trial-de-2028-caso-isolado.md)** —
+  R$499/mês em trial por 631 dias. Real, confirmado no Stripe, mas caso isolado (1 em 25).
+- **[Como consultar a réplica de leitura](consultar-a-replica-de-leitura.md)** —
+  receita operacional: Prisma do container Fly, `pgbouncer=true` obrigatório, e o que não tentar.
 
 ## Números de referência (2026-07-24)
 
@@ -31,6 +38,9 @@ livemode e do banco de produção em **2026-07-24**, salvo indicação em contr�
 | CAC-teto de trabalho | R$ 100–150 |
 | Budget de aquisição recomendado | R$ 25/dia |
 | Alvo real de dunning | 2 assinaturas (MRR R$698) |
+| Usuários sem plano nenhum | 3 de 11 (27%), sendo 2 já com projeto criado |
+| Preço médio contratado (ex-Exclusive) | R$ 329 |
+| Ritmo de signup (últimos 3 meses) | ~0,7/mês, em queda |
 
 ## Armadilhas conhecidas
 
