@@ -4,22 +4,22 @@ description: "A Bob cuida da tela de pagamento — você só cria a sessão e re
 icon: "cart-shopping"
 ---
 
-Se você não quer montar a tela de pagamento (exibir QR Code, copia-e-cola, polling, estados de erro), use o **checkout hospedado**: sua aplicação cria uma sessão via API e redireciona o comprador para uma página da Bob. Quando pagar, você recebe o webhook e o comprador volta pra sua `successUrl`.
+Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua aplicação cria uma sessão via API e redireciona o comprador para uma página da Bob. Quando pagar, você recebe o webhook e o comprador volta pra sua `successUrl`.
 
 ## Quando usar cada modo
 
-| | **API direta** (`POST /transactions`) | **Checkout hospedado** |
-|---|---|---|
-| Tela de pagamento | Você constrói (recebe o `pixCode`) | Pronta, hospedada pela Bob |
-| Controle visual | Total | Tema padrão da Bob |
-| Esforço de integração | Maior | Uma chamada + redirect |
-| Confirmação | Webhook do projeto | Webhook por sessão + `successUrl` |
+| | **Checkout hospedado** | **SDK embutível** | **API direta** |
+|---|---|---|---|
+| Tela de pagamento | Pronta, hospedada pela Bob | Montada no seu site pelo SDK Bob | Você constrói |
+| Cartão | Bob cuida de tokenização e 3DS | SDK cuida de tokenização e 3DS | Você cuida de tokenização e 3DS |
+| Esforço de integração | Uma chamada + redirect | `sessionToken` + componente/elemento DOM | Maior |
+| Confirmação | Webhook por sessão + `successUrl` | Callback + webhook | Webhook do projeto |
 
 ## O fluxo completo
 
 <Steps>
   <Step title="Crie a sessão">
-    `POST /api/v1/checkout-sessions/` com o valor e (opcionalmente) itens, dados do comprador e `webhookUrl`:
+    `POST /api/v1/checkout-sessions/` com o valor e (opcionalmente) métodos aceitos, itens, dados do comprador e `webhookUrl`:
 
     ```bash
     curl -X POST https://api.payments.bob.company/api/v1/checkout-sessions/ \
@@ -28,6 +28,7 @@ Se você não quer montar a tela de pagamento (exibir QR Code, copia-e-cola, pol
       -d '{
         "amountCents": 25000,
         "items": [{ "name": "Curso de Violão", "quantity": 1, "unitAmountCents": 25000 }],
+        "paymentMethods": ["pix", "credit_card"],
         "successUrl": "https://loja.example.com/obrigado",
         "webhookUrl": "https://loja.example.com/webhooks/bob",
         "webhookVersion": "v2"
@@ -37,7 +38,7 @@ Se você não quer montar a tela de pagamento (exibir QR Code, copia-e-cola, pol
     A resposta traz `checkoutUrl`, `checkoutToken` e — se você enviou `webhookUrl` — o `webhookSecret` para [verificar as assinaturas](/pages/webhooks). **O secret aparece só nesta resposta**; guarde-o.
   </Step>
   <Step title="Redirecione o comprador">
-    Mande o comprador para a `checkoutUrl`. Ele escolhe pagar, o PIX é gerado e exibido na hora.
+    Mande o comprador para a `checkoutUrl`. Ele escolhe um dos métodos disponíveis, como PIX ou cartão de crédito.
   </Step>
   <Step title="Receba a confirmação">
     Ao pagar, sua `webhookUrl` recebe `transaction.paid` (assinado — [verifique sempre](/pages/webhooks#verificando-a-assinatura)) e o comprador é levado à `successUrl`.
@@ -51,7 +52,10 @@ Se você não quer montar a tela de pagamento (exibir QR Code, copia-e-cola, pol
 
 - **`items` é metadado de exibição** — o catálogo é seu; a Bob só renderiza o resumo do pedido. O valor cobrado é sempre o `amountCents` da sessão.
 - **`expiresAt` é do link, não do PIX** — a sessão dura 24h por padrão; o PIX gerado dentro dela segue a expiração configurada no projeto.
-- **Sessão exige rota publicada** — sem rota de pagamento publicada para o método, a criação falha com `422` (assim você descobre na criação, não no clique do comprador).
+- **`paymentMethods` controla as opções exibidas** — use `["pix"]`, `["credit_card"]` ou combine os métodos. O padrão é `["pix"]`.
+- **Sessão exige rota publicada** — sem rota de pagamento publicada para cada método solicitado, a criação falha com `422` (assim você descobre na criação, não no clique do comprador).
+- **Cartão usa Stripe Connect** — para aceitar cartão, configure a conexão e publique uma rota `credit_card`. Veja [Cartão de crédito](/pages/credit-card/overview).
+- **Quer manter o comprador no seu site?** Use o [SDK de checkout](/pages/sdk/checkout). Ele embute o checkout da Bob sem expor Stripe.js para a sua aplicação.
 - **Sandbox funciona igual** — crie a sessão com `sk_test_` e o fluxo roda de ponta a ponta com o gateway de teste. Veja [Sandbox](/pages/sandbox).
 - **Com o SDK**: `bob.checkoutSessions.create(...)` já envia `webhookVersion: "v2"` por padrão. Veja [SDK Node.js](/pages/sdk/node).
 

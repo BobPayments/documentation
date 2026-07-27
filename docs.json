@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Bob Payments",
-  "description": "Documentação da API Bob Payments - Orquestrador de pagamentos PIX para criar cobranças, gerenciar clientes e receber notificações em tempo real.",
+  "description": "Documentação da API Bob Payments - Orquestrador de pagamentos para criar cobranças PIX e cartão, gerenciar clientes e receber notificações em tempo real.",
   "logo": {
     "light": "https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio",
     "dark": "https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio"
@@ -99,6 +99,7 @@
           {
             "group": "SDKs",
             "pages": [
+              "pages/sdk/checkout",
               "pages/sdk/node",
               "pages/sdk/php"
             ]
@@ -110,6 +111,12 @@
               "pages/pix/create",
               "pages/idempotency",
               "pages/pix/simulate-payment"
+            ]
+          },
+          {
+            "group": "Cartão de crédito",
+            "pages": [
+              "pages/credit-card/overview"
             ]
           },
           {
