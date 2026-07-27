@@ -64,7 +64,7 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 
 ## Timeouts
 
-A criação de transação orquestra gateways em paralelo e responde em até **30 segundos** no pior caso. Configure o timeout do seu cliente HTTP acima disso (o [SDK](/pages/sdk/node) usa 35s) e, ao repetir após timeout, **use a mesma `Idempotency-Key`** — se a criação tiver concluído do outro lado, você recebe o replay em vez de um PIX duplicado.
+A criação de transação orquestra gateways em paralelo e responde em até **30 segundos** no pior caso. Configure o timeout do seu cliente HTTP acima disso (o [SDK](/pages/sdk/node) usa 35s) e, ao repetir após timeout, **use a mesma `Idempotency-Key`** — se a criação tiver concluído do outro lado, você recebe o replay em vez de um pagamento duplicado.
 
 <Card title="Ficou travado?" icon="envelope" href="mailto:suporte@payments.bob.company">
   Fala com a gente: suporte@payments.bob.company

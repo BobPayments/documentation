@@ -1,5 +1,5 @@
 ---
-title: "Indo para Produção"
+title: "Indo para produção"
 description: "Como sair do sandbox e começar a processar pagamentos reais."
 icon: "rocket"
 ---
@@ -19,7 +19,7 @@ Simples: quando a integração estiver funcionando no sandbox, é só trocar a c
     Entregas podem se repetir (retry da plataforma). Processar o mesmo `transaction.paid` duas vezes não pode liberar o pedido duas vezes — deduplique por `transactionId`.
   </Step>
   <Step title="Criação com Idempotency-Key">
-    Timeout na criação não pode virar PIX duplicado. Envie [`Idempotency-Key`](/pages/idempotency) (o SDK já faz sozinho) e repita com a mesma chave após falhas de rede.
+    Timeout na criação não pode virar pagamento duplicado. Envie [`Idempotency-Key`](/pages/idempotency) (o SDK já faz sozinho) e repita com a mesma chave após falhas de rede.
   </Step>
   <Step title="HTTP 202 tratado">
     Em degradação rara, a criação responde `202` com `id: null` — o PIX é **válido**, entregue ao comprador e use `externalId` como referência. Veja [Erros](/pages/errors).

@@ -37,7 +37,8 @@ mintlify dev
 .
 ├── pages/
 │   ├── introduction.mdx        # Visão geral da API
-│   ├── devmode.mdx             # Ambiente sandbox
+│   ├── payments.mdx             # Métodos e caminhos de integração
+│   ├── sandbox.mdx             # Ambiente sandbox
 │   ├── authentication.mdx      # Autenticação Bearer Token
 │   ├── webhooks.mdx            # Webhooks e verificação de assinatura
 │   ├── production.mdx          # Guia para ir a produção

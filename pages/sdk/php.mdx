@@ -1,6 +1,6 @@
 ---
 title: "SDK PHP"
-description: "Biblioteca oficial PHP — idempotência automática, webhooks verificados e zero dependências."
+description: "Biblioteca oficial PHP para criar pagamentos e verificar webhooks, sem dependências externas."
 icon: "php"
 ---
 
@@ -30,6 +30,24 @@ $bob = new BobPaymentsClient([
 $bob->environment; // 'live' | 'sandbox' — detectado pelo prefixo da chave
 ```
 
+## Criar uma sessão para PIX e cartão
+
+Use o checkout hospedado quando o comprador deve escolher entre os métodos disponíveis:
+
+```php
+$session = $bob->checkoutSessions->create([
+    'amountCents' => 25_000,
+    'items' => [['name' => 'Assinatura Pro', 'quantity' => 1, 'unitAmountCents' => 25_000]],
+    'paymentMethods' => ['pix', 'credit_card'],
+    'successUrl' => 'https://loja.example.com/pedido/sucesso',
+    'webhookUrl' => 'https://loja.example.com/webhooks/bob',
+]);
+
+header('Location: ' . $session['checkoutUrl']);
+```
+
+Veja os detalhes dos campos em [Checkout hospedado](/pages/checkout/overview).
+
 ## Criar uma cobrança PIX
 
 ```php
@@ -58,7 +76,7 @@ $tx['persisted'];      // false = HTTP 202 (reconciliação pendente; PIX válid
 $tx['replayed'];       // true = resposta replayada por idempotência
 ```
 
-Todo `create` envia um header [`Idempotency-Key`](/pages/idempotency) automaticamente (UUID por chamada, ou o seu via `['idempotencyKey' => "pedido-{$orderId}"]` no segundo argumento), o que torna a chamada segura de repetir — o SDK faz retry com backoff em timeout, falha de rede, 429 e 5xx sem risco de PIX duplicado.
+Todo `create` envia um header [`Idempotency-Key`](/pages/idempotency) automaticamente (UUID por chamada, ou o seu via `['idempotencyKey' => "pedido-{$orderId}"]` no segundo argumento), o que torna a chamada segura de repetir — o SDK faz retry com backoff em timeout, falha de rede, 429 e 5xx sem risco de pagamento duplicado.
 
 ## Consultas
 

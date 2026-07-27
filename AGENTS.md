@@ -14,8 +14,11 @@
 
 ## Terminology
 
-<!-- Add product-specific terms and preferred usage -->
-<!-- Example: Use "workspace" not "project", "member" not "user" -->
+ - Use **pagamento** when talking about the product capability and **transação** when referring to the API resource.
+ - Write **PIX** in uppercase and **cartão de crédito** in full on first mention.
+ - Use **projeto** for the account scope associated with an API key; reserve **loja** for the merchant's business.
+ - Use **checkout hospedado** and **SDK Checkout** consistently.
+ - Describe cripto as a future method only until the API and operational flow are published.
 
 ## Style preferences
 
@@ -29,5 +32,5 @@
 
 ## Content boundaries
 
-<!-- Define what should and shouldn't be documented -->
-<!-- Example: Don't document internal admin features -->
+ - Document the public API, SDKs, sandbox, webhooks and integration workflows.
+ - Do not document internal admin features, gateway credentials, secret keys or unreleased payment methods as if they were available.

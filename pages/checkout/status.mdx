@@ -1,4 +1,6 @@
 ---
-title: "Consultar Status da Sessão"
+title: "Consultar status da sessão"
 openapi: "GET /api/v1/checkout-sessions/{token}/status"
 ---
+
+Use o `checkoutToken` retornado na criação para consultar o estado da sessão. Este endpoint é público e serve como complemento ao webhook; no backend, confirme o pedido pelo evento assinado `transaction.paid`.

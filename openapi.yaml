@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Bob Payments API
-  description: API de Gerenciamento e Monitoramento Bob Payments - Transações PIX
+  description: API de pagamentos Bob Payments para criar, acompanhar e conciliar transações com PIX e cartão de crédito.
   version: 1.0.0
 components:
   securitySchemes:
@@ -21,7 +21,7 @@ paths:
   /api/v1/transactions/:
     post:
       summary: Criar nova transação
-      description: Cria uma nova transação PIX utilizando a estratégia de execução
+      description: Cria uma nova transação de pagamento utilizando a estratégia de execução
         paralela de gateways. Aceita o header opcional `Idempotency-Key` para
         repetição segura — a resposta 2xx original é replayada por 1 hora
         (com o header `x-idempotent-replayed`); requisição em voo com a mesma
@@ -32,7 +32,7 @@ paths:
         required: false
         description: Identificador único da operação (até 256 caracteres, ex.
           UUID ou ID do pedido). Torna a criação segura de repetir em timeout
-          ou falha de rede, sem risco de PIX duplicado.
+          ou falha de rede, sem risco de pagamento duplicado.
         schema:
           type: string
           maxLength: 256
