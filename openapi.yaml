@@ -974,7 +974,7 @@ paths:
     post:
       summary: Criar sessão de checkout
       description: Cria uma sessão de checkout hospedado. Redirecione o comprador para a `checkoutUrl`
-        retornada — a Bob cuida da tela de pagamento, geração do PIX e confirmação. Requer API
+        retornada — a Bob cuida da tela de pagamento, dos métodos disponíveis e da confirmação. Requer API
         key (Bearer).
       requestBody:
         required: true
@@ -1047,7 +1047,8 @@ paths:
                     - pix
                     - credit_card
                     - boleto
-                  description: Métodos aceitos no checkout. Default [pix].
+                  description: Métodos aceitos no checkout. Default [pix]. Use credit_card
+                    para oferecer cartão de crédito quando houver rota publicada.
                 metadata:
                   type: object
                   additionalProperties: true
@@ -1073,8 +1074,8 @@ paths:
                 expiresAt:
                   type: string
                   format: date-time
-                  description: Expiração do LINK de checkout (default 24h). Não confundir com
-                    a expiração do PIX gerado dentro dele.
+                  description: Expiração do LINK de checkout (default 24h). Para PIX, não confundir
+                    com a expiração da cobrança gerada dentro dele.
               required:
               - amountCents
       responses:

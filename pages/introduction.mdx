@@ -1,14 +1,14 @@
 ---
 title: "Comece aqui"
-description: "Uma API PIX sem frescura. Integra em minutos, cobra na hora."
+description: "Uma API de pagamentos sem frescura. Integra em minutos, cobra na hora."
 icon: "house"
 ---
 
-A Bob Payments nasceu de um problema real: gateway caindo na hora errada, doc confusa, contrato que demora semanas. A gente resolveu isso construindo uma API que faz o que tem que fazer — gerar cobrança PIX e avisar quando pagou.
+A Bob Payments nasceu de um problema real: gateway caindo na hora errada, doc confusa, contrato que demora semanas. A gente resolveu isso construindo uma API que faz o que tem que fazer: criar cobranças, orquestrar gateways e avisar quando pagou.
 
 ## <Icon icon="buildings" type="solid" /> O que é a Bob Payments?
 
-É um orquestrador de pagamentos PIX. Em vez de integrar com um gateway só e torcer pra ele não cair, você integra uma vez com a gente e a gente cuida do resto — múltiplos gateways, fallback automático, tudo no mesmo formato.
+É um orquestrador de pagamentos para PIX e cartão de crédito. Em vez de integrar com um gateway só e torcer pra ele não cair, você integra uma vez com a gente e a gente cuida do resto — múltiplos gateways, fallback automático, tudo no mesmo formato.
 
 Uma chamada, um `pixCode`, dinheiro na conta:
 
@@ -55,12 +55,15 @@ console.log(data.pixCode); // manda isso pro seu cliente pagar
 
 ## <Icon icon="signs-post" type="solid" /> Escolha o seu caminho
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="API direta" icon="code" href="/pages/pix/create">
     Você recebe o `pixCode` e monta a experiência de pagamento do seu jeito. Controle total.
   </Card>
+  <Card title="Cartão de crédito" icon="credit-card" href="/pages/credit-card/overview">
+    Aceite cartão pelo checkout hospedado ou SDK embutível, com tokenização segura e fallback.
+  </Card>
   <Card title="Checkout hospedado" icon="cart-shopping" href="/pages/checkout/overview">
-    Uma chamada + redirect. A Bob cuida da tela de pagamento, QR Code e confirmação.
+    Uma chamada + redirect. A Bob cuida da tela de pagamento, métodos disponíveis e confirmação.
   </Card>
   <Card title="SDK Node.js" icon="node-js" href="/pages/sdk/node">
     Tipos completos, idempotência automática e webhooks verificados em uma biblioteca oficial.
@@ -89,6 +92,9 @@ Duas coisas que você vai notar rápido:
   </Step>
   <Step title="Rode o fluxo no sandbox">
     [Sandbox](/pages/sandbox) — crie, pague e expire cobranças sem dinheiro real.
+  </Step>
+  <Step title="Configure os métodos">
+    [PIX](/pages/pix/reference) e [cartão de crédito](/pages/credit-card/overview) — publique uma rota para cada método que você vai aceitar.
   </Step>
   <Step title="Configure webhooks">
     [Webhooks](/pages/webhooks) — saiba na hora quando o pagamento cair.
