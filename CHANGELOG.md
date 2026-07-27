@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.34](https://github.com/BobPayments/documentation/compare/v1.1.33...v1.1.34) (2026-07-27)
+
+### Documentação
+
+* organizar SDKs por camada e seção de cartão espelhando PIX ([#4](https://github.com/BobPayments/documentation/issues/4)) ([7434c5e](https://github.com/BobPayments/documentation/commit/7434c5e22bf9e769f85dfc08ed57e1bf8d5e77b4))
+
 ## [1.1.33](https://github.com/BobPayments/documentation/compare/v1.1.32...v1.1.33) (2026-07-27)
 
 ### Documentação
