@@ -128,8 +128,8 @@
           {
             "group": "Cartão de crédito",
             "pages": [
-              "pages/credit-card/overview",
-              "pages/credit-card/reference"
+              "pages/credit-card/reference",
+              "pages/credit-card/overview"
             ]
           },
           {
