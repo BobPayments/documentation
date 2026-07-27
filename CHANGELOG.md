@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.33](https://github.com/BobPayments/documentation/compare/v1.1.32...v1.1.33) (2026-07-27)
+
+### Documentação
+
+* document credit card checkout ([#3](https://github.com/BobPayments/documentation/issues/3)) ([d15dc0d](https://github.com/BobPayments/documentation/commit/d15dc0ddd891a0e0fcd924295e779100e3e023a0))
+
 ## [1.1.32](https://github.com/BobPayments/documentation/compare/v1.1.31...v1.1.32) (2026-07-09)
 
 ### Documentação
