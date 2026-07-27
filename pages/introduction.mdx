@@ -1,54 +1,46 @@
 ---
 title: "Comece aqui"
-description: "Uma API de pagamentos sem frescura. Integra em minutos, cobra na hora."
+description: "Uma integração para criar, acompanhar e conciliar pagamentos com PIX e cartão de crédito."
 icon: "house"
 ---
 
-A Bob Payments nasceu de um problema real: gateway caindo na hora errada, doc confusa, contrato que demora semanas. A gente resolveu isso construindo uma API que faz o que tem que fazer: criar cobranças, orquestrar gateways e avisar quando pagou.
+A Bob Payments é um orquestrador de pagamentos. Você integra uma vez e usa a mesma base para criar cobranças, orquestrar gateways e receber a confirmação quando o pagamento acontecer.
 
 ## <Icon icon="buildings" type="solid" /> O que é a Bob Payments?
 
-É um orquestrador de pagamentos para PIX e cartão de crédito. Em vez de integrar com um gateway só e torcer pra ele não cair, você integra uma vez com a gente e a gente cuida do resto — múltiplos gateways, fallback automático, tudo no mesmo formato.
+Hoje você pode oferecer PIX e cartão de crédito. A Bob cuida do roteamento, do fallback e da comunicação com os gateways, enquanto a sua aplicação trabalha com uma experiência consistente. Novos métodos, como cripto, serão adicionados à mesma arquitetura quando estiverem disponíveis.
 
-Uma chamada, um `pixCode`, dinheiro na conta:
+Para oferecer PIX e cartão com uma única tela, crie uma sessão de checkout no seu backend:
 
 ```javascript
-const response = await fetch('https://api.payments.bob.company/api/v1/transactions/', {
+const response = await fetch('https://api.payments.bob.company/api/v1/checkout-sessions/', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer sk_test_sua_chave',
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    customer: {
-      name: 'João Silva',
-      document: '12345678901',
-      documentType: 'CPF',
-      email: 'joao@example.com',
-      address: {
-        street: 'Rua das Flores', streetNumber: '123', neighborhood: 'Centro',
-        zipCode: '01310-100', city: 'São Paulo', state: 'SP',
-      },
-    },
-    payment: { amountCents: 10000, product: 'Plano Premium' }, // R$ 100,00 — sempre centavos
-    originDomain: 'loja.example.com',
+    amountCents: 10000, // R$ 100,00 — sempre centavos
+    items: [{ name: 'Plano Premium', quantity: 1, unitAmountCents: 10000 }],
+    paymentMethods: ['pix', 'credit_card'],
+    successUrl: 'https://loja.example.com/pedido/sucesso',
+    webhookUrl: 'https://loja.example.com/webhooks/bob',
   }),
 });
 
 const { data } = await response.json();
-console.log(data.pixCode); // manda isso pro seu cliente pagar
+console.log(data.checkoutUrl); // redirecione o comprador para esta URL
 ```
 
 ```json
 {
   "success": true,
-  "message": "Transaction created successfully",
+  "message": "Checkout session created successfully",
   "data": {
-    "id": "clx7a8b9c0d1e2f3g4h5",
-    "externalId": "abc123",
-    "pixCode": "00020126580014br.gov.bcb.pix...",
-    "expirationDate": "2026-02-28T10:00:00.000Z",
-    "status": "waiting_payment"
+    "sessionId": "sess_...",
+    "checkoutToken": "chk_...",
+    "checkoutUrl": "https://checkout.payments.bob.company/...",
+    "status": "PENDING"
   }
 }
 ```
@@ -56,8 +48,11 @@ console.log(data.pixCode); // manda isso pro seu cliente pagar
 ## <Icon icon="signs-post" type="solid" /> Escolha o seu caminho
 
 <CardGroup cols={2}>
-  <Card title="API direta" icon="code" href="/pages/pix/create">
-    Você recebe o `pixCode` e monta a experiência de pagamento do seu jeito. Controle total.
+  <Card title="Pagamentos" icon="wallet" href="/pages/payments">
+    Escolha o método e o caminho de integração mais adequado para o seu produto.
+  </Card>
+  <Card title="API direta de PIX" icon="code" href="/pages/pix/create">
+    Receba o `pixCode` e monte a experiência de pagamento do seu jeito.
   </Card>
   <Card title="Cartão de crédito" icon="credit-card" href="/pages/credit-card/overview">
     Aceite cartão pelo checkout hospedado ou SDK embutível, com tokenização segura e fallback.
@@ -76,8 +71,8 @@ Duas coisas que você vai notar rápido:
 
 1. **Endpoints que falam por si** — sem abstrações desnecessárias
    ```
-   POST /api/v1/transactions/        // cria cobrança
-   GET  /api/v1/transactions/{id}    // checa status
+   POST /api/v1/transactions/        // cria transação PIX
+   GET  /api/v1/transactions/{id}    // consulta status
    POST /api/v1/checkout-sessions/   // checkout hospedado
    GET  /api/v1/customers/           // lista clientes
    ```

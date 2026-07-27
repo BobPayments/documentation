@@ -6,6 +6,10 @@ icon: "credit-card"
 
 A Bob Payments também processa **cartão de crédito**. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível da Bob. Eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e escondem o fallback entre gateways.
 
+<Note>
+  Para aceitar cartão no checkout, o cartão **deve ser tokenizado no navegador** pelo pacote de checkout da Bob (`@bobpayments/checkout-sdk`). A sua aplicação e a API só recebem um token seguro — PAN, CVV e validade nunca passam pela API Bob. Veja o [SDK Checkout](/pages/sdk/checkout) e a [Referência](/pages/credit-card/reference).
+</Note>
+
 ## Escolha o nível de integração
 
 | Nível | Quando usar |
@@ -77,7 +81,7 @@ checkout.mount('#bob-payment');
 
 O SDK carrega Stripe.js internamente, monta os campos seguros, cria o `PaymentMethod`, envia o token para a API Bob e conduz 3DS quando necessário. O lojista não precisa importar `@stripe/react-stripe-js`.
 
-<Card title="SDK de checkout" icon="code" href="/pages/sdk/checkout">
+<Card title="SDK Checkout" icon="code" href="/pages/sdk/checkout">
   Veja como embutir o checkout da Bob no seu site.
 </Card>
 
@@ -181,23 +185,17 @@ Quando o pagamento exigir ação do comprador, como autenticação 3DS, o checko
 
 Use webhook e/ou consulta de status para confirmar o desfecho financeiro. Não considere apenas o HTTP `201` como confirmação de pagamento.
 
-## Webhook Stripe Connect
+## O que você configura
 
-Configure na plataforma Stripe o endpoint Connect:
+No seu lado, a configuração é feita pelo Dashboard:
 
-```text
-POST https://api.seudominio.com/api/v1/webhooks/stripe/connect
-```
+1. Conecte a sua conta Stripe pelo onboarding hospedado.
+2. Confirme que existe uma rota publicada com `paymentMethod: "credit_card"`.
+3. Use o checkout hospedado ou o SDK Checkout para coletar o cartão.
+4. Configure o webhook da Bob para receber a confirmação do pagamento.
 
-O endpoint verifica `stripe-signature` com `STRIPE_CONNECT_WEBHOOK_SECRET`, identifica a conta por `event.account` e reconcilia o pagamento da conexão local. Habilite os eventos de `PaymentIntent` e `Charge` no endpoint Connect.
+A Bob gerencia as credenciais da plataforma Stripe, a reconciliação com a conta conectada e os webhooks internos do gateway. Você não precisa enviar `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_WEBHOOK_SECRET` ou qualquer outra chave Stripe para a sua aplicação.
 
-## Configuração da plataforma
-
-```env
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_CONNECT_PLATFORM_SECRET_KEY=sk_live_...
-STRIPE_PUBLISHABLE_KEY=pk_live_...
-STRIPE_CONNECT_WEBHOOK_SECRET=whsec_...
-```
-
-`STRIPE_CONNECT_PLATFORM_SECRET_KEY` pode reutilizar `STRIPE_SECRET_KEY` em instalações legadas, mas produção deve usar uma chave de plataforma explícita. `STRIPE_PUBLISHABLE_KEY` é pública e pode aparecer no payload público do checkout. Nenhuma `sk_...` pode ser enviada ao navegador.
+<Warning>
+  Nunca envie chaves secretas Stripe nem dados brutos do cartão para o navegador, para a API Bob ou para repositórios. Se uma credencial vazar, revogue-a imediatamente no provedor responsável.
+</Warning>

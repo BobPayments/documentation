@@ -1,4 +1,10 @@
 ---
-title: "Criar Sessão de Checkout"
+title: "Criar sessão de checkout"
 openapi: "POST /api/v1/checkout-sessions/"
 ---
+
+Crie uma sessão no seu backend e redirecione o comprador para o `checkoutUrl` retornado. Para oferecer mais de um método, envie `paymentMethods`, por exemplo `['pix', 'credit_card']`.
+
+<Warning>
+  Nunca crie uma sessão no frontend com uma chave `sk_test_` ou `sk_live_`. O endpoint exige uma chave secreta e deve ser chamado pelo seu servidor.
+</Warning>

@@ -1,6 +1,6 @@
 ---
 title: "SDK Node.js"
-description: "Biblioteca oficial TypeScript/Node.js — tipos completos, idempotência automática e webhooks verificados."
+description: "Biblioteca oficial TypeScript/Node.js para criar pagamentos, usar checkout e verificar webhooks."
 icon: "node-js"
 ---
 
@@ -33,6 +33,25 @@ const bob = new BobPayments({
 bob.environment; // 'live' | 'sandbox' — detectado pelo prefixo da chave
 ```
 
+## Criar uma sessão para PIX e cartão
+
+Use o checkout hospedado quando o comprador deve escolher entre os métodos disponíveis:
+
+```typescript
+const session = await bob.checkoutSessions.create({
+  amountCents: 25_000,
+  items: [{ name: 'Assinatura Pro', quantity: 1, unitAmountCents: 25_000 }],
+  paymentMethods: ['pix', 'credit_card'],
+  successUrl: 'https://loja.example.com/pedido/sucesso',
+  webhookUrl: 'https://loja.example.com/webhooks/bob',
+});
+
+// Redirecione o comprador; guarde session.webhookSecret se ele existir.
+redirect(session.checkoutUrl);
+```
+
+Veja os detalhes dos campos em [Checkout hospedado](/pages/checkout/overview).
+
 ## Criar uma cobrança PIX
 
 ```typescript
@@ -61,7 +80,7 @@ tx.persisted;      // false = HTTP 202 (reconciliação pendente; PIX válido)
 tx.replayed;       // true = resposta replayada por idempotência
 ```
 
-Todo `create` envia um header [`Idempotency-Key`](/pages/idempotency) automaticamente, o que torna a chamada segura de repetir — o SDK faz retry com backoff em timeout, falha de rede, 429 e 5xx sem risco de PIX duplicado.
+Todo `create` envia um header [`Idempotency-Key`](/pages/idempotency) automaticamente, o que torna a chamada segura de repetir — o SDK faz retry com backoff em timeout, falha de rede, 429 e 5xx sem risco de pagamento duplicado.
 
 ## Consultas
 
@@ -136,6 +155,17 @@ Com `sk_test_` e o gateway **Bob Sandbox** configurado no projeto, o desfecho é
 ```typescript
 await bob.transactions.create({ payment: { amountCents: 10_001, ... }, ... }); // expira em ~5s
 ```
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="SDK Checkout" icon="credit-card" href="/pages/sdk/checkout">
+    Camada de frontend: monte o checkout no seu site com a sessão criada aqui.
+  </Card>
+  <Card title="Visão geral dos SDKs" icon="cubes" href="/pages/sdk/overview">
+    Como as bibliotecas de servidor e o SDK de frontend se encaixam.
+  </Card>
+</CardGroup>
 
 <Card title="Código-fonte e releases" icon="github" href="https://github.com/BobPayments/bob-payments-sdk-node">
   github.com/BobPayments/bob-payments-sdk-node — CHANGELOG e versões via semantic-release

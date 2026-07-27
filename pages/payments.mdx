@@ -1,0 +1,72 @@
+---
+title: "Pagamentos"
+description: "Escolha o método de pagamento e o caminho de integração mais adequado para o seu produto."
+icon: "wallet"
+---
+
+A Bob Payments oferece uma única integração para criar, acompanhar e conciliar pagamentos. O método escolhido muda a experiência do comprador, mas o ciclo da transação continua o mesmo: criar, aguardar o resultado e confirmar pelo webhook.
+
+## Métodos disponíveis
+
+| Método | Disponibilidade | Melhor caminho | O que você recebe |
+|---|---|---|---|
+| **PIX** | Disponível | API direta, checkout hospedado ou SDK Checkout | Código copia-e-cola, QR Code e eventos de status |
+| **Cartão de crédito** | Disponível | Checkout hospedado ou SDK Checkout | Tokenização segura, 3DS e eventos de status |
+| **Cripto** | Em planejamento | Será anunciado quando estiver disponível | Esta documentação ainda não descreve uma API de cripto |
+
+<Note>
+  Um método só pode ser usado quando houver uma rota publicada e uma conexão configurada para ele no Dashboard. Não habilite um método apenas porque ele aparece em um payload ou enum antigo da API.
+</Note>
+
+## Escolha como integrar
+
+| Se você quer... | Use... |
+|---|---|
+| Começar rápido e oferecer PIX e cartão | [Checkout hospedado](/pages/checkout/overview) |
+| Manter a tela de pagamento no seu site | [SDK Checkout](/pages/sdk/checkout) |
+| Controlar a experiência do PIX e receber o código EMV | [API direta de transações](/pages/pix/create) |
+| Integrar no backend com menos código | [SDKs de servidor](/pages/sdk/overview) |
+
+<Warning>
+  A API direta não deve receber número do cartão, CVV ou validade. Para cartão, use o checkout hospedado ou o SDK Checkout, que tokenizam os dados no navegador.
+</Warning>
+
+## Fluxo comum
+
+<Steps>
+  <Step title="Configure o ambiente">
+    Crie uma chave `sk_test_` e configure uma conexão e uma rota publicada para cada método que deseja aceitar. Comece pelo [Sandbox](/pages/sandbox).
+  </Step>
+  <Step title="Crie o pagamento">
+    Use uma transação direta para PIX ou crie uma sessão de checkout com `paymentMethods`, como `['pix', 'credit_card']`.
+  </Step>
+  <Step title="Mostre o próximo passo ao comprador">
+    No PIX, exiba o `pixCode` e o QR Code. No cartão, use o checkout hospedado ou o SDK para tokenização e autenticação 3DS.
+  </Step>
+  <Step title="Confirme no servidor">
+    Receba o evento `transaction.paid`, verifique a assinatura e libere o pedido apenas depois da confirmação. A página de retorno do checkout não substitui o webhook.
+  </Step>
+</Steps>
+
+## Estados e confirmação
+
+Use o status da transação ou da sessão para exibir o estado ao comprador, mas trate o webhook como a fonte de verdade no backend. Um `201` confirma que o recurso foi criado; não confirma que o pagamento foi aprovado.
+
+| Estado | Significado geral |
+|---|---|
+| `waiting_payment` | O comprador ainda precisa pagar ou concluir uma ação |
+| `processing` | O pagamento foi recebido e aguarda confirmação do gateway |
+| `paid` | O pagamento foi confirmado |
+| `expired` / `cancelled` | O pagamento não pode mais ser concluído |
+| `refunded` | O valor foi devolvido |
+
+Os estados específicos podem variar por método. Consulte a [referência de PIX](/pages/pix/reference), a [referência de cartão](/pages/credit-card/reference) e os [webhooks](/pages/webhooks) antes de implementar a máquina de estados do seu pedido.
+
+<CardGroup cols={2}>
+  <Card title="Começar no Sandbox" icon="flask" href="/pages/sandbox">
+    Teste criação, pagamento, expiração e webhooks sem movimentar dinheiro real.
+  </Card>
+  <Card title="Ir para produção" icon="rocket" href="/pages/production">
+    Passe pelo checklist de segurança, idempotência e confirmação antes de usar `sk_live_`.
+  </Card>
+</CardGroup>
