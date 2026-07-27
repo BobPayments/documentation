@@ -6,6 +6,10 @@ icon: "credit-card"
 
 A Bob Payments também processa **cartão de crédito**. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível da Bob. Eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e escondem o fallback entre gateways.
 
+<Note>
+  Para aceitar cartão no checkout, o cartão **deve ser tokenizado no navegador** pelo pacote de checkout da Bob (`@bobpayments/checkout-sdk`). A sua aplicação e a API só recebem um token seguro — PAN, CVV e validade nunca passam pela API Bob. Veja o [SDK Checkout](/pages/sdk/checkout) e a [Referência](/pages/credit-card/reference).
+</Note>
+
 ## Escolha o nível de integração
 
 | Nível | Quando usar |
@@ -77,7 +81,7 @@ checkout.mount('#bob-payment');
 
 O SDK carrega Stripe.js internamente, monta os campos seguros, cria o `PaymentMethod`, envia o token para a API Bob e conduz 3DS quando necessário. O lojista não precisa importar `@stripe/react-stripe-js`.
 
-<Card title="SDK de checkout" icon="code" href="/pages/sdk/checkout">
+<Card title="SDK Checkout" icon="code" href="/pages/sdk/checkout">
   Veja como embutir o checkout da Bob no seu site.
 </Card>
 

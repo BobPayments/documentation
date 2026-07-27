@@ -99,9 +99,20 @@
           {
             "group": "SDKs",
             "pages": [
-              "pages/sdk/checkout",
-              "pages/sdk/node",
-              "pages/sdk/php"
+              "pages/sdk/overview",
+              {
+                "group": "Servidor",
+                "pages": [
+                  "pages/sdk/node",
+                  "pages/sdk/php"
+                ]
+              },
+              {
+                "group": "Frontend",
+                "pages": [
+                  "pages/sdk/checkout"
+                ]
+              }
             ]
           },
           {
@@ -116,7 +127,9 @@
           {
             "group": "Cartão de crédito",
             "pages": [
-              "pages/credit-card/overview"
+              "pages/credit-card/reference",
+              "pages/credit-card/overview",
+              "pages/idempotency"
             ]
           },
           {

@@ -1,0 +1,44 @@
+---
+title: "Visão geral"
+description: "Qual SDK usar — bibliotecas de servidor para o seu backend e o SDK de frontend para o checkout."
+icon: "cubes"
+---
+
+A Bob oferece SDKs oficiais em **duas camadas**. Elas resolvem problemas diferentes e costumam ser usadas juntas: uma biblioteca de **servidor** cria a cobrança e verifica webhooks no seu backend; o SDK de **frontend** monta o checkout e tokeniza o cartão no navegador.
+
+## Escolha seu SDK
+
+| SDK | Camada | Linguagem / Plataforma | Quando usar |
+|---|---|---|---|
+| [SDK Node.js](/pages/sdk/node) | Servidor (backend) | Node.js / TypeScript | Criar cobranças, listar transações e verificar webhooks a partir do seu servidor. |
+| [SDK PHP](/pages/sdk/php) | Servidor (backend) | PHP | O mesmo, em stacks PHP. |
+| [SDK Checkout](/pages/sdk/checkout) | Frontend (navegador) | JavaScript / React | Embutir o checkout da Bob no seu site, tokenizar cartão e conduzir 3DS sem expor Stripe.js. |
+
+<Note>
+  As chaves secretas (`sk_live_`, `sk_test_`) só existem no **servidor**. A criação da sessão de checkout acontece no backend com uma biblioteca de servidor; o SDK Checkout roda no navegador e recebe apenas o `checkoutToken`.
+</Note>
+
+## Fluxo típico (servidor + frontend juntos)
+
+```text
+Seu backend  ── SDK Node.js/PHP ──>  cria a sessão de checkout (sk_...)
+                                      │
+                                      └─ checkoutToken ─> seu frontend
+Seu frontend ── SDK Checkout ──────>  monta o checkout, tokeniza cartão, conduz 3DS
+```
+
+## Não tem SDK para a sua linguagem?
+
+Todas as operações estão disponíveis na REST API — os SDKs são conveniências sobre ela. Consulte a [Referência da API](/pages/pix/create) e chame os endpoints direto do seu backend em qualquer linguagem.
+
+<CardGroup cols={2}>
+  <Card title="SDK Node.js" icon="node-js" href="/pages/sdk/node">
+    Biblioteca oficial TypeScript/Node.js para o seu servidor.
+  </Card>
+  <Card title="SDK PHP" icon="php" href="/pages/sdk/php">
+    Biblioteca oficial PHP para o seu servidor.
+  </Card>
+  <Card title="SDK Checkout" icon="credit-card" href="/pages/sdk/checkout">
+    Embuta o checkout da Bob no seu site, com cartão, PIX e 3DS.
+  </Card>
+</CardGroup>

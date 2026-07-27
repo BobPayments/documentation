@@ -55,7 +55,7 @@ Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua
 - **`paymentMethods` controla as opções exibidas** — use `["pix"]`, `["credit_card"]` ou combine os métodos. O padrão é `["pix"]`.
 - **Sessão exige rota publicada** — sem rota de pagamento publicada para cada método solicitado, a criação falha com `422` (assim você descobre na criação, não no clique do comprador).
 - **Cartão usa Stripe Connect** — para aceitar cartão, configure a conexão e publique uma rota `credit_card`. Veja [Cartão de crédito](/pages/credit-card/overview).
-- **Quer manter o comprador no seu site?** Use o [SDK de checkout](/pages/sdk/checkout). Ele embute o checkout da Bob sem expor Stripe.js para a sua aplicação.
+- **Quer manter o comprador no seu site?** Use o [SDK Checkout](/pages/sdk/checkout). Ele embute o checkout da Bob sem expor Stripe.js para a sua aplicação.
 - **Sandbox funciona igual** — crie a sessão com `sk_test_` e o fluxo roda de ponta a ponta com o gateway de teste. Veja [Sandbox](/pages/sandbox).
 - **Com o SDK**: `bob.checkoutSessions.create(...)` já envia `webhookVersion: "v2"` por padrão. Veja [SDK Node.js](/pages/sdk/node).
 
