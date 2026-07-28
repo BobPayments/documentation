@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.36](https://github.com/BobPayments/documentation/compare/v1.1.35...v1.1.36) (2026-07-28)
+
+### Documentação
+
+* hide payment provider internals ([#6](https://github.com/BobPayments/documentation/issues/6)) ([24a8154](https://github.com/BobPayments/documentation/commit/24a8154693c9284c5d77f1eacba50eaf4246a934))
+
 ## [1.1.35](https://github.com/BobPayments/documentation/compare/v1.1.34...v1.1.35) (2026-07-28)
 
 ### Documentação
