@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.35](https://github.com/BobPayments/documentation/compare/v1.1.34...v1.1.35) (2026-07-28)
+
+### Documentação
+
+* colocar Referência antes do overview no grupo Cartão de crédito ([#5](https://github.com/BobPayments/documentation/issues/5)) ([9bb91e4](https://github.com/BobPayments/documentation/commit/9bb91e42b6cc2ed38839acd692c9b72863b3f6bb))
+
 ## [1.1.34](https://github.com/BobPayments/documentation/compare/v1.1.33...v1.1.34) (2026-07-27)
 
 ### Documentação
