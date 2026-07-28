@@ -78,7 +78,7 @@ Uma transação de cartão de crédito é representada pela seguinte estrutura:
     { "paymentMethod": "credit_card" }
     ```
     `paymentMethod` : <u>string.</u><br />
-    Método de pagamento da transação. Para cartão, o valor é `credit_card`. O cliente da transação informa apenas o método — a rota publicada decide qual gateway processa a tentativa; o `connectionId` nunca é escolhido pelo cliente.
+    Método de pagamento da transação. Para cartão, o valor é `credit_card`. A Bob gerencia internamente o processamento da tentativa.
   </Accordion>
 
   <Accordion title="status:">
@@ -93,7 +93,7 @@ Uma transação de cartão de crédito é representada pela seguinte estrutura:
       | `pending` | **Transação criada, ainda sem confirmação final** |
       | `waiting_payment` | **Aguardando autenticação 3DS ou confirmação assíncrona** |
       | `paid` | **Pagamento aprovado** |
-      | `failed` | **Todas as tentativas elegíveis falharam** |
+      | `failed` | **O processamento não foi concluído** |
       | `refunded` | **O valor foi devolvido ao cliente** |
       | `cancelled` | **A transação foi cancelada** |
     </Info>

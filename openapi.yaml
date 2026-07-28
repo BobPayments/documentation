@@ -21,8 +21,7 @@ paths:
   /api/v1/transactions/:
     post:
       summary: Criar nova transação
-      description: Cria uma nova transação de pagamento utilizando a estratégia de execução
-        paralela de gateways. Aceita o header opcional `Idempotency-Key` para
+      description: Cria uma nova transação de pagamento. Aceita o header opcional `Idempotency-Key` para
         repetição segura — a resposta 2xx original é replayada por 1 hora
         (com o header `x-idempotent-replayed`); requisição em voo com a mesma
         chave retorna 409; reusar a chave com body diferente retorna 422.
@@ -469,13 +468,6 @@ paths:
         name: domain
         required: false
       - schema:
-          type: string
-          format: cuid
-          pattern: ^[cC][^\s-]{8,}$
-        in: query
-        name: connectionId
-        required: false
-      - schema:
           type: integer
           minimum: 0
           maximum: 9007199254740991
@@ -583,23 +575,6 @@ paths:
                           - name
                           - email
                           additionalProperties: false
-                        connection:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            alias:
-                              type: string
-                            providerId:
-                              type: string
-                            providerName:
-                              type: string
-                          required:
-                          - id
-                          - alias
-                          - providerId
-                          - providerName
-                          additionalProperties: false
                         originDomain:
                           nullable: true
                           type: string
@@ -621,7 +596,6 @@ paths:
                       - createdAt
                       - updatedAt
                       - customer
-                      - connection
                       - originDomain
                       - customerEmail
                       - customerName
@@ -804,23 +778,6 @@ paths:
                         - email
                         - phone
                         additionalProperties: false
-                      gateway:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                          alias:
-                            type: string
-                          providerId:
-                            type: string
-                          providerName:
-                            type: string
-                        required:
-                        - id
-                        - alias
-                        - providerId
-                        - providerName
-                        additionalProperties: false
                       originDomain:
                         nullable: true
                         type: string
@@ -845,7 +802,6 @@ paths:
                     - createdAt
                     - updatedAt
                     - customer
-                    - gateway
                     - originDomain
                     - customerEmail
                     - customerName

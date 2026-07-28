@@ -4,7 +4,7 @@ description: "Aceite cartão de crédito pelo checkout hospedado ou SDK embutív
 icon: "credit-card"
 ---
 
-A Bob Payments também processa **cartão de crédito**. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível da Bob. Eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e escondem o fallback entre gateways.
+A Bob Payments também processa **cartão de crédito**. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível da Bob. Eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e gerenciam o processamento internamente.
 
 <Note>
   Para aceitar cartão no checkout, o cartão **deve ser tokenizado no navegador** pelo pacote de checkout da Bob (`@bobpayments/checkout-sdk`). A sua aplicação e a API só recebem um token seguro — PAN, CVV e validade nunca passam pela API Bob. Veja o [SDK Checkout](/pages/sdk/checkout) e a [Referência](/pages/credit-card/reference).
@@ -25,11 +25,10 @@ Cartão
   -> Bob Checkout ou @bobpayments/checkout-sdk
   -> tokenização segura
   -> API Bob
-  -> rota publicada de credit_card
-  -> Stripe Connect
+  -> processamento interno da Bob
 ```
 
-O número do cartão, CVV e validade nunca passam pela API Bob. O comprador também não vê Stripe Checkout nem escolhe gateway. A Bob decide a conexão pela rota publicada.
+O número do cartão, CVV e validade nunca passam pela API Bob. O comprador não vê detalhes do processamento interno.
 
 <Warning>
   Nunca envie cartão bruto para a API Bob. Payloads com PAN, CVV ou validade devem continuar sendo rejeitados.
@@ -53,11 +52,11 @@ curl -X POST https://api.payments.bob.company/api/v1/checkout-sessions/ \
   }'
 ```
 
-A sessão exige uma rota publicada para cada método solicitado. Se não existir rota publicada para `credit_card`, a criação falha com `422` e `ERR_INTEGRATION_006`.
+A sessão aceita `credit_card` quando o método está habilitado no projeto. Caso contrário, a API informa que o método não está disponível.
 
 ## SDK embutível
 
-Use o SDK embutível quando você quer manter o comprador no seu site, mas não quer implementar Stripe.js, tokenização, 3DS ou fallback.
+Use o SDK embutível quando você quer manter o comprador no seu site, mas não quer implementar os campos seguros, a tokenização, o 3DS ou o fallback.
 
 ```tsx
 import { BobCheckout } from '@bobpayments/checkout-sdk';
@@ -79,7 +78,7 @@ const checkout = await BobCheckout.create({
 checkout.mount('#bob-payment');
 ```
 
-O SDK carrega Stripe.js internamente, monta os campos seguros, cria o `PaymentMethod`, envia o token para a API Bob e conduz 3DS quando necessário. O lojista não precisa importar `@stripe/react-stripe-js`.
+O SDK gerencia os campos seguros, cria um identificador seguro de método de pagamento, envia o token para a API Bob e conduz 3DS quando necessário. O lojista não precisa importar bibliotecas adicionais.
 
 <Card title="SDK Checkout" icon="code" href="/pages/sdk/checkout">
   Veja como embutir o checkout da Bob no seu site.
@@ -91,86 +90,9 @@ Use a API direta com cartão somente quando você já possui sua própria implem
 
 O `pm_...` deve existir apenas em memória durante a tentativa. Não salve esse valor em logs, analytics, URL ou banco do checkout.
 
-O cliente da transação não escolhe `connectionId`. Ele informa o método de pagamento e a rota publicada decide qual gateway processa a tentativa.
+## Processamento e fallback
 
-## Conectar Stripe
-
-O painel conecta uma conta Stripe ao projeto usando Stripe Connect Hosted Onboarding:
-
-```http
-POST /api/v1/connection-accounts/stripe/connect
-Authorization: Bearer <token>
-Idempotency-Key: connect-<request-id>
-Content-Type: application/json
-```
-
-```json
-{
-  "alias": "Stripe principal",
-  "email": "financeiro@lojista.com",
-  "displayName": "Loja Exemplo",
-  "country": "BR",
-  "feePercentage": 3.9,
-  "feeFixed": 100
-}
-```
-
-A resposta contém `connectionAccountId`, `stripeAccountId` e `onboardingUrl`. Abra `onboardingUrl` em navegação de tela inteira. Links de onboarding da Stripe são de uso único.
-
-No exemplo, `feePercentage` é a taxa percentual da conexão e `feeFixed` é a taxa fixa em centavos.
-
-Se a Stripe chamar a `refreshUrl`, solicite um novo link:
-
-```http
-POST /api/v1/connection-accounts/:connectionAccountId/stripe/onboarding-link
-Authorization: Bearer <token>
-Idempotency-Key: onboarding-refresh-<request-id>
-```
-
-A Bob não recebe a Secret Key do lojista.
-
-## Criar e publicar a rota
-
-Uma rota de cartão precisa ter:
-
-- `paymentMethod: "credit_card"`
-- pelo menos uma conexão Stripe válida no mesmo projeto
-- status `published`
-
-Exemplo de `flowDefinition`:
-
-```json
-{
-  "alias": "Cartão - Stripe com fallback",
-  "paymentMethod": "credit_card",
-  "flowDefinition": {
-    "version": 1,
-    "entryNodeId": "cartoes",
-    "nodes": {
-      "cartoes": {
-        "type": "gateway_group",
-        "gateways": [
-          {
-            "connectionId": "conn_stripe_principal",
-            "trafficPercentage": 100,
-            "priority": 1
-          },
-          {
-            "connectionId": "conn_stripe_fallback",
-            "trafficPercentage": null,
-            "priority": 0
-          }
-        ],
-        "onAllFailed": null
-      }
-    }
-  }
-}
-```
-
-## Fallback
-
-Para cartão, as tentativas são executadas em sequência conforme a rota publicada. Uma recusa elegível ou indisponibilidade do gateway libera a próxima conexão. O comprador recebe uma única resposta final e não vê detalhes das tentativas internas.
+Para cartão, a Bob gerencia as tentativas e o fallback internamente. O comprador recebe uma única resposta final e não vê detalhes do processamento.
 
 Quando o pagamento exigir ação do comprador, como autenticação 3DS, o checkout deve mostrar a autenticação segura, abrir a URL retornada e consultar o status ao voltar. Mostre sucesso somente quando a sessão ou transação estiver `PAID`/`paid`.
 
@@ -180,7 +102,7 @@ Quando o pagamento exigir ação do comprador, como autenticação 3DS, o checko
 |---|---|
 | `paid` | Pagamento aprovado |
 | `waiting_payment` | Aguardando autenticação 3DS ou confirmação assíncrona |
-| `failed` | Todas as tentativas elegíveis falharam |
+| `failed` | O processamento não foi concluído |
 | `pending` | Pagamento criado, mas ainda sem confirmação final |
 
 Use webhook e/ou consulta de status para confirmar o desfecho financeiro. Não considere apenas o HTTP `201` como confirmação de pagamento.
@@ -189,13 +111,12 @@ Use webhook e/ou consulta de status para confirmar o desfecho financeiro. Não c
 
 No seu lado, a configuração é feita pelo Dashboard:
 
-1. Conecte a sua conta Stripe pelo onboarding hospedado.
-2. Confirme que existe uma rota publicada com `paymentMethod: "credit_card"`.
-3. Use o checkout hospedado ou o SDK Checkout para coletar o cartão.
-4. Configure o webhook da Bob para receber a confirmação do pagamento.
+1. Habilite cartão para o projeto, quando necessário.
+2. Use o checkout hospedado ou o SDK Checkout para coletar o cartão.
+3. Configure o webhook da Bob para receber a confirmação do pagamento.
 
-A Bob gerencia as credenciais da plataforma Stripe, a reconciliação com a conta conectada e os webhooks internos do gateway. Você não precisa enviar `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_WEBHOOK_SECRET` ou qualquer outra chave Stripe para a sua aplicação.
+A Bob gerencia o processamento do cartão, a reconciliação e os detalhes internos da operação. Você não precisa enviar credenciais de provedores de pagamento para a sua aplicação.
 
 <Warning>
-  Nunca envie chaves secretas Stripe nem dados brutos do cartão para o navegador, para a API Bob ou para repositórios. Se uma credencial vazar, revogue-a imediatamente no provedor responsável.
+  Nunca envie credenciais secretas nem dados brutos do cartão para o navegador, para a API Bob ou para repositórios.
 </Warning>

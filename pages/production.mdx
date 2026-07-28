@@ -25,7 +25,7 @@ Simples: quando a integração estiver funcionando no sandbox, é só trocar a c
     Em degradação rara, a criação responde `202` com `id: null` — o PIX é **válido**, entregue ao comprador e use `externalId` como referência. Veja [Erros](/pages/errors).
   </Step>
   <Step title="Erros tratados pelo código, não pela mensagem">
-    Trate por `status` + `type` (ex.: `ERR_ALL_GATEWAYS_FAILED` → retry com backoff). A [página de erros](/pages/errors) diz o que fazer com cada um.
+    Trate por `status` + `type` e repita erros transitórios com backoff. A [página de erros](/pages/errors) diz o que fazer com cada um.
   </Step>
   <Step title="Troque a chave">
     Substitua `sk_test_*` por `sk_live_*` nas variáveis de ambiente. Só isso — mesma API, mesmos endpoints.
