@@ -15,7 +15,7 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
 | **Cripto** | Em planejamento | Será anunciado quando estiver disponível | Esta documentação ainda não descreve uma API de cripto |
 
 <Note>
-  Um método só pode ser usado quando houver uma rota publicada e uma conexão configurada para ele no Dashboard. Não habilite um método apenas porque ele aparece em um payload ou enum antigo da API.
+  Um método só pode ser usado quando estiver habilitado no projeto. Não habilite um método apenas porque ele aparece em um payload ou enum antigo da API.
 </Note>
 
 ## Escolha como integrar
@@ -35,7 +35,7 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
 
 <Steps>
   <Step title="Configure o ambiente">
-    Crie uma chave `sk_test_` e configure uma conexão e uma rota publicada para cada método que deseja aceitar. Comece pelo [Sandbox](/pages/sandbox).
+    Crie uma chave `sk_test_` e habilite os métodos que deseja aceitar. Comece pelo [Sandbox](/pages/sandbox).
   </Step>
   <Step title="Crie o pagamento">
     Use uma transação direta para PIX ou crie uma sessão de checkout com `paymentMethods`, como `['pix', 'credit_card']`.
@@ -55,7 +55,7 @@ Use o status da transação ou da sessão para exibir o estado ao comprador, mas
 | Estado | Significado geral |
 |---|---|
 | `waiting_payment` | O comprador ainda precisa pagar ou concluir uma ação |
-| `processing` | O pagamento foi recebido e aguarda confirmação do gateway |
+| `processing` | O pagamento foi recebido e aguarda confirmação |
 | `paid` | O pagamento foi confirmado |
 | `expired` / `cancelled` | O pagamento não pode mais ser concluído |
 | `refunded` | O valor foi devolvido |

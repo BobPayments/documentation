@@ -12,7 +12,7 @@ A Bob oferece SDKs oficiais em **duas camadas**. Elas resolvem problemas diferen
 |---|---|---|---|
 | [SDK Node.js](/pages/sdk/node) | Servidor (backend) | Node.js / TypeScript | Criar cobranças, listar transações e verificar webhooks a partir do seu servidor. |
 | [SDK PHP](/pages/sdk/php) | Servidor (backend) | PHP | O mesmo, em stacks PHP. |
-| [SDK Checkout](/pages/sdk/checkout) | Frontend (navegador) | JavaScript / React | Embutir o checkout da Bob no seu site, tokenizar cartão e conduzir 3DS sem expor Stripe.js. |
+| [SDK Checkout](/pages/sdk/checkout) | Frontend (navegador) | JavaScript / React | Embutir o checkout da Bob no seu site, tokenizar cartão e conduzir 3DS sem expor os dados brutos do cartão. |
 
 <Note>
   As chaves secretas (`sk_live_`, `sk_test_`) só existem no **servidor**. A criação da sessão de checkout acontece no backend com uma biblioteca de servidor; o SDK Checkout roda no navegador e recebe apenas o `checkoutToken`.

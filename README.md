@@ -6,9 +6,9 @@
 
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/BobPayments/documentation/issues)
 
-Bob Payments é um orquestrador de pagamentos para desenvolvedores. Em vez de integrar e manter cada gateway individualmente, você conecta uma única API e nós cuidamos do roteamento, fallback e disponibilidade. Built by developers for developers, it offers:
+Bob Payments é uma plataforma de pagamentos para desenvolvedores. Você conecta uma única API e nós cuidamos do processamento, fallback e disponibilidade. Built by developers for developers, it offers:
 
-- Múltiplos gateways PIX e cartão por trás de uma única API
+- PIX e cartão por trás de uma única API
 - QR Code e código copia-e-cola gerados em uma chamada
 - Cartão de crédito via checkout hospedado ou SDK embutível
 - Notificações em tempo real via webhooks com verificação HMAC-SHA256

@@ -53,10 +53,10 @@ Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua
 - **`items` é metadado de exibição** — o catálogo é seu; a Bob só renderiza o resumo do pedido. O valor cobrado é sempre o `amountCents` da sessão.
 - **`expiresAt` é do link, não do PIX** — a sessão dura 24h por padrão; o PIX gerado dentro dela segue a expiração configurada no projeto.
 - **`paymentMethods` controla as opções exibidas** — use `["pix"]`, `["credit_card"]` ou combine os métodos disponíveis no seu projeto. O padrão é `["pix"]`.
-- **Sessão exige rota publicada** — sem rota de pagamento publicada para cada método solicitado, a criação falha com `422` (assim você descobre na criação, não no clique do comprador).
-- **Cartão usa Stripe Connect** — para aceitar cartão, configure a conexão e publique uma rota `credit_card`. Veja [Cartão de crédito](/pages/credit-card/overview).
-- **Quer manter o comprador no seu site?** Use o [SDK Checkout](/pages/sdk/checkout). Ele embute o checkout da Bob sem expor Stripe.js para a sua aplicação.
-- **Sandbox funciona igual** — crie a sessão com `sk_test_` e o fluxo roda de ponta a ponta com o gateway de teste. Veja [Sandbox](/pages/sandbox).
+- **Método não disponível** — a criação da sessão informa quando um método solicitado não está habilitado no projeto.
+- **Cartão de crédito** — informe `credit_card` em `paymentMethods` para aceitar cartão. Veja [Cartão de crédito](/pages/credit-card/overview).
+- **Quer manter o comprador no seu site?** Use o [SDK Checkout](/pages/sdk/checkout). Ele embute o checkout da Bob sem expor os dados brutos do cartão à sua aplicação.
+- **Sandbox funciona igual** — crie a sessão com `sk_test_` e o fluxo roda de ponta a ponta no ambiente de teste. Veja [Sandbox](/pages/sandbox).
 - **Com o SDK**: `bob.checkoutSessions.create(...)` já envia `webhookVersion: "v2"` por padrão. Veja [SDK Node.js](/pages/sdk/node).
 
 <Card title="Referência da API" icon="code" href="/pages/checkout/create">

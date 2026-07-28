@@ -60,7 +60,7 @@ checkout.destroy();
 - Tokeniza o cartão sem expor `pm_...` para a sua aplicação.
 - Conduz autenticação 3DS quando a API retorna `nextActionUrl`.
 - Aguarda o status final antes de chamar `onSuccess`.
-- Esconde gateways, IDs internos e detalhes de fallback do comprador.
+- Esconde IDs internos e detalhes do processamento do comprador.
 
 ## Estados
 
@@ -80,10 +80,10 @@ loading_session
 
 ## Segurança
 
-- Não importe Stripe.js diretamente para usar o SDK Bob.
+- Não importe bibliotecas adicionais diretamente para usar o SDK Bob.
 - Não salve tokens de cartão, `pm_...` ou corpo bruto de pagamento.
 - Não envie dados sensíveis em eventos, analytics ou `postMessage`.
-- Configure sua CSP para permitir os domínios necessários da Bob e da Stripe.
+- Configure sua CSP para permitir os domínios necessários para o checkout da Bob.
 - Desmonte o checkout com `destroy()` quando a sessão mudar ou o componente sair da tela.
 
 <Card title="Cartão de crédito" icon="credit-card" href="/pages/credit-card/overview">

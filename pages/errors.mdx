@@ -9,9 +9,9 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 ```json
 {
   "type": "ERR_INTEGRATION_006",
-  "title": "Sem Rota Publicada",
+  "title": "Método não disponível",
   "status": 422,
-  "detail": "Nenhuma rota publicada para o método de pagamento informado.",
+  "detail": "O método de pagamento informado não está habilitado no projeto.",
   "instance": "/api/v1/transactions"
 }
 ```
@@ -38,10 +38,10 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 | `403` | Autenticado, mas sem permissão | Cheque o tipo de chave e o modo do projeto (projeto em dev mode bloqueia `sk_live_`). |
 | `404` | Recurso não encontrado | ID errado ou de outro projeto — a API não revela recursos de terceiros. |
 | `409` | `Idempotency-Key` em processamento | Outra requisição com a mesma chave está em voo. Aguarde ~1s e repita **com a mesma chave** — você recebe o replay. Veja [Idempotência](/pages/idempotency). |
-| `422` | Erro semântico | O payload é válido, mas algo do negócio impede: sem rota publicada, valor acima do limite do projeto, chave idempotente reusada com body diferente. Corrija a causa antes de repetir. |
+| `422` | Erro semântico | O payload é válido, mas algo do negócio impede: método não disponível, valor acima do limite do projeto, chave idempotente reusada com body diferente. Corrija a causa antes de repetir. |
 | `429` | Rate limit | Aguarde o header `Retry-After` (segundos) antes de repetir. Backoff exponencial se persistir. |
 | `500` | Erro interno | Repita com backoff. Se persistir, fale com o suporte informando o `instance` e o horário. |
-| `503` | Todos os gateways falharam ou sistema sob carga | Transitório — repita com backoff. Na criação de transação, use [Idempotency-Key](/pages/idempotency) para repetir sem risco de duplicar. |
+| `503` | Processamento temporariamente indisponível ou sistema sob carga | Transitório — repita com backoff. Na criação de transação, use [Idempotency-Key](/pages/idempotency) para repetir sem risco de duplicar. |
 
 ## Códigos que você vai encontrar
 
@@ -51,12 +51,11 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 | `ERR_AUTH_009` | 401 | API key inválida ou expirada |
 | `ERR_AUTHZ_001` | 403 | Chave sem a permissão necessária para o recurso |
 | `ERR_TRANSACTION_001` | 404 | Transação não encontrada |
-| `ERR_INTEGRATION_006` | 422 | Sem rota de pagamento publicada para o método |
-| `ERR_ALL_GATEWAYS_FAILED` | 503 | Nenhum gateway conseguiu processar (detalhes por gateway em `details`) |
+| `ERR_INTEGRATION_006` | 422 | Método de pagamento não disponível no projeto |
 
 ## Caso especial: HTTP 202 na criação
 
-`202` **não é erro** — é sucesso parcial. O PIX foi gerado no gateway, mas a persistência ficou pendente de reconciliação automática:
+`202` **não é erro** — é sucesso parcial. O PIX foi gerado, mas a persistência ficou pendente de reconciliação automática:
 
 - `data.id` vem `null`; use `data.externalId` como referência
 - O `pixCode` é **válido e pagável** — entregue ao comprador normalmente
@@ -64,7 +63,7 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 
 ## Timeouts
 
-A criação de transação orquestra gateways em paralelo e responde em até **30 segundos** no pior caso. Configure o timeout do seu cliente HTTP acima disso (o [SDK](/pages/sdk/node) usa 35s) e, ao repetir após timeout, **use a mesma `Idempotency-Key`** — se a criação tiver concluído do outro lado, você recebe o replay em vez de um pagamento duplicado.
+A criação de transação pode levar até **30 segundos** no pior caso. Configure o timeout do seu cliente HTTP acima disso (o [SDK](/pages/sdk/node) usa 35s) e, ao repetir após timeout, **use a mesma `Idempotency-Key`** — se a criação tiver concluído, você recebe o replay em vez de um pagamento duplicado.
 
 <Card title="Ficou travado?" icon="envelope" href="mailto:suporte@payments.bob.company">
   Fala com a gente: suporte@payments.bob.company
