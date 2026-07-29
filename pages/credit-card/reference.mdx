@@ -1,5 +1,5 @@
 ---
-title: "Referência"
+title: "Transação de cartão"
 description: "Estrutura e atributos de uma transação de cartão de crédito na API Bob Payments"
 icon: "book-open-cover"
 ---
@@ -10,7 +10,7 @@ Para aceitar cartão de crédito você **não** envia os dados do cartão para a
   Nunca envie cartão bruto (PAN, CVV ou validade) para a API Bob. Use o pacote de checkout JS da Bob para tokenizar o cartão no browser. Veja o [SDK Checkout](/pages/sdk/checkout).
 </Warning>
 
-## <Icon icon="folder-tree" type="solid" /> Estrutura
+## Estrutura
 
 Uma transação de cartão de crédito é representada pela seguinte estrutura:
 
@@ -38,128 +38,74 @@ Uma transação de cartão de crédito é representada pela seguinte estrutura:
 }
 ```
 
-## Atributos:
+## Atributos
 
-<AccordionGroup>
-  <Accordion title="id:">
-    ```json
-    { "id": "clx7a8b9c0d1e2f3g4h5" }
-    ```
-    `id` : <u>string.</u><br />
-    Identificador único da transação no formato CUID.
-  </Accordion>
+<ResponseField name="id" type="string">
+  Identificador único da transação no formato CUID.
+</ResponseField>
 
-  <Accordion title="externalId:">
-    ```json
-    { "externalId": "pedido_123" }
-    ```
-    `externalId` : <u>string.</u><br />
-    Identificador da transação no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
-  </Accordion>
+<ResponseField name="externalId" type="string">
+  Identificador da transação no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
+</ResponseField>
 
-  <Accordion title="amountCents:">
-    ```json
-    { "amountCents": 25000 }
-    ```
-    `amountCents` : <u>integer.</u><br />
-    Valor da transação em centavos. Exemplo: `25000` = R$ 250,00.
-  </Accordion>
+<ResponseField name="amountCents" type="integer">
+  Valor da transação em centavos. Exemplo: `25000` = R$ 250,00.
+</ResponseField>
 
-  <Accordion title="product:">
-    ```json
-    { "product": "Assinatura Pro" }
-    ```
-    `product` : <u>string.</u><br />
-    Nome ou descrição do produto/serviço cobrado.
-  </Accordion>
+<ResponseField name="product" type="string">
+  Nome ou descrição do produto/serviço cobrado.
+</ResponseField>
 
-  <Accordion title="paymentMethod:">
-    ```json
-    { "paymentMethod": "credit_card" }
-    ```
-    `paymentMethod` : <u>string.</u><br />
-    Método de pagamento da transação. Para cartão, o valor é `credit_card`. A Bob gerencia internamente o processamento da tentativa.
-  </Accordion>
+<ResponseField name="paymentMethod" type="string">
+  Método de pagamento da transação. Para cartão, o valor é `credit_card`. A Bob gerencia internamente o processamento da tentativa.
+</ResponseField>
 
-  <Accordion title="status:">
-    ```json
-    { "status": "paid" }
-    ```
-    `status` : <u>string.</u><br />
-    Status atual da transação.
-    <Info>
-      | Status | Descrição |
-      |--------|-----------|
-      | `pending` | **Transação criada, ainda sem confirmação final** |
-      | `waiting_payment` | **Aguardando autenticação 3DS ou confirmação assíncrona** |
-      | `paid` | **Pagamento aprovado** |
-      | `failed` | **O processamento não foi concluído** |
-      | `refunded` | **O valor foi devolvido ao cliente** |
-      | `cancelled` | **A transação foi cancelada** |
-    </Info>
-    Não considere apenas o HTTP `201` como confirmação de pagamento — use webhook e/ou consulta de status para confirmar o desfecho financeiro.
-  </Accordion>
+<ResponseField name="status" type="string">
+  Status atual da transação.
+  <Note>
+    | Status | Descrição |
+    |--------|-----------|
+    | `pending` | **Transação criada, ainda sem confirmação final** |
+    | `waiting_payment` | **Aguardando autenticação 3DS ou confirmação assíncrona** |
+    | `paid` | **Pagamento aprovado** |
+    | `failed` | **O processamento não foi concluído** |
+    | `refunded` | **O valor foi devolvido ao cliente** |
+    | `cancelled` | **A transação foi cancelada** |
+  </Note>
+  Não considere apenas o HTTP `201` como confirmação de pagamento — use webhook e/ou consulta de status para confirmar o desfecho financeiro.
+</ResponseField>
 
-  <Accordion title="card:">
-    ```json
-    {
-      "card": {
-        "brand": "visa",
-        "last4": "4242"
-      }
-    }
-    ```
-    `card` : <u>object | null.</u><br />
-    Dados de exibição do cartão, seguros para armazenar e mostrar ao comprador. `brand` é a bandeira e `last4` são os quatro últimos dígitos. **PAN, CVV e validade nunca são retornados** — o cartão é tokenizado no browser pelo pacote de checkout da Bob.
-  </Accordion>
+<ResponseField name="card" type="object | null">
+  Dados de exibição do cartão, seguros para armazenar e mostrar ao comprador. `brand` é a bandeira e `last4` são os quatro últimos dígitos. **PAN, CVV e validade nunca são retornados** — o cartão é tokenizado no browser pelo pacote de checkout da Bob.
+</ResponseField>
 
-  <Accordion title="customerEmail:">
-    ```json
-    { "customerEmail": "joao@email.com" }
-    ```
-    `customerEmail` : <u>string | null.</u><br />
-    E-mail do comprador. Atalho direto ao campo `customer.email`, disponível no nível raiz da transação.
-  </Accordion>
+<ResponseField name="customerEmail" type="string | null">
+  E-mail do comprador. Atalho direto ao campo `customer.email`, disponível no nível raiz da transação.
+</ResponseField>
 
-  <Accordion title="customerName:">
-    ```json
-    { "customerName": "João Silva" }
-    ```
-    `customerName` : <u>string | null.</u><br />
-    Nome do comprador. Atalho direto ao campo `customer.name`, disponível no nível raiz da transação.
-  </Accordion>
+<ResponseField name="customerName" type="string | null">
+  Nome do comprador. Atalho direto ao campo `customer.name`, disponível no nível raiz da transação.
+</ResponseField>
 
-  <Accordion title="customer:">
-    ```json
-    {
-      "customer": {
-        "name": "João Silva",
-        "email": "joao@email.com",
-        "document": "12345678900"
-      }
-    }
-    ```
-    `customer` : <u>object.</u><br />
-    Dados do comprador vinculado à transação. Consulte a [entidade Customer](/pages/customers/reference).
-  </Accordion>
+<ResponseField name="customer" type="object">
+  Dados do comprador vinculado à transação. Consulte a [entidade Customer](/pages/customers/reference).
+</ResponseField>
 
-  <Accordion title="createdAt:">
-    ```json
-    { "createdAt": "2026-02-28T09:00:00.000Z" }
-    ```
-    `createdAt` : <u>date-time.</u><br />
-    Data e hora de criação da transação.
-  </Accordion>
+<ResponseField name="createdAt" type="date-time">
+  Data e hora de criação da transação.
+</ResponseField>
 
-  <Accordion title="updatedAt:">
-    ```json
-    { "updatedAt": "2026-02-28T09:05:32.000Z" }
-    ```
-    `updatedAt` : <u>date-time.</u><br />
-    Data e hora da última atualização.
-  </Accordion>
-</AccordionGroup>
+<ResponseField name="updatedAt" type="date-time">
+  Data e hora da última atualização.
+</ResponseField>
 
-<Card title="Cartão de crédito" icon="credit-card" href="/pages/credit-card/overview">
-  Veja os modos de integração, a tokenização via SDK e a configuração de rota de cartão.
-</Card>
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Cartão de crédito" icon="credit-card" href="/pages/credit-card/overview">
+    Modos de integração, tokenização via SDK e configuração de rota.
+  </Card>
+  <Card title="SDK Checkout" icon="browser" href="/pages/sdk/checkout">
+    Tokenize o cartão no navegador sem tocar em PAN ou CVV.
+  </Card>
+</CardGroup>

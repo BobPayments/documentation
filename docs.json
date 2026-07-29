@@ -8,10 +8,11 @@
   "name": "Bob Payments",
   "description": "Documentação da API Bob Payments — uma integração para criar, acompanhar e conciliar pagamentos com PIX e cartão de crédito, com suporte a novos métodos no futuro.",
   "logo": {
-    "light": "https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio",
-    "dark": "https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio"
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "/pages/introduction"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "colors": {
     "primary": "#087A60",
     "light": "#5EE0B5",
@@ -62,6 +63,15 @@
             "href": "/"
           }
         ]
+      },
+      {
+        "header": "Suporte",
+        "items": [
+          {
+            "label": "Falar com o suporte",
+            "href": "mailto:suporte@payments.bob.company"
+          }
+        ]
       }
     ]
   },
@@ -82,6 +92,46 @@
     {
       "source": "/",
       "destination": "/pages/introduction"
+    },
+    {
+      "source": "/api-reference",
+      "destination": "/pages/pix/reference"
+    },
+    {
+      "source": "/api-reference/criar-nova-transação",
+      "destination": "/pages/pix/create"
+    },
+    {
+      "source": "/api-reference/listar-todas-as-transações",
+      "destination": "/pages/pix/list"
+    },
+    {
+      "source": "/api-reference/buscar-transação-por-id",
+      "destination": "/pages/pix/check-status"
+    },
+    {
+      "source": "/api-reference/simular-pagamento-de-transação-sandbox",
+      "destination": "/pages/pix/simulate-payment"
+    },
+    {
+      "source": "/api-reference/checkout/criar-sessão-de-checkout",
+      "destination": "/pages/checkout/create"
+    },
+    {
+      "source": "/api-reference/checkout/consultar-status-da-sessão",
+      "destination": "/pages/checkout/status"
+    },
+    {
+      "source": "/api-reference/listar-todos-os-clientes",
+      "destination": "/pages/customers/list"
+    },
+    {
+      "source": "/api-reference/buscar-cliente-por-id",
+      "destination": "/pages/customers/get"
+    },
+    {
+      "source": "/api-reference/buscar-detalhes-da-loja",
+      "destination": "/pages/store/get"
     }
   ],
   "contextual": {
@@ -101,90 +151,76 @@
     }
   },
   "navigation": {
-    "tabs": [
+    "languages": [
       {
-        "tab": "Documentação",
-        "groups": [
+        "language": "pt-BR",
+        "default": true,
+        "tabs": [
           {
-            "group": "Primeiros passos",
-            "pages": [
-              "pages/introduction",
-              "pages/quickstart"
-            ]
-          },
-          {
-            "group": "Conceitos principais",
-            "pages": [
-              "pages/concepts/payment-flow",
-              "pages/concepts/transactions",
-              "pages/concepts/customers",
-              "pages/concepts/webhooks"
-            ]
-          },
-          {
-            "group": "Usando a Bob",
-            "pages": [
-              "pages/sandbox",
-              "pages/authentication",
-              "pages/production"
-            ]
-          },
-          {
-            "group": "Guias de integração",
-            "pages": [
-              "pages/payments",
-              "pages/checkout/overview",
-              "pages/pix/create"
-            ]
-          },
-          {
-            "group": "Métodos de pagamento",
-            "pages": [
+            "tab": "Documentação",
+            "groups": [
               {
-                "group": "PIX",
-                "expanded": false,
+                "group": "Primeiros passos",
                 "pages": [
-                  "pages/pix/reference",
-                  "pages/pix/simulate-payment"
+                  "pages/introduction",
+                  "pages/quickstart"
                 ]
               },
               {
-                "group": "Cartão de crédito",
-                "expanded": false,
+                "group": "Conceitos principais",
                 "pages": [
-                  "pages/credit-card/overview",
-                  "pages/credit-card/reference"
+                  "pages/concepts/payment-flow",
+                  "pages/concepts/transactions",
+                  "pages/concepts/customers",
+                  "pages/concepts/webhooks"
+                ]
+              },
+              {
+                "group": "Formas de integração",
+                "pages": [
+                  "pages/payments",
+                  "pages/checkout/overview",
+                  "pages/credit-card/overview"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "pages/webhooks"
+                ]
+              },
+              {
+                "group": "Usando a Bob",
+                "pages": [
+                  "pages/sandbox",
+                  "pages/authentication",
+                  "pages/production"
+                ]
+              },
+              {
+                "group": "Fundamentos da API",
+                "pages": [
+                  "pages/idempotency",
+                  "pages/errors"
                 ]
               }
             ]
           },
           {
-            "group": "Webhooks",
-            "pages": [
-              "pages/webhooks"
-            ]
-          },
-          {
-            "group": "Fundamentos da API",
-            "pages": [
-              "pages/idempotency",
-              "pages/errors"
-            ]
-          },
-          {
-            "group": "Recursos da API",
-            "pages": [
+            "tab": "Referência da API",
+            "groups": [
               {
                 "group": "Transações",
-                "expanded": false,
                 "pages": [
+                  "pages/pix/reference",
+                  "pages/credit-card/reference",
+                  "pages/pix/create",
                   "pages/pix/list",
                   "pages/pix/check-status"
                 ]
               },
               {
                 "group": "Checkout",
-                "expanded": false,
                 "pages": [
                   "pages/checkout/create",
                   "pages/checkout/status"
@@ -192,7 +228,6 @@
               },
               {
                 "group": "Clientes",
-                "expanded": false,
                 "pages": [
                   "pages/customers/reference",
                   "pages/customers/get",
@@ -201,47 +236,48 @@
               },
               {
                 "group": "Projeto",
-                "expanded": false,
                 "pages": [
                   "pages/store/reference",
                   "pages/store/get"
                 ]
+              },
+              {
+                "group": "Sandbox",
+                "pages": [
+                  "pages/pix/simulate-payment"
+                ]
               }
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Referência da API",
-        "openapi": "openapi.yaml"
-      },
-      {
-        "tab": "SDKs",
-        "groups": [
+          },
           {
-            "group": "Comece aqui",
-            "pages": [
-              "pages/sdk/overview"
+            "tab": "SDKs",
+            "groups": [
+              {
+                "group": "Comece aqui",
+                "pages": [
+                  "pages/sdk/overview"
+                ]
+              },
+              {
+                "group": "Servidor",
+                "pages": [
+                  "pages/sdk/node",
+                  "pages/sdk/php"
+                ]
+              },
+              {
+                "group": "Frontend",
+                "pages": [
+                  "pages/sdk/checkout"
+                ]
+              }
             ]
           },
           {
-            "group": "Servidor",
-            "pages": [
-              "pages/sdk/node",
-              "pages/sdk/php"
-            ]
-          },
-          {
-            "group": "Frontend",
-            "pages": [
-              "pages/sdk/checkout"
-            ]
+            "tab": "Changelog",
+            "href": "https://github.com/BobPayments/documentation/blob/main/CHANGELOG.md"
           }
         ]
-      },
-      {
-        "tab": "Changelog",
-        "href": "https://github.com/BobPayments/documentation/blob/main/CHANGELOG.md"
       }
     ]
   }

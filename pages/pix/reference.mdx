@@ -1,10 +1,10 @@
 ---
-title: "Referência"
+title: "Cobrança PIX"
 description: "Estrutura e atributos de uma cobrança PIX na API Bob Payments"
 icon: "book-open-cover"
 ---
 
-## <Icon icon="folder-tree" type="solid" /> Estrutura
+## Estrutura
 
 Uma cobrança PIX é representada pela seguinte estrutura:
 
@@ -29,118 +29,73 @@ Uma cobrança PIX é representada pela seguinte estrutura:
 }
 ```
 
-## Atributos:
+## Atributos
 
-<AccordionGroup>
-  <Accordion title="id:">
-    ```json
-    { "id": "clx7a8b9c0d1e2f3g4h5" }
-    ```
-    `id` : <u>string.</u><br />
-    Identificador único da cobrança no formato CUID.
-  </Accordion>
+<ResponseField name="id" type="string">
+  Identificador único da cobrança no formato CUID.
+</ResponseField>
 
-  <Accordion title="externalId:">
-    ```json
-    { "externalId": "pedido_123" }
-    ```
-    `externalId` : <u>string.</u><br />
-    Identificador da cobrança no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
-  </Accordion>
+<ResponseField name="externalId" type="string">
+  Identificador da cobrança no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
+</ResponseField>
 
-  <Accordion title="amountCents:">
-    ```json
-    { "amountCents": 10000 }
-    ```
-    `amountCents` : <u>integer.</u><br />
-    Valor da cobrança em centavos. Exemplo: `10000` = R$ 100,00.
-  </Accordion>
+<ResponseField name="amountCents" type="integer">
+  Valor da cobrança em centavos. Exemplo: `10000` = R$ 100,00.
+</ResponseField>
 
-  <Accordion title="product:">
-    ```json
-    { "product": "Plano Premium" }
-    ```
-    `product` : <u>string.</u><br />
-    Nome ou descrição do produto/serviço cobrado. Aparece na notificação do PIX para o pagador.
-  </Accordion>
+<ResponseField name="product" type="string">
+  Nome ou descrição do produto/serviço cobrado. Aparece na notificação do PIX para o pagador.
+</ResponseField>
 
-  <Accordion title="status:">
-    ```json
-    { "status": "waiting_payment" }
-    ```
-    `status` : <u>string.</u><br />
-    Status atual da cobrança.
-    <Info>
-      | Status | Descrição |
-      |--------|-----------|
-      | `waiting_payment` | **Aguardando pagamento do cliente** |
-      | `processing` | **Pagamento recebido, aguardando confirmação** |
-      | `paid` | **Pagamento confirmado** |
-      | `expired` | **O tempo limite de pagamento foi excedido** |
-      | `cancelled` | **A cobrança foi cancelada** |
-      | `refunded` | **O valor foi devolvido ao cliente** |
-    </Info>
-  </Accordion>
+<ResponseField name="status" type="string">
+  Status atual da cobrança.
+  <Note>
+    | Status | Descrição |
+    |--------|-----------|
+    | `waiting_payment` | **Aguardando pagamento do cliente** |
+    | `processing` | **Pagamento recebido, aguardando confirmação** |
+    | `paid` | **Pagamento confirmado** |
+    | `expired` | **O tempo limite de pagamento foi excedido** |
+    | `cancelled` | **A cobrança foi cancelada** |
+    | `refunded` | **O valor foi devolvido ao cliente** |
+  </Note>
+</ResponseField>
 
-  <Accordion title="pixCode:">
-    ```json
-    { "pixCode": "00020126580014br.gov.bcb.pix..." }
-    ```
-    `pixCode` : <u>string.</u><br />
-    Código PIX copia-e-cola (Pix Payload Format Object). Disponível apenas quando `status` é `waiting_payment`.
-  </Accordion>
+<ResponseField name="pixCode" type="string">
+  Código PIX copia-e-cola (Pix Payload Format Object). Disponível apenas quando `status` é `waiting_payment`.
+</ResponseField>
 
-  <Accordion title="expirationDate:">
-    ```json
-    { "expirationDate": "2026-02-28T10:00:00.000Z" }
-    ```
-    `expirationDate` : <u>date-time.</u><br />
-    Data e hora de expiração da cobrança. Após esse momento, o status muda para `expired`.
-  </Accordion>
+<ResponseField name="expirationDate" type="date-time">
+  Data e hora de expiração da cobrança. Após esse momento, o status muda para `expired`.
+</ResponseField>
 
-  <Accordion title="customerEmail:">
-    ```json
-    { "customerEmail": "joao@email.com" }
-    ```
-    `customerEmail` : <u>string | null.</u><br />
-    E-mail do comprador. Atalho direto ao campo `customer.email`, disponível no nível raiz da transação.
-  </Accordion>
+<ResponseField name="customerEmail" type="string | null">
+  E-mail do comprador. Atalho direto ao campo `customer.email`, disponível no nível raiz da transação.
+</ResponseField>
 
-  <Accordion title="customerName:">
-    ```json
-    { "customerName": "João Silva" }
-    ```
-    `customerName` : <u>string | null.</u><br />
-    Nome do comprador. Atalho direto ao campo `customer.name`, disponível no nível raiz da transação.
-  </Accordion>
+<ResponseField name="customerName" type="string | null">
+  Nome do comprador. Atalho direto ao campo `customer.name`, disponível no nível raiz da transação.
+</ResponseField>
 
-  <Accordion title="customer:">
-    ```json
-    {
-      "customer": {
-        "name": "João Silva",
-        "email": "joao@email.com",
-        "document": "12345678900"
-      }
-    }
-    ```
-    `customer` : <u>object.</u><br />
-    Dados do comprador vinculado à cobrança. Consulte a [entidade Customer](/pages/customers/reference).
-  </Accordion>
+<ResponseField name="customer" type="object">
+  Dados do comprador vinculado à cobrança. Consulte a [entidade Customer](/pages/customers/reference).
+</ResponseField>
 
-  <Accordion title="createdAt:">
-    ```json
-    { "createdAt": "2026-02-28T09:00:00.000Z" }
-    ```
-    `createdAt` : <u>date-time.</u><br />
-    Data e hora de criação da cobrança.
-  </Accordion>
+<ResponseField name="createdAt" type="date-time">
+  Data e hora de criação da cobrança.
+</ResponseField>
 
-  <Accordion title="updatedAt:">
-    ```json
-    { "updatedAt": "2026-02-28T09:05:32.000Z" }
-    ```
-    `updatedAt` : <u>date-time.</u><br />
-    Data e hora da última atualização.
-  </Accordion>
-</AccordionGroup>
+<ResponseField name="updatedAt" type="date-time">
+  Data e hora da última atualização.
+</ResponseField>
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Criar cobrança" icon="code" href="/pages/pix/create">
+    Gere um PIX com valor, produto e dados do comprador.
+  </Card>
+  <Card title="Consultar status" icon="magnifying-glass" href="/pages/pix/check-status">
+    Verifique o estado atual de uma cobrança.
+  </Card>
+</CardGroup>

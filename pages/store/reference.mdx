@@ -1,10 +1,10 @@
 ---
-title: "Referência"
+title: "Estrutura do projeto"
 description: "Consulte as configurações e informações do seu projeto"
 icon: "book-open-cover"
 ---
 
-## <Icon icon="folder-tree" type="solid" /> Estrutura
+## Estrutura
 
 A loja representa o projeto associado à sua chave de API:
 
@@ -18,47 +18,35 @@ A loja representa o projeto associado à sua chave de API:
 }
 ```
 
-## Atributos:
+## Atributos
 
-<AccordionGroup>
-  <Accordion title="id:">
-    ```json
-    { "id": "clz9x8w7v6u5t4s3r2q1" }
-    ```
-    `id` : <u>string.</u><br />
-    Identificador único do projeto no formato CUID.
-  </Accordion>
+<ResponseField name="id" type="string">
+  Identificador único do projeto no formato CUID.
+</ResponseField>
 
-  <Accordion title="name:">
-    ```json
-    { "name": "Minha Loja" }
-    ```
-    `name` : <u>string.</u><br />
-    Nome do projeto configurado no Dashboard.
-  </Accordion>
+<ResponseField name="name" type="string">
+  Nome do projeto configurado no Dashboard.
+</ResponseField>
 
-  <Accordion title="devMode:">
-    ```json
-    { "devMode": false }
-    ```
-    `devMode` : <u>boolean.</u><br />
-    Indica se o projeto está em modo sandbox (`true`) ou produção (`false`). Reflete o ambiente da chave de API utilizada (`sk_test_*` ou `sk_live_*`).
-  </Accordion>
+<ResponseField name="devMode" type="boolean">
+  Indica se o projeto está em modo sandbox (`true`) ou produção (`false`). Reflete o ambiente da chave de API utilizada (`sk_test_*` ou `sk_live_*`).
+</ResponseField>
 
-  <Accordion title="pixExpirationMinutes:">
-    ```json
-    { "pixExpirationMinutes": 60 }
-    ```
-    `pixExpirationMinutes` : <u>integer.</u><br />
-    Tempo em minutos até uma cobrança PIX expirar. Configurável no Dashboard.
-  </Accordion>
+<ResponseField name="pixExpirationMinutes" type="integer">
+  Tempo em minutos até uma cobrança PIX expirar. Configurável no Dashboard.
+</ResponseField>
 
-  <Accordion title="maxTransactionAmountCents:">
-    ```json
-    { "maxTransactionAmountCents": null }
-    ```
-    `maxTransactionAmountCents` : <u>integer | null.</u><br />
-    Valor máximo permitido por transação, em centavos. `null` indica que não há limite configurado.
-  </Accordion>
+<ResponseField name="maxTransactionAmountCents" type="integer | null">
+  Valor máximo permitido por transação, em centavos. `null` indica que não há limite configurado.
+</ResponseField>
 
-</AccordionGroup>
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Dados da loja" icon="code" href="/pages/store/get">
+    Consulte as configurações do projeto pela API.
+  </Card>
+  <Card title="Autenticação" icon="key" href="/pages/authentication">
+    A chave de API define a qual projeto a requisição pertence.
+  </Card>
+</CardGroup>

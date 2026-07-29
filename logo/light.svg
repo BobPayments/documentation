@@ -1,13 +1,9 @@
-<svg width="190" height="32" viewBox="0 0 190 32" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
-  <title id="title">Bob Payments</title>
+<svg width="134" height="26" viewBox="0 0 134 26" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bob Payments">
   <defs>
-    <linearGradient id="bob-gradient" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0A8265"/>
-      <stop offset="1" stop-color="#066B55"/>
-    </linearGradient>
+    <clipPath id="bob-logo-clip">
+      <circle cx="13" cy="13" r="13" />
+    </clipPath>
   </defs>
-  <rect width="32" height="32" rx="10" fill="url(#bob-gradient)"/>
-  <path d="M8.5 6.5H16.4C20.1 6.5 22.4 8.4 22.4 11.5C22.4 13.2 21.6 14.6 20.1 15.5C22.1 16.3 23.2 17.9 23.2 20C23.2 23.6 20.4 25.7 16.1 25.7H8.5V6.5ZM13 10.2V13.8H16C17.3 13.8 18 13.2 18 12C18 10.8 17.2 10.2 15.9 10.2H13ZM13 17.4V22H16.3C17.8 22 18.7 21.2 18.7 19.7C18.7 18.2 17.8 17.4 16.2 17.4H13Z" fill="white"/>
-  <text x="43" y="22" fill="#087A60" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="750" letter-spacing="-0.5">Bob</text>
-  <text x="81" y="22" fill="#4A6861" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="500" letter-spacing="-0.4">Payments</text>
+  <image x="0" y="0" width="26" height="26" clip-path="url(#bob-logo-clip)" href="data:image/webp;base64,UklGRgwEAABXRUJQVlA4WAoAAAAQAAAAMwAAMwAAQUxQSGwBAAABkEPbtqk957dt27Zt21bn/4+ddCnZ2bZt27ZtJ+/8fveeO9JHxAQAQwXnxjkH7n+S8NuTEws6gpSAoNf0uyjzzdx4BU6JeyRkeaVWmYPXLmR+LZ2V8qRfyFFaasDE4jByfhDMwPsRcv9WICvwHRL8WyPD4w2S/FM4LJP7SPR76DAUdyLZR4ZDdSLhVUPYfqWE2YMtR9K3VQb4/qOFLQMWI/FbigAmP6lhGkArkl8GcIDeJzWdX/QwPgkFHD9ChHVzRbi2S4TP50TAG/+N80LsEeHrfBFujBZhU6oIU/T/CJAMR+l91YAeemsBLP+QywWANdQeKgNAqESsHQZuovVIfRDXn6TKYfCJlLYpDKF8lM4rCxja5gWV34kw3ODPNKQGGH7cVwpSG8gNf83vdwPId7rI61UisNSY8Y/LDktgHHmG3ZNKBWCuUHKOzeMuDeCqEDP3rZzvG4pUgL9y2KhVlz8N+H5787RUTWAIVlA4IHoCAABwEQCdASo0ADQAPjEYiUOiIaESDAW0IAMEtIAIpr8w/F3zANWa9T/IbeAPQA/LH42ZZf69fkB+QGwI/3z8u9eP/evyj/pPwgfxn5b+rX4+/1/2d/YF/Iv5n/nPzQ/sffV/YD2Of1iJW1l2DTBbMQtH+U3fzRnmRsBF6E4C8zu0tKS8Xjvs2RZ3Vm7DfCSscMyCe+3gAP7//k4SIPk2UgJiCT38PhxKJS5pUQezFnzCoGP+kKf9YlAq7l7HX68X8MNebLmGHVO02cyXyR9sARgs+uE2w4p5A85ad+IxpAqjcZc2kp/K6GBQ8zc+d4WHAytbil9O1duOIMNPWiCnIn3SAn+DQldbxWHLXn6AjsKab+Bv/5cGmvY4JlPxQUyOW9t4FRe49t6EUUO/EMC1m3bLJz+mU/x1C3KbtMr68+44Inoi4FGq7dMi8GaJugJBsFv/Sqfiga6OMYgvfhbW9JOylsQ0ezWFSsH/M9LWS+xT+dR1JTvdRYnwQ28YCwo9z68FlbXJrSZQ7F7nC/24P5vw6p2jdmLb9uQWTEg/Gf/4r/KUaJN/2KsXLCCRGp0hVeQDZS+C42mr//TWjYs9z5IUDaswBPP1bP1z9zPaVj9VAwe9Gk4h3Z5a6yoG748HSZpwvjbf9lHCRqQ1L93SjOSUb+mvSS6wWnR1GHBsYhvYGcWLEsZ/vyTSqX2hXrL4xzj6fS3TKdakV7ffVAi5daKs3S/5fSr7UDlQWuYcbzZAaYnPQ3ZA//jFUh3+kMKQRcC0kZ5Mwx4PSVAFc23vQGGmmX/hTfUB3XWBaa+lHZJauaEi3P3DnZIVUyX1ahoGzW03Ark0B/AAAAAA" />
+  <text x="34" y="18.4" fill="#17211F" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" font-weight="600" letter-spacing="-0.375">Bob Payments</text>
 </svg>
