@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.37](https://github.com/BobPayments/documentation/compare/v1.1.36...v1.1.37) (2026-07-29)
+
+### Documentação
+
+* reorganize portal and refresh visual design ([#7](https://github.com/BobPayments/documentation/issues/7)) ([6f269f0](https://github.com/BobPayments/documentation/commit/6f269f0d47b4bc5deb21a6bbc2b0225749a7427d))
+
 ## [1.1.36](https://github.com/BobPayments/documentation/compare/v1.1.35...v1.1.36) (2026-07-28)
 
 ### Documentação
