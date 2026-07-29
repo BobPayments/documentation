@@ -1,0 +1,61 @@
+---
+title: "Fluxo de pagamento"
+description: "Entenda o caminho entre sua aplicação, a Bob Payments e o comprador."
+icon: "diagram-project"
+---
+
+Todo pagamento segue o mesmo ciclo: sua aplicação cria um recurso, o comprador conclui a ação necessária e a Bob confirma o resultado.
+
+## Visão geral
+
+```text
+Seu backend
+    │
+    ├─ cria uma sessão de checkout ou transação
+    │
+    ▼
+Bob Payments ── apresenta PIX ou cartão ──> Comprador
+    │
+    ├─ processa o pagamento
+    │
+    ▼
+Webhook assinado ──> Seu backend confirma o pedido
+```
+
+## Etapas do fluxo
+
+<Steps>
+  <Step title="Escolha a integração">
+    Use o checkout hospedado para começar rápido, o SDK Checkout para manter a experiência no seu site ou a API direta para controlar o fluxo de PIX.
+  </Step>
+  <Step title="Crie o recurso">
+    Seu backend cria uma sessão de checkout ou uma transação. Envie uma chave de idempotência nas operações de criação.
+  </Step>
+  <Step title="Conduza o comprador">
+    Redirecione para o checkout, monte o SDK Checkout ou exiba o QR Code e o código copia-e-cola do PIX.
+  </Step>
+  <Step title="Acompanhe o estado">
+    Mostre o andamento no frontend com o status da sessão ou da transação.
+  </Step>
+  <Step title="Confirme no servidor">
+    Trate o webhook assinado como a confirmação do pagamento. A página de retorno não substitui o webhook.
+  </Step>
+</Steps>
+
+## Responsabilidades
+
+| Componente | Responsabilidade |
+|---|---|
+| Seu backend | Autenticar, criar recursos e confirmar o pedido |
+| Checkout hospedado ou SDK Checkout | Coletar a escolha do comprador e proteger os dados do cartão |
+| API Bob | Criar e consultar sessões, transações e clientes |
+| Webhook | Notificar mudanças de estado de forma assíncrona |
+
+<CardGroup cols={2}>
+  <Card title="Escolher uma integração" icon="signs-post" href="/pages/payments">
+    Compare os caminhos disponíveis.
+  </Card>
+  <Card title="Entender transações" icon="arrow-right-arrow-left" href="/pages/concepts/transactions">
+    Conheça o recurso que representa cada tentativa de pagamento.
+  </Card>
+</CardGroup>

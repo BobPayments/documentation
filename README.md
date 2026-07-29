@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Bob Payments Logo" src="https://resend-attachments.s3.amazonaws.com/bbjVzq13Vc2xBio" width="200" />
+  <img alt="Bob Payments Logo" src="./logo/light.svg" width="200" />
 </p>
 
 # Bob Payments Documentation
@@ -37,6 +37,8 @@ mintlify dev
 .
 ├── pages/
 │   ├── introduction.mdx        # Visão geral da API
+│   ├── quickstart.mdx          # Primeiro pagamento no sandbox
+│   ├── concepts/               # Conceitos principais e fluxo de pagamento
 │   ├── payments.mdx             # Métodos e caminhos de integração
 │   ├── sandbox.mdx             # Ambiente sandbox
 │   ├── authentication.mdx      # Autenticação Bearer Token

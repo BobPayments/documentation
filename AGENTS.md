@@ -22,7 +22,7 @@
 
 ## Style preferences
 
-<!-- Add any project-specific style rules below -->
+{/* Add any project-specific style rules below */}
 
 - Use active voice and second person ("you")
 - Keep sentences concise — one idea per sentence
