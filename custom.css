@@ -12,17 +12,21 @@ body {
   margin-top: 1rem;
 }
 
-#sidebar .nav-logo {
-  width: 44px;
-  max-width: 44px;
-  height: 44px;
+/* Round mark plus wordmark, matching the 26px lockup used on the marketing site. */
+#sidebar .nav-logo,
+#header .nav-logo {
+  width: auto;
+  max-width: 190px;
+  height: 26px;
   padding: 0;
-  border: 1px solid rgba(15, 40, 33, 0.12);
-  border-radius: 999px;
+  border: 0;
 }
 
-.dark #sidebar .nav-logo {
-  border-color: rgba(255, 255, 255, 0.18);
+#sidebar .nav-logo img,
+#header .nav-logo img {
+  width: auto;
+  height: 26px;
+  max-height: 26px;
 }
 
 #sidebar #search-bar-entry {
@@ -60,6 +64,22 @@ html[data-current-path="/pages/introduction"] main#content-container {
   padding-left: 0;
 }
 
+/* The tab bar is painted over the content (its wrapper reserves no height), so the
+   hero has to start exactly where that 3rem strip ends — otherwise its top edge sits
+   under the tabs and the gap above it shows the page background instead of the hero. */
+@media (min-width: 1024px) {
+  html[data-current-path="/pages/introduction"] main#content-container {
+    padding-top: 3rem;
+  }
+}
+
+/* The landing page is full-bleed, so keep the pagination card on the same axis as
+   the content cards instead of letting it stretch edge to edge. */
+html[data-current-path="/pages/introduction"] #pagination {
+  width: min(1200px, calc(100% - 96px));
+  margin: 0 auto 64px;
+}
+
 .bob-home {
   width: 100%;
   color: #17211f;
@@ -68,110 +88,93 @@ html[data-current-path="/pages/introduction"] main#content-container {
 .bob-hero {
   position: relative;
   display: flex;
-  min-height: 510px;
+  min-height: 430px;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding: 72px 0 80px;
   background:
-    radial-gradient(circle at 82% 12%, rgba(64, 225, 167, 0.34), transparent 28%),
-    radial-gradient(circle at 12% 88%, rgba(5, 81, 65, 0.7), transparent 35%),
-    linear-gradient(135deg, #064f41 0%, #087a60 54%, #099775 100%);
+    radial-gradient(ellipse 70% 90% at 50% 42%, rgba(255, 255, 255, 0.14), transparent 70%),
+    linear-gradient(180deg, #0a8265 0%, #087a60 58%, #06664f 100%);
   color: #fff;
   isolation: isolate;
 }
 
+/* Concentric rings, centred behind the headline. */
 .bob-hero-rings {
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
-  background-size: 52px 52px;
-  mask-image: linear-gradient(100deg, rgba(0, 0, 0, 0.18), #000 72%);
+  inset: -40% -5%;
+  background-image: repeating-radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.085) 0 1px,
+    transparent 1px 104px
+  );
+  mask-image: radial-gradient(circle at 50% 50%, #000 22%, rgba(0, 0, 0, 0.45) 52%, transparent 74%);
   pointer-events: none;
-  transform: perspective(700px) rotateX(62deg) scale(1.4) translateY(20%);
-  transform-origin: bottom;
 }
 
 .bob-hero-content {
   position: relative;
   z-index: 1;
-  width: min(1120px, calc(100% - 80px));
-}
-
-.bob-hero-copy {
-  max-width: 720px;
-  text-align: left;
+  width: min(960px, calc(100% - 80px));
+  text-align: center;
 }
 
 .bob-hero-kicker {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 22px;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.bob-hero-kicker > .bob-kicker-dot {
-  width: 8px;
-  height: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.72);
-  border-radius: 999px;
-  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.08);
+  margin: 0 0 18px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .bob-hero h1 {
-  max-width: 680px;
-  margin: 0;
+  max-width: 900px;
+  margin: 0 auto;
   color: #fff;
-  font-size: clamp(44px, 4.4vw, 64px);
+  font-size: clamp(38px, 3.6vw, 58px);
   font-weight: 750;
-  letter-spacing: -0.045em;
-  line-height: 1.02;
+  letter-spacing: -0.04em;
+  line-height: 1.06;
+  text-wrap: balance;
 }
 
 .bob-hero-description {
-  max-width: 600px;
-  margin: 24px 0 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: clamp(17px, 1.45vw, 20px);
+  max-width: 620px;
+  margin: 22px auto 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: clamp(16px, 1.2vw, 19px);
   line-height: 1.55;
+  text-wrap: balance;
 }
 
 .bob-hero-button {
   display: inline-flex;
-  min-height: 56px;
+  min-height: 46px;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
-  margin-top: 32px;
-  padding: 0 28px;
-  border-radius: 999px;
+  margin-top: 30px;
+  padding: 0 22px;
+  border-radius: 10px;
   background: #fff;
   color: #066b55;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 650;
   text-decoration: none;
-  box-shadow: 0 12px 30px rgba(2, 44, 34, 0.18);
+  box-shadow: 0 8px 22px rgba(2, 44, 34, 0.16);
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .bob-hero-button:hover {
   color: #075e4b;
-  transform: translateY(-2px);
-  box-shadow: 0 16px 34px rgba(2, 44, 34, 0.24);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(2, 44, 34, 0.22);
 }
 
 .bob-home-surface {
   min-height: 560px;
-  padding: 42px 48px 96px;
-  background:
-    linear-gradient(180deg, rgba(221, 242, 235, 0.3), transparent 190px),
-    #f8faf9;
+  padding: 48px 48px 96px;
+  background: #f7f9f8;
 }
 
 .bob-home-container {
@@ -184,16 +187,17 @@ html[data-current-path="/pages/introduction"] main#content-container {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 18px;
-  padding: 22px 24px;
-  border: 1px solid #dde7e3;
+  padding: 20px 22px;
+  border: 1px solid #e3eae7;
   border-radius: 12px;
   background: #fff;
   color: #17211f;
   text-decoration: none;
+  transition: border-color 160ms ease;
 }
 
 .bob-feature-banner:hover {
-  border-color: #a9c9bf;
+  border-color: #b7d3c9;
   color: #17211f;
 }
 
@@ -208,10 +212,15 @@ html[data-current-path="/pages/introduction"] main#content-container {
   font-weight: 750;
 }
 
+.bob-feature-icon svg,
+.bob-entry-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
 .bob-feature-icon {
-  width: 48px;
-  height: 48px;
-  font-size: 15px;
+  width: 40px;
+  height: 40px;
 }
 
 .bob-feature-copy {
@@ -223,79 +232,64 @@ html[data-current-path="/pages/introduction"] main#content-container {
 
 .bob-feature-title {
   color: #17211f;
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 650;
 }
 
 .bob-feature-copy > span {
   color: #62706c;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .bob-feature-button {
-  padding: 12px 18px;
+  padding: 10px 16px;
   border-radius: 8px;
   background: #087a60;
   color: #fff;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .bob-entry-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
-  margin-top: 40px;
+  gap: 24px;
+  margin-top: 32px;
 }
 
 .bob-entry-card {
-  position: relative;
-  overflow: hidden;
-  padding: 28px 28px 30px;
-  border: 1px solid #dde7e3;
+  padding: 24px 24px 26px;
+  border: 1px solid #e3eae7;
   border-radius: 12px;
   background: #fff;
-}
-
-.bob-entry-card::after {
-  position: absolute;
-  top: 0;
-  right: 28px;
-  left: 28px;
-  height: 3px;
-  border-radius: 0 0 4px 4px;
-  background: linear-gradient(90deg, #087a60, #72d6b9);
-  content: "";
-  opacity: 0.7;
 }
 
 .bob-entry-title {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .bob-entry-icon {
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
   flex: 0 0 auto;
-  font-size: 17px;
 }
 
 .bob-entry-card h2 {
   margin: 0;
   color: #17211f;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 650;
   letter-spacing: -0.02em;
 }
 
 .bob-entry-action {
   display: block;
-  margin: 22px 0 24px;
-  padding: 12px 16px;
-  border-radius: 7px;
+  margin: 20px 0 22px;
+  padding: 10px 16px;
+  border-radius: 8px;
   background: #f1f4f3;
   color: #26332f;
   font-size: 14px;
@@ -311,7 +305,7 @@ html[data-current-path="/pages/introduction"] main#content-container {
 
 .bob-entry-card ul {
   display: grid;
-  gap: 15px;
+  gap: 13px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -320,10 +314,10 @@ html[data-current-path="/pages/introduction"] main#content-container {
 .bob-entry-card li {
   position: relative;
   margin: 0;
-  padding-left: 22px;
+  padding-left: 20px;
   color: #4f5f5a;
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .bob-entry-card li::before {
@@ -342,10 +336,22 @@ html[data-current-path="/pages/introduction"] main#content-container {
   color: #edf7f3;
 }
 
-.dark .bob-home-surface {
+.dark .bob-hero {
   background:
-    linear-gradient(180deg, rgba(15, 86, 68, 0.24), transparent 190px),
-    #0b1210;
+    radial-gradient(ellipse 70% 90% at 50% 42%, rgba(94, 224, 181, 0.14), transparent 70%),
+    linear-gradient(180deg, #086b55 0%, #075746 62%, #064838 100%);
+}
+
+.dark .bob-hero-rings {
+  background-image: repeating-radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.06) 0 1px,
+    transparent 1px 104px
+  );
+}
+
+.dark .bob-home-surface {
+  background: #0b1210;
 }
 
 .dark .bob-feature-banner,
@@ -391,6 +397,13 @@ html[data-current-path="/pages/introduction"] main#content-container {
   color: #83eac7;
 }
 
+/* Only pt-BR is published — the locale exists to translate the UI strings, so the
+   switcher itself is noise. */
+#localization-select-trigger,
+li:has(> div > #localization-select-trigger) {
+  display: none;
+}
+
 /* Maple already matches the reference navigation. Hide page icons for the same
    text-led hierarchy while preserving HTTP method badges on API pages. */
 #sidebar-content .sidebar-group a svg {
@@ -405,26 +418,18 @@ html[data-current-path="/pages/introduction"] main#content-container {
     overflow: hidden;
   }
 
+  html[data-current-path="/pages/introduction"] #pagination {
+    width: calc(100% - 40px);
+    margin-bottom: 40px;
+  }
+
   .bob-hero {
-    min-height: 460px;
+    min-height: 360px;
+    padding: 56px 0 60px;
   }
 
   .bob-hero-content {
-    display: block;
     width: min(700px, calc(100% - 48px));
-  }
-
-  .bob-hero-copy {
-    text-align: center;
-  }
-
-  .bob-hero-kicker {
-    justify-content: center;
-  }
-
-  .bob-hero-description {
-    margin-right: auto;
-    margin-left: auto;
   }
 
   .bob-home {
@@ -443,16 +448,16 @@ html[data-current-path="/pages/introduction"] main#content-container {
 
 @media (max-width: 640px) {
   .bob-hero {
-    min-height: 430px;
+    min-height: 320px;
   }
 
   .bob-hero-kicker {
-    margin-bottom: 18px;
-    font-size: 12px;
+    margin-bottom: 14px;
+    font-size: 13px;
   }
 
   .bob-hero h1 {
-    font-size: 35px;
+    font-size: 34px;
   }
 
   .bob-hero-description {

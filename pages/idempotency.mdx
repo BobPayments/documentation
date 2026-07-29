@@ -49,3 +49,14 @@ await bob.transactions.create(params, { idempotencyKey: `pedido-${orderId}` });
 - Ao repetir após timeout, **use a mesma chave** da tentativa original.
 - A janela de replay é de **1 hora** — depois disso, a mesma chave cria uma transação nova.
 - A idempotência complementa (não substitui) as regras de deduplicação do método de pagamento. Não use uma chave fixa para todos os pedidos.
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Erros" icon="triangle-exclamation" href="/pages/errors">
+    Veja quais respostas pedem repetição e quais pedem correção.
+  </Card>
+  <Card title="Criar cobrança" icon="code" href="/pages/pix/create">
+    Envie o header `Idempotency-Key` na criação da transação.
+  </Card>
+</CardGroup>

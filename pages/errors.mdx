@@ -35,7 +35,7 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 |---|---|---|
 | `400` | Payload inválido (validação) | **Não repita** sem corrigir. Veja `details.issues` — lista campo a campo o que falhou. |
 | `401` | API key ausente, inválida ou revogada | Confira o header `Authorization: Bearer sk_...` e se a chave não foi revogada no Dashboard. |
-| `403` | Autenticado, mas sem permissão | Cheque o tipo de chave e o modo do projeto (projeto em dev mode bloqueia `sk_live_`). |
+| `403` | Autenticado, mas sem permissão | Cheque o tipo de chave e o modo do projeto (projeto em sandbox bloqueia `sk_live_`). |
 | `404` | Recurso não encontrado | ID errado ou de outro projeto — a API não revela recursos de terceiros. |
 | `409` | `Idempotency-Key` em processamento | Outra requisição com a mesma chave está em voo. Aguarde ~1s e repita **com a mesma chave** — você recebe o replay. Veja [Idempotência](/pages/idempotency). |
 | `422` | Erro semântico | O payload é válido, mas algo do negócio impede: método não disponível, valor acima do limite do projeto, chave idempotente reusada com body diferente. Corrija a causa antes de repetir. |
@@ -65,6 +65,13 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 
 A criação de transação pode levar até **30 segundos** no pior caso. Configure o timeout do seu cliente HTTP acima disso (o [SDK](/pages/sdk/node) usa 35s) e, ao repetir após timeout, **use a mesma `Idempotency-Key`** — se a criação tiver concluído, você recebe o replay em vez de um pagamento duplicado.
 
-<Card title="Ficou travado?" icon="envelope" href="mailto:suporte@payments.bob.company">
-  Fala com a gente: suporte@payments.bob.company
-</Card>
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Idempotência" icon="rotate" href="/pages/idempotency">
+    Reenvie criações com segurança depois de um timeout.
+  </Card>
+  <Card title="Configurar webhooks" icon="webhook" href="/pages/webhooks">
+    Trate o resultado do pagamento de forma assíncrona.
+  </Card>
+</CardGroup>

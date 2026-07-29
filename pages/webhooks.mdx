@@ -376,6 +376,13 @@ def verify_v1(raw_body: bytes, signature: str, secret: str) -> bool:
   Retorne HTTP 200 imediatamente e processe o evento de forma assíncrona para evitar timeouts. Entregas podem se repetir em retry — processe de forma **idempotente**.
 </Tip>
 
-<Card title="Ficou travado?" icon="envelope" href="mailto:suporte@payments.bob.company">
-  Fala com a gente: suporte@payments.bob.company
-</Card>
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Idempotência" icon="rotate" href="/pages/idempotency">
+    Trate entregas repetidas sem liberar o pedido duas vezes.
+  </Card>
+  <Card title="Testar no sandbox" icon="flask" href="/pages/sandbox">
+    Dispare `transaction.paid` e `transaction.expired` sem dinheiro real.
+  </Card>
+</CardGroup>

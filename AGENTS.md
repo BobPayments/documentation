@@ -12,12 +12,19 @@
 - Run `mint dev` to preview locally
 - Run `mint broken-links` to check links
 
+## Navigation structure
+
+- The **Documentação** tab holds guides and concepts only — no endpoint pages, so no HTTP method badges appear in its sidebar.
+- The **Referência da API** tab is curated by resource in `docs.json`, not generated from `openapi.yaml`. Each endpoint is an MDX page under `pages/` whose frontmatter points at the operation (`openapi: "POST /api/v1/transactions/"`), which keeps URLs stable and human-readable.
+- Because that tab is curated, **a new operation in `openapi.yaml` will not show up on its own**: add the matching MDX page and list it in the resource group. Mintlify still serves an auto-generated `/api-reference/<summary>` page for it, but that page is outside the navigation and `seo.indexing: "navigable"` keeps it out of search.
+
 ## Terminology
 
  - Use **pagamento** when talking about the product capability and **transação** when referring to the API resource.
  - Write **PIX** in uppercase and **cartão de crédito** in full on first mention.
  - Use **projeto** for the account scope associated with an API key; reserve **loja** for the merchant's business.
  - Use **checkout hospedado** and **SDK Checkout** consistently.
+ - Call the test environment **sandbox** — never "Dev Mode" or "Bob Sandbox". `devMode` stays as-is only when naming the API field.
  - Describe cripto as a future method only until the API and operational flow are published.
 
 ## Style preferences

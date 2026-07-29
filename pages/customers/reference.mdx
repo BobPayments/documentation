@@ -1,10 +1,10 @@
 ---
-title: "Referência"
+title: "Estrutura do cliente"
 description: "Gerencie os compradores do seu projeto com histórico de transações"
 icon: "book-open-cover"
 ---
 
-## <Icon icon="folder-tree" type="solid" /> Estrutura
+## Estrutura
 
 Um cliente é representado em nossa API pela seguinte estrutura:
 
@@ -33,166 +33,95 @@ Um cliente é representado em nossa API pela seguinte estrutura:
 }
 ```
 
-## Atributos:
+## Atributos
 
-<AccordionGroup>
-  <Accordion title="id:">
-    ```json
-    { "id": "clx1a2b3c4d5e6f7g8h9" }
-    ```
-    `id` : <u>string.</u><br />
-    Identificador único do cliente no formato CUID.
-  </Accordion>
+<ResponseField name="id" type="string">
+  Identificador único do cliente no formato CUID.
+</ResponseField>
 
-  <Accordion title="name:">
-    ```json
-    { "name": "João Silva" }
-    ```
-    `name` : <u>string.</u><br />
-    Nome completo do cliente.
-  </Accordion>
+<ResponseField name="name" type="string">
+  Nome completo do cliente.
+</ResponseField>
 
-  <Accordion title="email:">
-    ```json
-    { "email": "joao@email.com" }
-    ```
-    `email` : <u>string.</u><br />
-    Endereço de e-mail do cliente.
-  </Accordion>
+<ResponseField name="email" type="string">
+  Endereço de e-mail do cliente.
+</ResponseField>
 
-  <Accordion title="phone:">
-    ```json
-    { "phone": "11987654321" }
-    ```
-    `phone` : <u>string.</u><br />
-    Telefone com DDD, somente números.
-  </Accordion>
+<ResponseField name="phone" type="string">
+  Telefone com DDD, somente números.
+</ResponseField>
 
-  <Accordion title="document:">
-    ```json
-    { "document": "12345678900" }
-    ```
-    `document` : <u>string.</u><br />
-    CPF ou CNPJ do cliente, somente números. Usado como identificador único por projeto.
-  </Accordion>
+<ResponseField name="document" type="string">
+  CPF ou CNPJ do cliente, somente números. Usado como identificador único por projeto.
+</ResponseField>
 
-  <Accordion title="street:">
-    ```json
-    { "street": "Rua Exemplo" }
-    ```
-    `street` : <u>string.</u><br />
-    Nome da rua ou logradouro.
-  </Accordion>
+<ResponseField name="street" type="string">
+  Nome da rua ou logradouro.
+</ResponseField>
 
-  <Accordion title="streetNumber:">
-    ```json
-    { "streetNumber": "123" }
-    ```
-    `streetNumber` : <u>string.</u><br />
-    Número do endereço.
-  </Accordion>
+<ResponseField name="streetNumber" type="string">
+  Número do endereço.
+</ResponseField>
 
-  <Accordion title="complement:">
-    ```json
-    { "complement": null }
-    ```
-    `complement` : <u>string | null.</u><br />
-    Complemento do endereço (ex: `Apto 4`). Opcional.
-  </Accordion>
+<ResponseField name="complement" type="string | null">
+  Complemento do endereço (ex: `Apto 4`). Opcional.
+</ResponseField>
 
-  <Accordion title="neighborhood:">
-    ```json
-    { "neighborhood": "Centro" }
-    ```
-    `neighborhood` : <u>string.</u><br />
-    Bairro do cliente.
-  </Accordion>
+<ResponseField name="neighborhood" type="string">
+  Bairro do cliente.
+</ResponseField>
 
-  <Accordion title="zipCode:">
-    ```json
-    { "zipCode": "01234567" }
-    ```
-    `zipCode` : <u>string.</u><br />
-    CEP somente números.
-  </Accordion>
+<ResponseField name="zipCode" type="string">
+  CEP somente números.
+</ResponseField>
 
-  <Accordion title="city:">
-    ```json
-    { "city": "São Paulo" }
-    ```
-    `city` : <u>string.</u><br />
-    Cidade do cliente.
-  </Accordion>
+<ResponseField name="city" type="string">
+  Cidade do cliente.
+</ResponseField>
 
-  <Accordion title="state:">
-    ```json
-    { "state": "SP" }
-    ```
-    `state` : <u>string.</u><br />
-    Sigla do estado (UF).
-  </Accordion>
+<ResponseField name="state" type="string">
+  Sigla do estado (UF).
+</ResponseField>
 
-  <Accordion title="country:">
-    ```json
-    { "country": "BR" }
-    ```
-    `country` : <u>string.</u><br />
-    Código do país no formato ISO 3166-1 alpha-2.
-  </Accordion>
+<ResponseField name="country" type="string">
+  Código do país no formato ISO 3166-1 alpha-2.
+</ResponseField>
 
-  <Accordion title="isBlocked:">
-    ```json
-    { "isBlocked": false }
-    ```
-    `isBlocked` : <u>boolean.</u><br />
-    Indica se o cliente está bloqueado. Clientes bloqueados não podem gerar novas transações.
-  </Accordion>
+<ResponseField name="isBlocked" type="boolean">
+  Indica se o cliente está bloqueado. Clientes bloqueados não podem gerar novas transações.
+</ResponseField>
 
-  <Accordion title="blockedAt:">
-    ```json
-    { "blockedAt": "2026-02-28T10:00:00.000Z" }
-    ```
-    `blockedAt` : <u>date-time | null.</u><br />
-    Data e hora em que o bloqueio foi aplicado.
-  </Accordion>
+<ResponseField name="blockedAt" type="date-time | null">
+  Data e hora em que o bloqueio foi aplicado.
+</ResponseField>
 
-  <Accordion title="blockedReason:">
-    ```json
-    { "blockedReason": "Suspeita de fraude" }
-    ```
-    `blockedReason` : <u>string | null.</u><br />
-    Motivo registrado para o bloqueio do cliente.
-  </Accordion>
+<ResponseField name="blockedReason" type="string | null">
+  Motivo registrado para o bloqueio do cliente.
+</ResponseField>
 
-  <Accordion title="blockExpiresAt:">
-    ```json
-    { "blockExpiresAt": null }
-    ```
-    `blockExpiresAt` : <u>date-time | null.</u><br />
-    Data de expiração do bloqueio. `null` indica bloqueio permanente até desbloqueio manual.
-  </Accordion>
+<ResponseField name="blockExpiresAt" type="date-time | null">
+  Data de expiração do bloqueio. `null` indica bloqueio permanente até desbloqueio manual.
+</ResponseField>
 
-  <Accordion title="blockType:">
-    ```json
-    { "blockType": null }
-    ```
-    `blockType` : <u>string | null.</u><br />
-    Tipo de bloqueio aplicado.
-  </Accordion>
+<ResponseField name="blockType" type="string | null">
+  Tipo de bloqueio aplicado.
+</ResponseField>
 
-  <Accordion title="createdAt:">
-    ```json
-    { "createdAt": "2026-02-28T09:00:00.000Z" }
-    ```
-    `createdAt` : <u>date-time.</u><br />
-    Data e hora de criação do registro.
-  </Accordion>
+<ResponseField name="createdAt" type="date-time">
+  Data e hora de criação do registro.
+</ResponseField>
 
-  <Accordion title="updatedAt:">
-    ```json
-    { "updatedAt": "2026-02-28T09:00:00.000Z" }
-    ```
-    `updatedAt` : <u>date-time.</u><br />
-    Data e hora da última atualização.
-  </Accordion>
-</AccordionGroup>
+<ResponseField name="updatedAt" type="date-time">
+  Data e hora da última atualização.
+</ResponseField>
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Buscar cliente por ID" icon="magnifying-glass" href="/pages/customers/get">
+    Recupere um cliente específico do projeto.
+  </Card>
+  <Card title="Clientes" icon="users" href="/pages/concepts/customers">
+    Entenda como a Bob vincula compradores e transações.
+  </Card>
+</CardGroup>

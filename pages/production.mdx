@@ -40,6 +40,13 @@ Simples: quando a integração estiver funcionando no sandbox, é só trocar a c
   Transações de sandbox e produção são totalmente isoladas — nada do que você criou com `sk_test_` aparece nos números reais do projeto.
 </Note>
 
-<Card title="Ficou travado?" icon="envelope" href="mailto:suporte@payments.bob.company">
-  Fala com a gente: suporte@payments.bob.company
-</Card>
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Configurar webhooks" icon="webhook" href="/pages/webhooks">
+    Confirme cada pagamento pelo evento, não pela resposta da criação.
+  </Card>
+  <Card title="Idempotência" icon="rotate" href="/pages/idempotency">
+    Repita requisições de criação sem risco de cobrar duas vezes.
+  </Card>
+</CardGroup>
