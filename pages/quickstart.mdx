@@ -1,0 +1,87 @@
+---
+title: "Guia rápido"
+description: "Crie uma sessão de checkout no sandbox e acompanhe seu primeiro pagamento."
+icon: "bolt"
+---
+
+Neste guia, você cria uma sessão de checkout com PIX e cartão de crédito. A Bob hospeda a tela de pagamento e devolve uma URL pronta para o comprador.
+
+<Info>
+  Você precisa de uma chave `sk_test_`. Crie a chave no Dashboard antes de começar.
+</Info>
+
+## 1. Crie a sessão no seu backend
+
+Envie o valor em centavos e os métodos que deseja oferecer:
+
+```bash
+curl -X POST https://api.payments.bob.company/api/v1/checkout-sessions/ \
+  -H "Authorization: Bearer sk_test_sua_chave" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amountCents": 10000,
+    "items": [
+      {
+        "name": "Plano Premium",
+        "quantity": 1,
+        "unitAmountCents": 10000
+      }
+    ],
+    "paymentMethods": ["pix", "credit_card"],
+    "successUrl": "https://loja.example.com/pedido/sucesso",
+    "webhookUrl": "https://loja.example.com/webhooks/bob"
+  }'
+```
+
+<Warning>
+  Crie a sessão no backend. Nunca exponha uma chave `sk_test_` ou `sk_live_` no navegador.
+</Warning>
+
+## 2. Redirecione o comprador
+
+A resposta inclui a URL do checkout:
+
+```json
+{
+  "success": true,
+  "data": {
+    "sessionId": "sess_...",
+    "checkoutToken": "chk_...",
+    "checkoutUrl": "https://checkout.payments.bob.company/...",
+    "status": "PENDING"
+  }
+}
+```
+
+Redirecione o comprador para `data.checkoutUrl`. A Bob apresenta os métodos habilitados no projeto e conduz o pagamento.
+
+## 3. Confirme o resultado
+
+Use o `successUrl` para orientar o comprador. No backend, confirme o pagamento pelo webhook assinado.
+
+<Steps>
+  <Step title="Receba o evento">
+    Disponibilize uma rota HTTPS para receber os eventos do projeto.
+  </Step>
+  <Step title="Verifique a assinatura">
+    Valide a assinatura antes de confiar no conteúdo da requisição.
+  </Step>
+  <Step title="Atualize o pedido">
+    Libere o produto apenas quando receber a confirmação do pagamento.
+  </Step>
+</Steps>
+
+<CardGroup cols={2}>
+  <Card title="Entender o fluxo" icon="diagram-project" href="/pages/concepts/payment-flow">
+    Veja como sessão, transação, checkout e webhook se conectam.
+  </Card>
+  <Card title="Configurar webhooks" icon="bell" href="/pages/webhooks">
+    Implemente a confirmação assíncrona no seu servidor.
+  </Card>
+  <Card title="Testar no sandbox" icon="flask" href="/pages/sandbox">
+    Simule os estados do pagamento sem movimentar dinheiro real.
+  </Card>
+  <Card title="Ver todos os caminhos" icon="signs-post" href="/pages/payments">
+    Compare checkout hospedado, SDK Checkout e API direta.
+  </Card>
+</CardGroup>

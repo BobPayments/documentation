@@ -1,0 +1,32 @@
+---
+title: "Clientes"
+description: "Entenda como a Bob associa compradores, dados cadastrais e transações."
+icon: "users"
+---
+
+Um cliente representa o comprador dentro do seu projeto. O recurso reúne dados cadastrais e permite consultar as transações associadas a essa pessoa ou empresa.
+
+## Quando usar
+
+Envie os dados do cliente ao criar uma transação. A Bob usa essas informações para processar o pagamento, aplicar validações e manter o histórico do projeto.
+
+Os campos exigidos dependem da operação. Consulte a referência antes de montar o payload.
+
+## Escopo e segurança
+
+- O cliente pertence ao projeto associado à sua chave de API.
+- Consulte e atualize dados de clientes apenas no backend.
+- Colete apenas os dados necessários para o pagamento.
+- Nunca registre dados pessoais completos em logs de aplicação.
+
+<CardGroup cols={2}>
+  <Card title="Estrutura do cliente" icon="book-open" href="/pages/customers/reference">
+    Consulte os campos publicados para o recurso.
+  </Card>
+  <Card title="Buscar por ID" icon="magnifying-glass" href="/pages/customers/get">
+    Recupere um cliente específico.
+  </Card>
+  <Card title="Listar clientes" icon="list" href="/pages/customers/list">
+    Consulte os clientes do projeto.
+  </Card>
+</CardGroup>
