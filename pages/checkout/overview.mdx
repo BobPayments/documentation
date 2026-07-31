@@ -6,6 +6,10 @@ icon: "cart-shopping"
 
 Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua aplicação cria uma sessão via API e redireciona o comprador para uma página da Bob. Quando pagar, você recebe o webhook e o comprador volta pra sua `successUrl`.
 
+<Note>
+  **Cartão de crédito está em breve.** Hoje o checkout hospedado opera com **PIX**; as referências a `credit_card` abaixo valem para quando o cartão for lançado.
+</Note>
+
 ## Quando usar cada modo
 
 | | **Checkout hospedado** | **SDK embutível** | **API direta** |
@@ -28,7 +32,7 @@ Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua
       -d '{
         "amountCents": 25000,
         "items": [{ "name": "Curso de Violão", "quantity": 1, "unitAmountCents": 25000 }],
-        "paymentMethods": ["pix", "credit_card"],
+        "paymentMethods": ["pix"],
         "successUrl": "https://loja.example.com/obrigado",
         "webhookUrl": "https://loja.example.com/webhooks/bob",
         "webhookVersion": "v2"
@@ -38,7 +42,7 @@ Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua
     A resposta traz `checkoutUrl`, `checkoutToken` e — se você enviou `webhookUrl` — o `webhookSecret` para [verificar as assinaturas](/pages/webhooks). **O secret aparece só nesta resposta**; guarde-o.
   </Step>
   <Step title="Redirecione o comprador">
-    Mande o comprador para a `checkoutUrl`. Ele escolhe um dos métodos disponíveis, como PIX ou cartão de crédito.
+    Mande o comprador para a `checkoutUrl`. Ele conclui o pagamento pelo método disponível (PIX).
   </Step>
   <Step title="Receba a confirmação">
     Ao pagar, sua `webhookUrl` recebe `transaction.paid` (assinado — [verifique sempre](/pages/webhooks#verificando-a-assinatura)) e o comprador é levado à `successUrl`.
@@ -52,9 +56,9 @@ Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua
 
 - **`items` é metadado de exibição** — o catálogo é seu; a Bob só renderiza o resumo do pedido. O valor cobrado é sempre o `amountCents` da sessão.
 - **`expiresAt` é do link, não do PIX** — a sessão dura 24h por padrão; o PIX gerado dentro dela segue a expiração configurada no projeto.
-- **`paymentMethods` controla as opções exibidas** — use `["pix"]`, `["credit_card"]` ou combine os métodos disponíveis no seu projeto. O padrão é `["pix"]`.
+- **`paymentMethods` controla as opções exibidas** — hoje use `["pix"]` (o padrão). O suporte a `["credit_card"]` entra quando o cartão for lançado.
 - **Método não disponível** — a criação da sessão informa quando um método solicitado não está habilitado no projeto.
-- **Cartão de crédito** — informe `credit_card` em `paymentMethods` para aceitar cartão. Veja [Cartão de crédito](/pages/credit-card/overview).
+- **Cartão de crédito (em breve)** — quando lançar, você informará `credit_card` em `paymentMethods`. Veja [Cartão de crédito](/pages/credit-card/overview).
 - **Quer manter o comprador no seu site?** Use o [SDK Checkout](/pages/sdk/checkout). Ele embute o checkout da Bob sem expor os dados brutos do cartão à sua aplicação.
 - **Sandbox funciona igual** — crie a sessão com `sk_test_` e o fluxo roda de ponta a ponta no ambiente de teste. Veja [Sandbox](/pages/sandbox).
 - **Com o SDK**: `bob.checkoutSessions.create(...)` já envia `webhookVersion: "v2"` por padrão. Veja [SDK Node.js](/pages/sdk/node).

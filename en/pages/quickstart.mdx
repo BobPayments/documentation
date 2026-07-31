@@ -1,0 +1,94 @@
+---
+title: "Create your first payment with the SDK"
+description: "Run a project with the Bob SDK and make your first PIX payment in the sandbox in minutes."
+icon: "bolt"
+---
+
+This ~5-minute guide uses the Bob server SDK to create a **PIX** charge and confirm your first payment in the sandbox.
+
+<Note>
+  You need an `sk_test_` key. If you don't have one yet, see [Set up your account](/en/pages/setup-account).
+</Note>
+
+<Steps>
+  <Step title="Install the prerequisites">
+    You need [Node.js](https://nodejs.org/) **20 or 22 (LTS)**.
+
+    ```bash
+    node --version   # v20.x or v22.x
+    ```
+  </Step>
+
+  <Step title="Create the project and install the SDK">
+    ```bash
+    mkdir bob-first-payment && cd bob-first-payment
+    npm init -y
+    npm install @bobpayments/sdk
+    ```
+  </Step>
+
+  <Step title="Configure the API key">
+    Create a `.env` file in the root with your sandbox key:
+
+    ```bash
+    BOB_API_KEY=sk_test_your_key
+    ```
+
+    <Warning>
+      The `sk_test_` key is secret and lives on the **backend** only. Never send it to the browser.
+    </Warning>
+  </Step>
+
+  <Step title="Create the PIX charge">
+    Create a checkout session with PIX. The response includes the `checkoutUrl` you redirect the buyer to:
+
+    ```typescript
+    import { BobPayments } from '@bobpayments/sdk';
+
+    const bob = new BobPayments({ apiKey: process.env.BOB_API_KEY! });
+
+    const session = await bob.checkoutSessions.create({
+      amountCents: 10_000, // in the sandbox, an amount ending in .00 is paid automatically
+      items: [{ name: 'Premium Plan', quantity: 1, unitAmountCents: 10_000 }],
+      paymentMethods: ['pix'],
+      successUrl: 'https://store.example.com/order/success',
+      webhookUrl: 'https://store.example.com/webhooks/bob',
+    });
+
+    console.log(session.checkoutUrl); // redirect the buyer here
+    ```
+  </Step>
+
+  <Step title="Make your first payment">
+    In the sandbox, the outcome is controlled by the **last two digits of the amount** — no real PIX needed:
+
+    | Amount cents | Outcome |
+    |---|---|
+    | `.00` (e.g., `10000`) | Paid in ~5s (`transaction.paid`) |
+    | `.01` (e.g., `10001`) | Expires in ~5s (`transaction.expired`) |
+    | `.02` (e.g., `10002`) | Stays pending until it expires |
+
+    Since the session above uses `10_000`, the payment is confirmed within seconds and fires the `transaction.paid` webhook.
+  </Step>
+
+  <Step title="Check the payment in the Dashboard">
+    Go to **Transactions** at [app.payments.bob.company](https://app.payments.bob.company) and see the just-paid charge, with the `isSandbox: true` field.
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Understand the flow" icon="diagram-project" href="/en/pages/concepts/payment-flow">
+    See how session, transaction, checkout, and webhook connect.
+  </Card>
+  <Card title="Configure webhooks" icon="bell" href="/en/pages/webhooks">
+    Implement asynchronous confirmation on your server.
+  </Card>
+  <Card title="Test in the sandbox" icon="flask" href="/en/pages/sandbox">
+    Simulate payment states without moving real money.
+  </Card>
+  <Card title="See all paths" icon="signs-post" href="/en/pages/payments">
+    Compare hosted checkout, Checkout SDK, and direct API.
+  </Card>
+</CardGroup>

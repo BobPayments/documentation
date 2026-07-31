@@ -4,43 +4,35 @@ description: "Entenda o caminho entre sua aplicação, a Bob Payments e o compra
 icon: "diagram-project"
 ---
 
-Todo pagamento segue o mesmo ciclo: sua aplicação cria um recurso, o comprador conclui a ação necessária e a Bob confirma o resultado.
+Todo pagamento na Bob passa pela mesma sequência — **cliente**, **sessão de checkout**, **coleta do pagamento** e **criação da transação** — independente da forma de integração. As opções mudam; a ordem é sempre a mesma.
 
-## Visão geral
+<Note>
+  Hoje o método disponível é **PIX**. O **cartão de crédito** está em breve — os trechos abaixo sobre tokenização de cartão valem para quando ele for lançado.
+</Note>
 
-```text
-Seu backend
-    │
-    ├─ cria uma sessão de checkout ou transação
-    │
-    ▼
-Bob Payments ── apresenta PIX ou cartão ──> Comprador
-    │
-    ├─ processa o pagamento
-    │
-    ▼
-Webhook assinado ──> Seu backend confirma o pedido
-```
-
-## Etapas do fluxo
+## O processo de pagamento na Bob
 
 <Steps>
-  <Step title="Escolha a integração">
-    Use o checkout hospedado para começar rápido, o SDK Checkout para manter a experiência no seu site ou a API direta para controlar o fluxo de PIX.
+  <Step title="1. Identifique o cliente">
+    Todo pagamento se associa a um **cliente** (nome, documento, contato). A Bob guarda esses dados para reaproveitar em cobranças futuras e gera um identificador usado nos passos seguintes.
   </Step>
-  <Step title="Crie o recurso">
-    Seu backend cria uma sessão de checkout ou uma transação. Envie uma chave de idempotência nas operações de criação.
+  <Step title="2. Crie a sessão de checkout">
+    A sessão conecta o cliente ao pagamento, guarda os detalhes da cobrança e carrega os métodos disponíveis (hoje PIX; cartão em breve). Integrações server-to-server que usam **PIX direto pela API** podem pular este passo e criar a transação diretamente.
   </Step>
-  <Step title="Conduza o comprador">
-    Redirecione para o checkout, monte o SDK Checkout ou exiba o QR Code e o código copia-e-cola do PIX.
+  <Step title="3. Colete o pagamento">
+    Há duas formas de coletar:
+
+    - **Checkout hospedado ou SDK Checkout** — a Bob coleta com segurança: mostra o PIX (QR Code e copia-e-cola) e, para cartão, tokeniza os dados no navegador gerando um identificador seguro (`pm_...`). PAN, CVV e validade nunca passam pela sua aplicação.
+    - **API direta** — você assume a tokenização e a conformidade PCI, enviando à Bob apenas o token seguro.
   </Step>
-  <Step title="Acompanhe o estado">
-    Mostre o andamento no frontend com o status da sessão ou da transação.
-  </Step>
-  <Step title="Confirme no servidor">
-    Trate o webhook assinado como a confirmação do pagamento. A página de retorno não substitui o webhook.
+  <Step title="4. Crie a transação">
+    A transação é o pagamento em si — cada tentativa de cobrança. Ela usa o cliente e os dados coletados nos passos anteriores e recebe um status que evolui até o desfecho final.
   </Step>
 </Steps>
+
+## Confirmação por webhook
+
+O desfecho financeiro é **assíncrono**. Assim que a transação muda de estado (`transaction.paid`, `transaction.expired`), a Bob envia um **webhook assinado** ao seu backend — trate-o como a confirmação oficial do pagamento. A página de retorno (`successUrl`) orienta o comprador, mas não substitui o webhook.
 
 ## Responsabilidades
 
@@ -59,5 +51,11 @@ Webhook assinado ──> Seu backend confirma o pedido
   </Card>
   <Card title="Entender transações" icon="arrow-right-arrow-left" href="/pages/concepts/transactions">
     Conheça o recurso que representa cada tentativa de pagamento.
+  </Card>
+  <Card title="Clientes" icon="user" href="/pages/concepts/customers">
+    Veja como os dados do comprador são guardados e reaproveitados.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/pages/webhooks">
+    Implemente a confirmação assíncrona no seu servidor.
   </Card>
 </CardGroup>

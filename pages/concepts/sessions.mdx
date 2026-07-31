@@ -1,0 +1,60 @@
+---
+title: "Sessão de checkout"
+description: "O recurso que conecta o cliente ao pagamento e carrega os métodos disponíveis."
+icon: "receipt"
+---
+
+Uma **sessão de checkout** conecta o cliente ao pagamento, guarda os detalhes da cobrança e carrega os métodos disponíveis (hoje **PIX**; cartão em breve). Você cria uma sessão para cada cobrança quando usa o **checkout hospedado** ou o **SDK Checkout**.
+
+<Note>
+  Integrações server-to-server que usam **PIX direto pela API** podem pular a sessão e criar a transação diretamente.
+</Note>
+
+## O que a sessão contém
+
+Você define a cobrança ao criar a sessão:
+
+| Campo | Descrição |
+|---|---|
+| `amountCents` | Valor cobrado, sempre em centavos. É o valor final da cobrança. |
+| `paymentMethods` | Métodos exibidos ao comprador. Hoje `['pix']` (o padrão); `credit_card` entra quando o cartão for lançado. |
+| `items` | Metadado de exibição do pedido — não altera o valor cobrado. |
+| `successUrl` | Para onde o comprador volta após pagar. |
+| `webhookUrl` / `webhookVersion` | Endpoint que recebe a confirmação assinada. |
+
+Em resposta, a Bob devolve o `checkoutToken`, a `checkoutUrl` e — se você enviou `webhookUrl` — o `webhookSecret` para verificar as assinaturas. **O secret aparece só nessa resposta**; guarde-o.
+
+## Ciclo de vida
+
+<Steps>
+  <Step title="Criada">
+    A sessão nasce com status `PENDING` e uma `checkoutUrl` pronta para o comprador.
+  </Step>
+  <Step title="Em pagamento">
+    O comprador escolhe um método e conclui o pagamento pela `checkoutUrl` ou pelo SDK.
+  </Step>
+  <Step title="Concluída ou expirada">
+    Ao pagar, a sessão gera uma **transação** e dispara o webhook. O link da sessão dura 24h por padrão (`expiresAt`) — o PIX gerado dentro dela segue a expiração configurada no projeto.
+  </Step>
+</Steps>
+
+## Sessão e transação
+
+A **sessão** é o recurso que apresenta o pagamento ao comprador; a **transação** é o registro do que aconteceu. Uma sessão paga resulta em uma transação com o desfecho final (`paid`, `expired`, …).
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Criar sessão de checkout" icon="code" href="/pages/checkout/create">
+    Todos os campos de criação, com playground interativo.
+  </Card>
+  <Card title="Checkout hospedado" icon="cart-shopping" href="/pages/checkout/overview">
+    O fluxo completo de ponta a ponta.
+  </Card>
+  <Card title="Transações" icon="arrow-right-arrow-left" href="/pages/concepts/transactions">
+    O recurso que registra cada tentativa de pagamento.
+  </Card>
+  <Card title="Consultar status da sessão" icon="magnifying-glass" href="/pages/checkout/status">
+    Faça polling do estado da sessão como complemento ao webhook.
+  </Card>
+</CardGroup>

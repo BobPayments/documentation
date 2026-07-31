@@ -1,0 +1,172 @@
+---
+title: "Node.js SDK"
+description: "Official TypeScript/Node.js library for creating payments, using checkout, and verifying webhooks."
+icon: "node-js"
+---
+
+[`@bobpayments/sdk`](https://github.com/BobPayments/bob-payments-sdk-node) is the recommended way to integrate in Node.js: zero dependencies (uses native `fetch` and `node:crypto`), TypeScript types for the full API contract, ESM + CJS.
+
+<Warning>
+  Server-side only: the `sk_live_`/`sk_test_` API key is secret and must **never** reach the browser.
+</Warning>
+
+## Installation
+
+```bash
+pnpm add @bobpayments/sdk
+# npm install @bobpayments/sdk · yarn add @bobpayments/sdk
+```
+
+Requires Node.js 20 or 22 (LTS).
+
+## Client
+
+```typescript
+import { BobPayments } from '@bobpayments/sdk';
+
+const bob = new BobPayments({
+  apiKey: process.env.BOB_API_KEY!, // sk_live_... or sk_test_...
+  // timeoutMs: 35_000,             // timeout per attempt
+  // maxRetries: 2,                 // automatic retries; 0 disables
+});
+
+bob.environment; // 'live' | 'sandbox' — detected from the key prefix
+```
+
+## Create a checkout session (PIX)
+
+Use the hosted checkout when you want Bob to present the payment screen. Today the available method is PIX; `credit_card` arrives when card is launched:
+
+```typescript
+const session = await bob.checkoutSessions.create({
+  amountCents: 25_000,
+  items: [{ name: 'Assinatura Pro', quantity: 1, unitAmountCents: 25_000 }],
+  paymentMethods: ['pix'],
+  successUrl: 'https://loja.example.com/pedido/sucesso',
+  webhookUrl: 'https://loja.example.com/webhooks/bob',
+});
+
+// Redirect the buyer; store session.webhookSecret if it exists.
+redirect(session.checkoutUrl);
+```
+
+See the field details in [Hosted checkout](/en/pages/checkout/overview).
+
+## Create a PIX charge
+
+```typescript
+const tx = await bob.transactions.create({
+  customer: {
+    name: 'João Silva',
+    document: '12345678901',
+    documentType: 'CPF',
+    email: 'joao@example.com',
+    address: {
+      street: 'Rua das Flores',
+      streetNumber: '123',
+      neighborhood: 'Centro',
+      zipCode: '01310-100',
+      city: 'São Paulo',
+      state: 'SP',
+    },
+  },
+  payment: { amountCents: 10_000, product: 'Assinatura Pro' }, // always in cents
+  originDomain: 'loja.example.com',
+});
+
+tx.pixCode;        // PIX copy-and-paste (EMV)
+tx.expirationDate; // when the PIX expires
+tx.persisted;      // false = HTTP 202 (reconciliation pending; PIX valid)
+tx.replayed;       // true = response replayed via idempotency
+```
+
+Every `create` sends an [`Idempotency-Key`](/en/pages/idempotency) header automatically, which makes the call safe to retry — the SDK retries with backoff on timeout, network failure, 429, and 5xx without risk of a duplicate payment.
+
+## Lookups
+
+```typescript
+const detail = await bob.transactions.get('clx1abc123');
+
+const page = await bob.transactions.list({
+  status: 'paid',
+  dateFrom: new Date('2026-07-01'),
+  limit: 50,
+}); // { data, meta: { total, page, limit, totalPages } }
+
+const customers = await bob.customers.list({ email: 'joao@example.com' });
+const customer = await bob.customers.get(customers.data[0].id);
+```
+
+## Webhooks
+
+`constructWebhookEvent` verifies the signature (v1 and v2, in constant time, with anti-replay) and returns the typed event:
+
+```typescript
+import { constructWebhookEvent, BobPaymentsWebhookVerificationError } from '@bobpayments/sdk';
+
+app.post('/webhooks/bob', express.raw({ type: 'application/json' }), (req, res) => {
+  try {
+    const event = constructWebhookEvent(
+      req.body, // RAW body (Buffer)
+      req.headers['x-webhook-signature'],
+      process.env.BOB_WEBHOOK_SECRET!,
+    );
+
+    if (event.event === 'transaction.paid') {
+      // v2: event.data.amountCents · v1: event.data.amount
+    }
+    res.status(200).send('ok');
+  } catch (error) {
+    if (error instanceof BobPaymentsWebhookVerificationError) {
+      return res.status(401).send('invalid signature');
+    }
+    throw error;
+  }
+});
+```
+
+Payload and signature details: [Webhooks](/en/pages/webhooks).
+
+## Error handling
+
+Every non-2xx response becomes a `BobPaymentsApiError` with the API's RFC 7807 fields:
+
+```typescript
+import { BobPaymentsApiError, BobPaymentsTimeoutError } from '@bobpayments/sdk';
+
+try {
+  await bob.transactions.create(params);
+} catch (error) {
+  if (error instanceof BobPaymentsApiError) {
+    error.status;            // 400, 401, 422, 429, 503...
+    error.code;              // 'ERR_INTEGRATION_006', ...
+    error.detail;            // descriptive message
+    error.retryAfterSeconds; // on 429/503 when the API sends Retry-After
+  } else if (error instanceof BobPaymentsTimeoutError) {
+    // exceeded the client timeout
+  }
+}
+```
+
+## Sandbox
+
+With `sk_test_`, the outcome in the sandbox is controlled by the amount's cents — see [Sandbox](/en/pages/sandbox):
+
+```typescript
+await bob.transactions.create({ payment: { amountCents: 10_001, ... }, ... }); // expires in ~5s
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Checkout SDK" icon="credit-card" href="/en/pages/sdk/checkout">
+    Frontend layer: mount the checkout on your site with the session created here.
+  </Card>
+  <Card title="SDK overview" icon="cubes" href="/en/pages/sdk/overview">
+    How the server libraries and the frontend SDK fit together.
+  </Card>
+</CardGroup>
+
+<Card title="Source code and releases" icon="github" href="https://github.com/BobPayments/bob-payments-sdk-node">
+  github.com/BobPayments/bob-payments-sdk-node — CHANGELOG and versions via semantic-release
+</Card>

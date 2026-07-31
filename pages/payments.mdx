@@ -11,8 +11,12 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
 | Método | Disponibilidade | Melhor caminho | O que você recebe |
 |---|---|---|---|
 | **PIX** | Disponível | API direta, checkout hospedado ou SDK Checkout | Código copia-e-cola, QR Code e eventos de status |
-| **Cartão de crédito** | Disponível | Checkout hospedado ou SDK Checkout | Tokenização segura, 3DS e eventos de status |
+| **Cartão de crédito** | **Em breve** | Checkout hospedado ou SDK Checkout | Tokenização segura, 3DS e eventos de status |
 | **Cripto** | Em planejamento | Será anunciado quando estiver disponível | Esta documentação ainda não descreve uma API de cripto |
+
+<Note>
+  **Cartão de crédito ainda não está disponível.** As páginas de cartão descrevem como vai funcionar quando lançar. Por enquanto, use **PIX**.
+</Note>
 
 <Note>
   Um método só pode ser usado quando estiver habilitado no projeto. Não habilite um método apenas porque ele aparece em um payload ou enum antigo da API.
@@ -22,7 +26,7 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
 
 | Se você quer... | Use... |
 |---|---|
-| Começar rápido e oferecer PIX e cartão | [Checkout hospedado](/pages/checkout/overview) |
+| Começar rápido a receber PIX | [Checkout hospedado](/pages/checkout/overview) |
 | Manter a tela de pagamento no seu site | [SDK Checkout](/pages/sdk/checkout) |
 | Controlar a experiência do PIX e receber o código EMV | [API direta de transações](/pages/pix/create) |
 | Integrar no backend com menos código | [SDKs de servidor](/pages/sdk/overview) |
@@ -38,7 +42,7 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
     Crie uma chave `sk_test_` e habilite os métodos que deseja aceitar. Comece pelo [Sandbox](/pages/sandbox).
   </Step>
   <Step title="Crie o pagamento">
-    Use uma transação direta para PIX ou crie uma sessão de checkout com `paymentMethods`, como `['pix', 'credit_card']`.
+    Use uma transação direta para PIX ou crie uma sessão de checkout com `paymentMethods`, como `['pix']`.
   </Step>
   <Step title="Mostre o próximo passo ao comprador">
     No PIX, exiba o `pixCode` e o QR Code. No cartão, use o checkout hospedado ou o SDK para tokenização e autenticação 3DS.

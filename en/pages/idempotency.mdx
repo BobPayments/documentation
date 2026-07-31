@@ -1,0 +1,62 @@
+---
+title: "Idempotency"
+description: "Safely retry creation requests — with no duplicate payments."
+icon: "rotate"
+---
+
+Timeouts and network failures leave a dangerous question: *was the payment created or not?* Retrying blindly can produce two charges for the same order. The `Idempotency-Key` header solves this: with it, retrying the same request is always safe.
+
+## How it works
+
+Send a unique identifier per operation in the `Idempotency-Key` header of the creation endpoint:
+
+```bash
+curl -X POST https://api.payments.bob.company/api/v1/transactions \
+  -H "Authorization: Bearer $BOB_API_KEY" \
+  -H "Idempotency-Key: pedido-8f14e45f" \
+  -H "Content-Type: application/json" \
+  -d '{ ... }'
+```
+
+| Scenario | What happens |
+|---|---|
+| First request with the key | Processed normally; the 2xx response is stored for **1 hour** |
+| Retry with the same key and same body | The API **replays the original response** (with the header `x-idempotent-replayed: true`) — no new payment is created |
+| Retry while the original is still processing | `409 Conflict` — wait a moment and retry |
+| Same key with a **different body** | `422` — each distinct request needs a new key |
+| Request that ended in an error (4xx/5xx) | The key is released; retrying **re-executes** the creation |
+
+<Note>
+  The key's scope is your **project** — keys from different projects never collide. Use up to 256 characters; a UUID or your order ID are good choices.
+</Note>
+
+## With the Node.js SDK
+
+The SDK sends a key automatically (a UUID per call) and, thanks to it, performs a **safe retry** on timeout, network failure, 429, and 5xx:
+
+```typescript
+const tx = await bob.transactions.create(params);
+tx.idempotencyKey; // key used — save it to retry manually if needed
+tx.replayed;       // true = this response came from replaying an earlier creation
+
+// Tying it to your order (retries of the same order never duplicate):
+await bob.transactions.create(params, { idempotencyKey: `pedido-${orderId}` });
+```
+
+## Best practices
+
+- **Generate a new key per business operation** (per order, per charge attempt) — never reuse a fixed key.
+- When retrying after a timeout, **use the same key** as the original attempt.
+- The replay window is **1 hour** — after that, the same key creates a new transaction.
+- Idempotency complements (does not replace) the payment method's deduplication rules. Don't use a fixed key for all orders.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Errors" icon="triangle-exclamation" href="/en/pages/errors">
+    See which responses call for a retry and which call for a fix.
+  </Card>
+  <Card title="Create a charge" icon="code" href="/en/pages/pix/create">
+    Send the `Idempotency-Key` header when creating the transaction.
+  </Card>
+</CardGroup>

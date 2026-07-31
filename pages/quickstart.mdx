@@ -1,73 +1,78 @@
 ---
-title: "Guia rápido"
-description: "Crie uma sessão de checkout no sandbox e acompanhe seu primeiro pagamento."
+title: "Criar seu primeiro pagamento com SDK"
+description: "Rode um projeto com o SDK da Bob e faça seu primeiro pagamento PIX no sandbox em poucos minutos."
 icon: "bolt"
 ---
 
-Neste guia, você cria uma sessão de checkout com PIX e cartão de crédito. A Bob hospeda a tela de pagamento e devolve uma URL pronta para o comprador.
+Este guia de ~5 minutos usa o SDK de servidor da Bob para criar uma cobrança **PIX** e confirmar seu primeiro pagamento no sandbox.
 
 <Note>
-  Você precisa de uma chave `sk_test_`. Crie a chave no Dashboard antes de começar.
+  Você precisa de uma chave `sk_test_`. Se ainda não tem, veja [Configurar sua conta](/pages/setup-account).
 </Note>
 
-## 1. Crie a sessão no seu backend
-
-Envie o valor em centavos e os métodos que deseja oferecer:
-
-```bash
-curl -X POST https://api.payments.bob.company/api/v1/checkout-sessions/ \
-  -H "Authorization: Bearer sk_test_sua_chave" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "amountCents": 10000,
-    "items": [
-      {
-        "name": "Plano Premium",
-        "quantity": 1,
-        "unitAmountCents": 10000
-      }
-    ],
-    "paymentMethods": ["pix", "credit_card"],
-    "successUrl": "https://loja.example.com/pedido/sucesso",
-    "webhookUrl": "https://loja.example.com/webhooks/bob"
-  }'
-```
-
-<Warning>
-  Crie a sessão no backend. Nunca exponha uma chave `sk_test_` ou `sk_live_` no navegador.
-</Warning>
-
-## 2. Redirecione o comprador
-
-A resposta inclui a URL do checkout:
-
-```json
-{
-  "success": true,
-  "data": {
-    "sessionId": "sess_...",
-    "checkoutToken": "chk_...",
-    "checkoutUrl": "https://checkout.payments.bob.company/...",
-    "status": "PENDING"
-  }
-}
-```
-
-Redirecione o comprador para `data.checkoutUrl`. A Bob apresenta os métodos habilitados no projeto e conduz o pagamento.
-
-## 3. Confirme o resultado
-
-Use o `successUrl` para orientar o comprador. No backend, confirme o pagamento pelo webhook assinado.
-
 <Steps>
-  <Step title="Receba o evento">
-    Disponibilize uma rota HTTPS para receber os eventos do projeto.
+  <Step title="Instale os pré-requisitos">
+    Você precisa de [Node.js](https://nodejs.org/) **20 ou 22 (LTS)**.
+
+    ```bash
+    node --version   # v20.x ou v22.x
+    ```
   </Step>
-  <Step title="Verifique a assinatura">
-    Valide a assinatura antes de confiar no conteúdo da requisição.
+
+  <Step title="Crie o projeto e instale o SDK">
+    ```bash
+    mkdir bob-primeiro-pagamento && cd bob-primeiro-pagamento
+    npm init -y
+    npm install @bobpayments/sdk
+    ```
   </Step>
-  <Step title="Atualize o pedido">
-    Libere o produto apenas quando receber a confirmação do pagamento.
+
+  <Step title="Configure a chave de API">
+    Crie um arquivo `.env` na raiz com a sua chave de sandbox:
+
+    ```bash
+    BOB_API_KEY=sk_test_sua_chave
+    ```
+
+    <Warning>
+      A chave `sk_test_` é secreta e só existe no **backend**. Nunca envie ao navegador.
+    </Warning>
+  </Step>
+
+  <Step title="Crie a cobrança PIX">
+    Crie uma sessão de checkout com PIX. A resposta traz a `checkoutUrl`, para onde você redireciona o comprador:
+
+    ```typescript
+    import { BobPayments } from '@bobpayments/sdk';
+
+    const bob = new BobPayments({ apiKey: process.env.BOB_API_KEY! });
+
+    const session = await bob.checkoutSessions.create({
+      amountCents: 10_000, // R$100,00 — no sandbox, final .00 é pago automaticamente
+      items: [{ name: 'Plano Premium', quantity: 1, unitAmountCents: 10_000 }],
+      paymentMethods: ['pix'],
+      successUrl: 'https://loja.example.com/pedido/sucesso',
+      webhookUrl: 'https://loja.example.com/webhooks/bob',
+    });
+
+    console.log(session.checkoutUrl); // redirecione o comprador para cá
+    ```
+  </Step>
+
+  <Step title="Faça seu primeiro pagamento">
+    No sandbox, o desfecho é controlado pelos **dois últimos dígitos do valor** — sem PIX real:
+
+    | Centavos do valor | Desfecho |
+    |---|---|
+    | `.00` (ex.: `10000`) | Pago em ~5s (`transaction.paid`) |
+    | `.01` (ex.: `10001`) | Expira em ~5s (`transaction.expired`) |
+    | `.02` (ex.: `10002`) | Fica pendente até expirar |
+
+    Como a sessão acima usa `10_000`, o pagamento é confirmado em segundos e dispara o webhook `transaction.paid`.
+  </Step>
+
+  <Step title="Confira o pagamento no Dashboard">
+    Acesse **Transações** em [app.payments.bob.company](https://app.payments.bob.company) e veja a cobrança recém-paga, com o campo `isSandbox: true`.
   </Step>
 </Steps>
 
