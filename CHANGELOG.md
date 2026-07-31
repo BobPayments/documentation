@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.40](https://github.com/BobPayments/documentation/compare/v1.1.39...v1.1.40) (2026-07-31)
+
+### Documentação
+
+* document crypto as an available hosted-checkout method (PT+EN) ([#10](https://github.com/BobPayments/documentation/issues/10)) ([9a7d2af](https://github.com/BobPayments/documentation/commit/9a7d2afb2fda63ca94069c9ba839b306923cec29))
+
 ## [1.1.39](https://github.com/BobPayments/documentation/compare/v1.1.38...v1.1.39) (2026-07-31)
 
 ### Documentação
