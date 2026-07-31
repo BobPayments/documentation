@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.39](https://github.com/BobPayments/documentation/compare/v1.1.38...v1.1.39) (2026-07-31)
+
+### Documentação
+
+* internacionalizar portal (PT+EN), reestruturar onboarding e marcar cartão como em breve ([#9](https://github.com/BobPayments/documentation/issues/9)) ([0e79781](https://github.com/BobPayments/documentation/commit/0e7978186ecb100051156cdbeaa987a32be67e28))
+
 ## [1.1.38](https://github.com/BobPayments/documentation/compare/v1.1.37...v1.1.38) (2026-07-29)
 
 ### Documentação
