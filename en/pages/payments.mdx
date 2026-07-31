@@ -12,7 +12,7 @@ Bob Payments offers a single integration to create, track, and reconcile payment
 |---|---|---|---|
 | **PIX** | Available | Direct API, hosted checkout, or Checkout SDK | Copy-and-paste code, QR Code, and status events |
 | **Credit card** | **Coming soon** | Hosted checkout or Checkout SDK | Secure tokenization, 3DS, and status events |
-| **Crypto** | Planned | Will be announced when available | This documentation does not yet describe a crypto API |
+| **Crypto** | Available | Hosted checkout | Hosted crypto payment page and status events |
 
 <Note>
   **Credit card is not available yet.** The card pages describe how it will work once it launches. For now, use **PIX**.
@@ -42,10 +42,10 @@ Bob Payments offers a single integration to create, track, and reconcile payment
     Create an `sk_test_` key and enable the methods you want to accept. Start with the [Sandbox](/en/pages/sandbox).
   </Step>
   <Step title="Create the payment">
-    Use a direct transaction for PIX, or create a checkout session with `paymentMethods`, such as `['pix']`.
+    Use a direct transaction for PIX, or create a checkout session with `paymentMethods`, such as `['pix']` or `['crypto']`.
   </Step>
   <Step title="Show the next step to the buyer">
-    For PIX, display the `pixCode` and the QR Code. For card, use the hosted checkout or the SDK for tokenization and 3DS authentication.
+    For PIX, display the `pixCode` and the QR Code. For crypto, redirect the buyer to the hosted page's `checkoutUrl`. For card, use the hosted checkout or the SDK for tokenization and 3DS authentication.
   </Step>
   <Step title="Confirm on the server">
     Receive the `transaction.paid` event, verify the signature, and release the order only after confirmation. The checkout return page does not replace the webhook.

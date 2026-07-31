@@ -12,7 +12,7 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
 |---|---|---|---|
 | **PIX** | Disponível | API direta, checkout hospedado ou SDK Checkout | Código copia-e-cola, QR Code e eventos de status |
 | **Cartão de crédito** | **Em breve** | Checkout hospedado ou SDK Checkout | Tokenização segura, 3DS e eventos de status |
-| **Cripto** | Em planejamento | Será anunciado quando estiver disponível | Esta documentação ainda não descreve uma API de cripto |
+| **Cripto** | Disponível | Checkout hospedado | Página hospedada de pagamento em criptomoeda e eventos de status |
 
 <Note>
   **Cartão de crédito ainda não está disponível.** As páginas de cartão descrevem como vai funcionar quando lançar. Por enquanto, use **PIX**.
@@ -42,10 +42,10 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
     Crie uma chave `sk_test_` e habilite os métodos que deseja aceitar. Comece pelo [Sandbox](/pages/sandbox).
   </Step>
   <Step title="Crie o pagamento">
-    Use uma transação direta para PIX ou crie uma sessão de checkout com `paymentMethods`, como `['pix']`.
+    Use uma transação direta para PIX ou crie uma sessão de checkout com `paymentMethods`, como `['pix']` ou `['crypto']`.
   </Step>
   <Step title="Mostre o próximo passo ao comprador">
-    No PIX, exiba o `pixCode` e o QR Code. No cartão, use o checkout hospedado ou o SDK para tokenização e autenticação 3DS.
+    No PIX, exiba o `pixCode` e o QR Code. Em cripto, redirecione o comprador para a `checkoutUrl` da página hospedada. No cartão, use o checkout hospedado ou o SDK para tokenização e autenticação 3DS.
   </Step>
   <Step title="Confirme no servidor">
     Receba o evento `transaction.paid`, verifique a assinatura e libere o pedido apenas depois da confirmação. A página de retorno do checkout não substitui o webhook.
