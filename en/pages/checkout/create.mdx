@@ -3,7 +3,7 @@ title: "Create checkout session"
 openapi: "POST /api/v1/checkout-sessions/"
 ---
 
-Create a session on your backend and redirect the buyer to the returned `checkoutUrl`. In `paymentMethods`, use `['pix']` for now (the default). Support for `credit_card` will be added when card payments launch.
+Create a session on your backend and redirect the buyer to the returned `checkoutUrl`. In `paymentMethods`, use `['pix']` (the default) or `['crypto']` for crypto payments. Support for `credit_card` will be added when card payments launch.
 
 <Warning>
   Never create a session in the frontend with a `sk_test_` or `sk_live_` key. This endpoint requires a secret key and must be called from your server.

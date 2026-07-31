@@ -7,7 +7,7 @@ icon: "cart-shopping"
 If you don't want to build the payment screen, use the **hosted checkout**: your application creates a session via API and redirects the buyer to a Bob-hosted page. When they pay, you receive the webhook and the buyer returns to your `successUrl`.
 
 <Note>
-  **Credit card is coming soon.** Today the hosted checkout works with **PIX**; the references to `credit_card` below apply once card payments launch.
+  Today the hosted checkout works with **PIX** and **crypto**. **Credit card is coming soon** — the references to `credit_card` below apply once card payments launch.
 </Note>
 
 ## When to use each mode
@@ -42,7 +42,7 @@ If you don't want to build the payment screen, use the **hosted checkout**: your
     The response returns `checkoutUrl`, `checkoutToken` and — if you sent `webhookUrl` — the `webhookSecret` used to [verify the signatures](/en/pages/webhooks). **The secret appears only in this response**; store it.
   </Step>
   <Step title="Redirect the buyer">
-    Send the buyer to the `checkoutUrl`. They complete the payment using the available method (PIX).
+    Send the buyer to the `checkoutUrl`. They complete the payment using the available method (PIX or crypto).
   </Step>
   <Step title="Receive the confirmation">
     On payment, your `webhookUrl` receives `transaction.paid` (signed — [always verify it](/en/pages/webhooks#verificando-a-assinatura)) and the buyer is taken to the `successUrl`.
@@ -56,8 +56,9 @@ If you don't want to build the payment screen, use the **hosted checkout**: your
 
 - **`items` is display metadata** — the catalog is yours; Bob only renders the order summary. The amount charged is always the session's `amountCents`.
 - **`expiresAt` belongs to the link, not the PIX** — the session lasts 24h by default; the PIX generated within it follows the expiration configured on the project.
-- **`paymentMethods` controls the displayed options** — today, use `["pix"]` (the default). Support for `["credit_card"]` arrives once card payments launch.
+- **`paymentMethods` controls the displayed options** — use `["pix"]` (the default) or `["crypto"]` for crypto payments; combine them in a single session to offer both. Support for `["credit_card"]` arrives once card payments launch.
 - **Method not available** — session creation reports when a requested method is not enabled on the project.
+- **Crypto** — pass `crypto` in `paymentMethods`. The buyer is taken to the hosted crypto page via the same `checkoutUrl`; confirmation arrives via `transaction.paid` just like the other methods.
 - **Credit card (coming soon)** — once it launches, you'll pass `credit_card` in `paymentMethods`. See [Credit card](/en/pages/credit-card/overview).
 - **Want to keep the buyer on your site?** Use the [Checkout SDK](/en/pages/sdk/checkout). It embeds Bob's checkout without exposing raw card data to your application.
 - **Sandbox works the same way** — create the session with `sk_test_` and the flow runs end to end in the test environment. See [Sandbox](/en/pages/sandbox).

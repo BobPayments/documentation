@@ -25,7 +25,7 @@
  - Use **projeto** for the account scope associated with an API key; reserve **loja** for the merchant's business.
  - Use **checkout hospedado** and **SDK Checkout** consistently.
  - Call the test environment **sandbox** — never "Dev Mode" or "Bob Sandbox". `devMode` stays as-is only when naming the API field.
- - Describe cripto as a future method only until the API and operational flow are published.
+ - Cripto is available through the **checkout hospedado** (`crypto` in `paymentMethods`); the buyer completes payment on the hosted page reached via `checkoutUrl`. Do not document a direct-transaction crypto API — the curated `/api/v1/transactions/` operation stays PIX-only.
 
 ## Style preferences
 
