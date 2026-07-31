@@ -35,29 +35,29 @@ body {
 }
 
 /* Landing page */
-html[data-current-path="/pages/introduction"] #header {
+html:is([data-current-path="/"],[data-current-path="/en"]) #header {
   display: none;
 }
 
-html[data-current-path="/pages/introduction"] main#content-container > div {
+html:is([data-current-path="/"],[data-current-path="/en"]) main#content-container > div {
   gap: 0;
   padding-top: 0;
 }
 
-html[data-current-path="/pages/introduction"] #content-area {
+html:is([data-current-path="/"],[data-current-path="/en"]) #content-area {
   width: 100%;
   max-width: none;
   margin: 0;
   padding: 0;
 }
 
-html[data-current-path="/pages/introduction"] #content {
+html:is([data-current-path="/"],[data-current-path="/en"]) #content {
   max-width: none;
   margin: 0;
   contain: none;
 }
 
-html[data-current-path="/pages/introduction"] main#content-container {
+html:is([data-current-path="/"],[data-current-path="/en"]) main#content-container {
   width: calc(100vw - 19rem);
   max-width: none;
   padding-right: 0;
@@ -68,16 +68,46 @@ html[data-current-path="/pages/introduction"] main#content-container {
    hero has to start exactly where that 3rem strip ends — otherwise its top edge sits
    under the tabs and the gap above it shows the page background instead of the hero. */
 @media (min-width: 1024px) {
-  html[data-current-path="/pages/introduction"] main#content-container {
+  html:is([data-current-path="/"],[data-current-path="/en"]) main#content-container {
     padding-top: 3rem;
   }
 }
 
-/* The landing page is full-bleed, so keep the pagination card on the same axis as
-   the content cards instead of letting it stretch edge to edge. */
-html[data-current-path="/pages/introduction"] #pagination {
-  width: min(1200px, calc(100% - 96px));
-  margin: 0 auto 64px;
+/* The landing page has its own entry cards, so the "next page" pagination card is
+   redundant chrome there — hide it. Same for the site footer: keep the landing clean. */
+html:is([data-current-path="/"],[data-current-path="/en"]) #pagination,
+html:is([data-current-path="/"],[data-current-path="/en"]) #footer,
+html:is([data-current-path="/"],[data-current-path="/en"]) footer {
+  display: none;
+}
+
+/* With the footer gone, the space it used to fill exposes the white page background
+   below the gray surface. Paint the landing background to match the surface so that
+   leftover strip blends in instead of showing as a white gap. */
+html:is([data-current-path="/"],[data-current-path="/en"]),
+html:is([data-current-path="/"],[data-current-path="/en"]) body,
+html:is([data-current-path="/"],[data-current-path="/en"]) main#content-container {
+  background: #f7f9f8;
+}
+
+html.dark:is([data-current-path="/"],[data-current-path="/en"]),
+html.dark:is([data-current-path="/"],[data-current-path="/en"]) body,
+html.dark:is([data-current-path="/"],[data-current-path="/en"]) main#content-container {
+  background: #0b1210;
+}
+
+/* On the landing page the tab bar floats over the green hero; translucent blur reads
+   as a glitch there, so paint it solid like the rest of the chrome. */
+html:is([data-current-path="/"],[data-current-path="/en"]) #navbar-transition-maple {
+  background: #fff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: #e7ecea;
+}
+
+html.dark:is([data-current-path="/"],[data-current-path="/en"]) #navbar-transition-maple {
+  background: #0b1210;
+  border-bottom-color: rgba(255, 255, 255, 0.07);
 }
 
 .bob-home {
@@ -88,11 +118,11 @@ html[data-current-path="/pages/introduction"] #pagination {
 .bob-hero {
   position: relative;
   display: flex;
-  min-height: 430px;
+  min-height: 560px;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 72px 0 80px;
+  padding: 104px 0 112px;
   background:
     radial-gradient(ellipse 70% 90% at 50% 42%, rgba(255, 255, 255, 0.14), transparent 70%),
     linear-gradient(180deg, #0a8265 0%, #087a60 58%, #06664f 100%);
@@ -100,17 +130,57 @@ html[data-current-path="/pages/introduction"] #pagination {
   isolation: isolate;
 }
 
-/* Concentric rings, centred behind the headline. */
-.bob-hero-rings {
+/* Soft blurred blobs drifting over the base gradient, echoing the marketing site's
+   animated cover. Both layers sit under .bob-hero-content (z-index 1). */
+.bob-hero-glow,
+.bob-hero::after {
   position: absolute;
-  inset: -40% -5%;
-  background-image: repeating-radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 255, 255, 0.085) 0 1px,
-    transparent 1px 104px
-  );
-  mask-image: radial-gradient(circle at 50% 50%, #000 22%, rgba(0, 0, 0, 0.45) 52%, transparent 74%);
+  inset: -35%;
   pointer-events: none;
+  will-change: transform;
+}
+
+.bob-hero-glow {
+  background:
+    radial-gradient(34% 44% at 24% 36%, rgba(148, 227, 195, 0.42), transparent 70%),
+    radial-gradient(28% 40% at 76% 22%, rgba(4, 51, 40, 0.55), transparent 72%),
+    radial-gradient(30% 42% at 66% 74%, rgba(94, 224, 181, 0.26), transparent 70%);
+  filter: blur(64px);
+  animation: bob-hero-drift-a 16s ease-in-out infinite alternate;
+}
+
+.bob-hero::after {
+  content: "";
+  background:
+    radial-gradient(38% 48% at 30% 78%, rgba(4, 44, 35, 0.5), transparent 72%),
+    radial-gradient(26% 36% at 84% 58%, rgba(126, 217, 183, 0.24), transparent 70%);
+  filter: blur(76px);
+  animation: bob-hero-drift-b 22s ease-in-out infinite alternate;
+}
+
+@keyframes bob-hero-drift-a {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(4%, 3%, 0) scale(1.18);
+  }
+}
+
+@keyframes bob-hero-drift-b {
+  from {
+    transform: translate3d(3%, 3%, 0) scale(1.12) rotate(2deg);
+  }
+  to {
+    transform: translate3d(-4%, -3%, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bob-hero-glow,
+  .bob-hero::after {
+    animation: none;
+  }
 }
 
 .bob-hero-content {
@@ -342,12 +412,11 @@ html[data-current-path="/pages/introduction"] #pagination {
     linear-gradient(180deg, #086b55 0%, #075746 62%, #064838 100%);
 }
 
-.dark .bob-hero-rings {
-  background-image: repeating-radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 255, 255, 0.06) 0 1px,
-    transparent 1px 104px
-  );
+.dark .bob-hero-glow {
+  background:
+    radial-gradient(34% 44% at 24% 36%, rgba(110, 210, 172, 0.3), transparent 70%),
+    radial-gradient(28% 40% at 76% 22%, rgba(3, 38, 30, 0.6), transparent 72%),
+    radial-gradient(30% 42% at 66% 74%, rgba(94, 224, 181, 0.2), transparent 70%);
 }
 
 .dark .bob-home-surface {
@@ -397,13 +466,6 @@ html[data-current-path="/pages/introduction"] #pagination {
   color: #83eac7;
 }
 
-/* Only pt-BR is published — the locale exists to translate the UI strings, so the
-   switcher itself is noise. */
-#localization-select-trigger,
-li:has(> div > #localization-select-trigger) {
-  display: none;
-}
-
 /* Maple already matches the reference navigation. Hide page icons for the same
    text-led hierarchy while preserving HTTP method badges on API pages. */
 #sidebar-content .sidebar-group a svg {
@@ -411,21 +473,16 @@ li:has(> div > #localization-select-trigger) {
 }
 
 @media (max-width: 1023px) {
-  html[data-current-path="/pages/introduction"] main#content-container {
+  html:is([data-current-path="/"],[data-current-path="/en"]) main#content-container {
     width: 100vw;
     max-width: 100vw;
     min-width: 0;
     overflow: hidden;
   }
 
-  html[data-current-path="/pages/introduction"] #pagination {
-    width: calc(100% - 40px);
-    margin-bottom: 40px;
-  }
-
   .bob-hero {
-    min-height: 360px;
-    padding: 56px 0 60px;
+    min-height: 460px;
+    padding: 72px 0 80px;
   }
 
   .bob-hero-content {
@@ -448,7 +505,7 @@ li:has(> div > #localization-select-trigger) {
 
 @media (max-width: 640px) {
   .bob-hero {
-    min-height: 320px;
+    min-height: 400px;
   }
 
   .bob-hero-kicker {

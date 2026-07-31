@@ -1,0 +1,115 @@
+---
+title: "Card transaction"
+description: "Structure and attributes of a credit card transaction in the Bob Payments API"
+icon: "book-open-cover"
+---
+
+<Note>
+  **Coming soon.** Credit card payments are not yet available on Bob. This reference describes the structure the API will return once it launches — for now, use **PIX**.
+</Note>
+
+To accept credit cards, you do **not** send the card data to the Bob API. The card number, CVV, and expiration date are collected and tokenized in the browser by Bob's checkout package (`@bobpayments/checkout-sdk`) — your application and the API only receive a secure token.
+
+<Warning>
+  Never send raw card data (PAN, CVV, or expiration date) to the Bob API. Use Bob's JS checkout package to tokenize the card in the browser. See the [Checkout SDK](/en/pages/sdk/checkout).
+</Warning>
+
+## Structure
+
+A credit card transaction is represented by the following structure:
+
+```json
+{
+  "id": "clx7a8b9c0d1e2f3g4h5",
+  "externalId": "pedido_123",
+  "amountCents": 25000,
+  "product": "Assinatura Pro",
+  "paymentMethod": "credit_card",
+  "status": "paid",
+  "card": {
+    "brand": "visa",
+    "last4": "4242"
+  },
+  "customerEmail": "joao@email.com",
+  "customerName": "João Silva",
+  "customer": {
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "document": "12345678900"
+  },
+  "createdAt": "2026-02-28T09:00:00.000Z",
+  "updatedAt": "2026-02-28T09:00:00.000Z"
+}
+```
+
+## Attributes
+
+<ResponseField name="id" type="string">
+  Unique identifier of the transaction in CUID format.
+</ResponseField>
+
+<ResponseField name="externalId" type="string">
+  Identifier of the transaction in your system. Use it to reconcile data without storing the internal `id`. Must be unique per project.
+</ResponseField>
+
+<ResponseField name="amountCents" type="integer">
+  Transaction amount in cents. Example: `25000` = R$ 250.00.
+</ResponseField>
+
+<ResponseField name="product" type="string">
+  Name or description of the product/service being charged.
+</ResponseField>
+
+<ResponseField name="paymentMethod" type="string">
+  Payment method of the transaction. For card, the value is `credit_card`. Bob handles the processing of the attempt internally.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current status of the transaction.
+  <Note>
+    | Status | Description |
+    |--------|-----------|
+    | `pending` | **Transaction created, still without final confirmation** |
+    | `waiting_payment` | **Awaiting 3DS authentication or asynchronous confirmation** |
+    | `paid` | **Payment approved** |
+    | `failed` | **Processing was not completed** |
+    | `refunded` | **The amount was refunded to the customer** |
+    | `cancelled` | **The transaction was cancelled** |
+  </Note>
+  Do not treat the HTTP `201` alone as confirmation of payment — use a webhook and/or a status check to confirm the financial outcome.
+</ResponseField>
+
+<ResponseField name="card" type="object | null">
+  Card display data, safe to store and show to the buyer. `brand` is the card brand and `last4` are the last four digits. **PAN, CVV, and expiration date are never returned** — the card is tokenized in the browser by Bob's checkout package.
+</ResponseField>
+
+<ResponseField name="customerEmail" type="string | null">
+  Buyer's email. A direct shortcut to the `customer.email` field, available at the root level of the transaction.
+</ResponseField>
+
+<ResponseField name="customerName" type="string | null">
+  Buyer's name. A direct shortcut to the `customer.name` field, available at the root level of the transaction.
+</ResponseField>
+
+<ResponseField name="customer" type="object">
+  Data of the buyer linked to the transaction. See the [Customer entity](/en/pages/customers/reference).
+</ResponseField>
+
+<ResponseField name="createdAt" type="date-time">
+  Date and time when the transaction was created.
+</ResponseField>
+
+<ResponseField name="updatedAt" type="date-time">
+  Date and time of the last update.
+</ResponseField>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Credit card" icon="credit-card" href="/en/pages/credit-card/overview">
+    Integration modes, tokenization via SDK, and route configuration.
+  </Card>
+  <Card title="Checkout SDK" icon="browser" href="/en/pages/sdk/checkout">
+    Tokenize the card in the browser without touching PAN or CVV.
+  </Card>
+</CardGroup>

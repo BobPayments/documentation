@@ -1,0 +1,52 @@
+---
+title: "Going to production"
+description: "How to leave the sandbox and start processing real payments."
+icon: "rocket"
+---
+
+Simple: once your integration is working in the sandbox, just swap the key. No approval process, no red tape. Before you swap, run through the checklist — these are the points that separate an integration that works from one that holds up in production.
+
+## Go-live checklist
+
+<Steps>
+  <Step title="Full flow validated in the sandbox">
+    Create charge → receive `transaction.paid` webhook → release the order. Also test the unhappy paths: expiration (`transaction.expired`) and cancellation. In the [sandbox](/en/pages/sandbox) you can simulate them all.
+  </Step>
+  <Step title="Webhook signature verified">
+    Does your application **reject** webhooks with an invalid signature? Test it by sending a forged POST to your endpoint. Use the [SDK or the verification examples](/en/pages/webhooks#verificando-a-assinatura) — always with the raw body. New channels use the **v2** format (anti-replay).
+  </Step>
+  <Step title="Idempotent webhook consumption">
+    Deliveries may repeat (platform retry). Processing the same `transaction.paid` twice must not release the order twice — deduplicate by `transactionId`.
+  </Step>
+  <Step title="Creation with Idempotency-Key">
+    A timeout on creation must not turn into a duplicate payment. Send [`Idempotency-Key`](/en/pages/idempotency) (the SDK does it for you) and retry with the same key after network failures.
+  </Step>
+  <Step title="HTTP 202 handled">
+    In rare degradation, creation responds with `202` and `id: null` — the PIX is **valid**, deliver it to the buyer and use `externalId` as the reference. See [Errors](/en/pages/errors).
+  </Step>
+  <Step title="Errors handled by code, not by message">
+    Handle by `status` + `type` and retry transient errors with backoff. The [errors page](/en/pages/errors) tells you what to do with each one.
+  </Step>
+  <Step title="Swap the key">
+    Replace `sk_test_*` with `sk_live_*` in your environment variables. That's it — same API, same endpoints.
+  </Step>
+</Steps>
+
+<Warning>
+  Never expose `sk_live_*` in the frontend, in public repositories, or in application logs. If a key leaks, revoke it in the Dashboard immediately.
+</Warning>
+
+<Note>
+  Sandbox and production transactions are fully isolated — nothing you created with `sk_test_` shows up in the project's real numbers.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Configure webhooks" icon="webhook" href="/en/pages/webhooks">
+    Confirm each payment by the event, not by the creation response.
+  </Card>
+  <Card title="Idempotency" icon="rotate" href="/en/pages/idempotency">
+    Retry creation requests without the risk of charging twice.
+  </Card>
+</CardGroup>

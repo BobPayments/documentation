@@ -1,0 +1,52 @@
+---
+title: "Project structure"
+description: "Check your project's settings and information"
+icon: "book-open-cover"
+---
+
+## Structure
+
+The store represents the project associated with your API key:
+
+```json
+{
+  "id": "clz9x8w7v6u5t4s3r2q1",
+  "name": "Minha Loja",
+  "devMode": false,
+  "pixExpirationMinutes": 60,
+  "maxTransactionAmountCents": null
+}
+```
+
+## Attributes
+
+<ResponseField name="id" type="string">
+  Unique identifier of the project in CUID format.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Project name configured in the Dashboard.
+</ResponseField>
+
+<ResponseField name="devMode" type="boolean">
+  Indicates whether the project is in sandbox mode (`true`) or production (`false`). Reflects the environment of the API key used (`sk_test_*` or `sk_live_*`).
+</ResponseField>
+
+<ResponseField name="pixExpirationMinutes" type="integer">
+  Time in minutes until a PIX charge expires. Configurable in the Dashboard.
+</ResponseField>
+
+<ResponseField name="maxTransactionAmountCents" type="integer | null">
+  Maximum amount allowed per transaction, in cents. `null` indicates that no limit is configured.
+</ResponseField>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Store data" icon="code" href="/en/pages/store/get">
+    Check the project's settings via the API.
+  </Card>
+  <Card title="Authentication" icon="key" href="/en/pages/authentication">
+    The API key determines which project the request belongs to.
+  </Card>
+</CardGroup>

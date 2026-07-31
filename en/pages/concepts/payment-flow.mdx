@@ -1,0 +1,61 @@
+---
+title: "Payment flow"
+description: "Understand the path between your application, Bob Payments, and the buyer."
+icon: "diagram-project"
+---
+
+Every payment on Bob goes through the same sequence — **customer**, **checkout session**, **payment collection**, and **transaction creation** — regardless of the integration approach. The options change; the order is always the same.
+
+<Note>
+  The method available today is **PIX**. The **credit card** is coming soon — the sections below about card tokenization apply once it launches.
+</Note>
+
+## The payment process on Bob
+
+<Steps>
+  <Step title="1. Identify the customer">
+    Every payment is associated with a **customer** (name, document, contact). Bob stores this data to reuse it in future charges and generates an identifier used in the following steps.
+  </Step>
+  <Step title="2. Create the checkout session">
+    The session connects the customer to the payment, stores the charge details, and loads the available methods (today PIX; card coming soon). Server-to-server integrations that use **PIX directly via the API** can skip this step and create the transaction directly.
+  </Step>
+  <Step title="3. Collect the payment">
+    There are two ways to collect:
+
+    - **Hosted checkout or Checkout SDK** — Bob collects it securely: it shows PIX (QR Code and copy-and-paste) and, for card, tokenizes the data in the browser, generating a secure identifier (`pm_...`). PAN, CVV, and expiry never pass through your application.
+    - **Direct API** — you take on tokenization and PCI compliance, sending Bob only the secure token.
+  </Step>
+  <Step title="4. Create the transaction">
+    The transaction is the payment itself — each charge attempt. It uses the customer and the data collected in the previous steps and receives a status that evolves until the final outcome.
+  </Step>
+</Steps>
+
+## Confirmation via webhook
+
+The financial outcome is **asynchronous**. As soon as the transaction changes state (`transaction.paid`, `transaction.expired`), Bob sends a **signed webhook** to your backend — treat it as the official payment confirmation. The return page (`successUrl`) guides the buyer, but it does not replace the webhook.
+
+## Responsibilities
+
+| Component | Responsibility |
+|---|---|
+| Your backend | Authenticate, create resources, and confirm the order |
+| Hosted checkout or Checkout SDK | Collect the buyer's choice and protect card data |
+| Bob API | Create and query sessions, transactions, and customers |
+| Webhook | Notify state changes asynchronously |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Choose an integration" icon="signs-post" href="/en/pages/payments">
+    Compare the available paths.
+  </Card>
+  <Card title="Understand transactions" icon="arrow-right-arrow-left" href="/en/pages/concepts/transactions">
+    Learn about the resource that represents each payment attempt.
+  </Card>
+  <Card title="Customers" icon="user" href="/en/pages/concepts/customers">
+    See how buyer data is stored and reused.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/en/pages/webhooks">
+    Implement asynchronous confirmation on your server.
+  </Card>
+</CardGroup>

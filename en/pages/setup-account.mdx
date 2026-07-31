@@ -1,0 +1,65 @@
+---
+title: "Set up your account"
+description: "Prepare your project, generate API keys, and enable webhooks before your first payment."
+icon: "gear"
+---
+
+Before creating your first charge, get your project ready: access the Dashboard, generate an API key, and configure the webhook that confirms each payment. It takes a few minutes and applies to both the sandbox and production.
+
+<Steps>
+  <Step title="Access the Dashboard">
+    Sign in at [app.payments.bob.company](https://app.payments.bob.company). If you don't have access yet, reach out to the Bob team to create your account.
+  </Step>
+  <Step title="Select or create a project">
+    Each project has its own keys, webhooks, and transactions. Pick the project that will receive the integration — or create a new one.
+  </Step>
+  <Step title="Generate your API key">
+    In the side menu, open **API Keys** and click **New key**. Give it a descriptive name (e.g., `backend-sandbox`) and confirm. The key is shown **only once** — store it in a secrets manager or environment variable.
+  </Step>
+  <Step title="Configure the webhook">
+    Provide an HTTPS route on your server to receive the project's events (`transaction.paid`, `transaction.expired`). This is how you confirm each payment without polling.
+  </Step>
+  <Step title="Start in the sandbox">
+    Use the `sk_test_` key to run the full flow without moving real money. When you're ready, swap it for the `sk_live_` key for production.
+  </Step>
+</Steps>
+
+## Your API keys
+
+Each project has two keys, one per environment:
+
+| Prefix | Environment | Processes payments? |
+|--------|-------------|---------------------|
+| `sk_test_*` | Sandbox | No |
+| `sk_live_*` | Production | Yes |
+
+The key goes in the `Authorization` header of every request:
+
+```
+Authorization: Bearer sk_test_your_key_here
+```
+
+<Warning>
+  Create and use keys on the backend only. Never expose an `sk_test_` or `sk_live_` key in the browser, in public repositories, or in unprotected environment variables.
+</Warning>
+
+<Tip>
+  Use environment variables (`process.env.BOB_API_KEY`) so the key never lives in your code. If a key leaks, revoke it from the Dashboard and generate a new one.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Create your first payment" icon="bolt" href="/en/pages/quickstart">
+    Create a sandbox checkout session and track the result via webhook.
+  </Card>
+  <Card title="Authentication" icon="key" href="/en/pages/authentication">
+    Learn the `sk_test_` and `sk_live_` keys and auth errors in detail.
+  </Card>
+  <Card title="Test in the sandbox" icon="flask" href="/en/pages/sandbox">
+    Simulate payment states without processing real money.
+  </Card>
+  <Card title="Configure webhooks" icon="bell" href="/en/pages/webhooks">
+    Implement asynchronous confirmation on your server.
+  </Card>
+</CardGroup>

@@ -10,7 +10,7 @@
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg",
-    "href": "/pages/introduction"
+    "href": "/"
   },
   "favicon": "/favicon.png",
   "colors": {
@@ -90,10 +90,6 @@
   },
   "redirects": [
     {
-      "source": "/",
-      "destination": "/pages/introduction"
-    },
-    {
       "source": "/api-reference",
       "destination": "/pages/pix/reference"
     },
@@ -162,16 +158,24 @@
               {
                 "group": "Primeiros passos",
                 "pages": [
+                  "index",
                   "pages/introduction",
-                  "pages/quickstart"
+                  {
+                    "group": "Quickstart",
+                    "pages": [
+                      "pages/setup-account",
+                      "pages/quickstart"
+                    ]
+                  }
                 ]
               },
               {
                 "group": "Conceitos principais",
                 "pages": [
                   "pages/concepts/payment-flow",
-                  "pages/concepts/transactions",
                   "pages/concepts/customers",
+                  "pages/concepts/sessions",
+                  "pages/concepts/transactions",
                   "pages/concepts/webhooks"
                 ]
               },
@@ -192,6 +196,7 @@
               {
                 "group": "Usando a Bob",
                 "pages": [
+                  "pages/environments",
                   "pages/sandbox",
                   "pages/authentication",
                   "pages/production"
@@ -272,10 +277,136 @@
                 ]
               }
             ]
+          }
+        ]
+      },
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Getting Started",
+                "pages": [
+                  "en/index",
+                  "en/pages/introduction",
+                  {
+                    "group": "Quickstart",
+                    "pages": [
+                      "en/pages/setup-account",
+                      "en/pages/quickstart"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Core concepts",
+                "pages": [
+                  "en/pages/concepts/payment-flow",
+                  "en/pages/concepts/customers",
+                  "en/pages/concepts/sessions",
+                  "en/pages/concepts/transactions",
+                  "en/pages/concepts/webhooks"
+                ]
+              },
+              {
+                "group": "Integration methods",
+                "pages": [
+                  "en/pages/payments",
+                  "en/pages/checkout/overview",
+                  "en/pages/credit-card/overview"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "en/pages/webhooks"
+                ]
+              },
+              {
+                "group": "Using Bob",
+                "pages": [
+                  "en/pages/sandbox",
+                  "en/pages/authentication",
+                  "en/pages/production"
+                ]
+              },
+              {
+                "group": "API fundamentals",
+                "pages": [
+                  "en/pages/idempotency",
+                  "en/pages/errors"
+                ]
+              }
+            ]
           },
           {
-            "tab": "Changelog",
-            "href": "https://github.com/BobPayments/documentation/blob/main/CHANGELOG.md"
+            "tab": "API Reference",
+            "groups": [
+              {
+                "group": "Transactions",
+                "pages": [
+                  "en/pages/pix/reference",
+                  "en/pages/credit-card/reference",
+                  "en/pages/pix/create",
+                  "en/pages/pix/list",
+                  "en/pages/pix/check-status"
+                ]
+              },
+              {
+                "group": "Checkout",
+                "pages": [
+                  "en/pages/checkout/create",
+                  "en/pages/checkout/status"
+                ]
+              },
+              {
+                "group": "Customers",
+                "pages": [
+                  "en/pages/customers/reference",
+                  "en/pages/customers/get",
+                  "en/pages/customers/list"
+                ]
+              },
+              {
+                "group": "Project",
+                "pages": [
+                  "en/pages/store/reference",
+                  "en/pages/store/get"
+                ]
+              },
+              {
+                "group": "Sandbox",
+                "pages": [
+                  "en/pages/pix/simulate-payment"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "SDKs",
+            "groups": [
+              {
+                "group": "Start here",
+                "pages": [
+                  "en/pages/sdk/overview"
+                ]
+              },
+              {
+                "group": "Server",
+                "pages": [
+                  "en/pages/sdk/node",
+                  "en/pages/sdk/php"
+                ]
+              },
+              {
+                "group": "Frontend",
+                "pages": [
+                  "en/pages/sdk/checkout"
+                ]
+              }
+            ]
           }
         ]
       }

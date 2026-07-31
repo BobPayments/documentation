@@ -1,0 +1,43 @@
+---
+title: "Webhooks"
+description: "Understand why asynchronous events are the source of truth for the integration."
+icon: "bell"
+---
+
+Webhooks are HTTP requests sent by Bob when an event happens in your project. They report state changes without requiring continuous API polling.
+
+## Why use them
+
+The buyer may close the page before returning. A confirmation can also happen after the initial API response. For this reason, your backend must confirm the result through the signed webhook.
+
+## Delivery flow
+
+<Steps>
+  <Step title="Bob creates the event">
+    A relevant change happens, such as the confirmation of a transaction.
+  </Step>
+  <Step title="Your endpoint receives the request">
+    Bob sends the payload to the HTTPS URL configured in the project.
+  </Step>
+  <Step title="Your application validates the signature">
+    Verify the authenticity of the message using the raw request body.
+  </Step>
+  <Step title="Your application processes the event">
+    Update the order idempotently and respond with success.
+  </Step>
+</Steps>
+
+<Note>
+  Bob may retry a delivery. Use the transaction identifier to prevent the same event from releasing an order more than once.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Configure webhooks" icon="gear" href="/en/pages/webhooks">
+    Events, payload versions, signature, and implementation examples.
+  </Card>
+  <Card title="Transactions" icon="arrow-right-arrow-left" href="/en/pages/concepts/transactions">
+    Understand the states that the events communicate.
+  </Card>
+</CardGroup>

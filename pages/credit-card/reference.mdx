@@ -4,6 +4,10 @@ description: "Estrutura e atributos de uma transação de cartão de crédito na
 icon: "book-open-cover"
 ---
 
+<Note>
+  **Em breve.** O pagamento com cartão de crédito ainda não está disponível na Bob. Esta referência descreve a estrutura que a API vai retornar quando lançar — por enquanto, use **PIX**.
+</Note>
+
 Para aceitar cartão de crédito você **não** envia os dados do cartão para a API Bob. O número do cartão, CVV e validade são coletados e tokenizados no navegador pelo pacote de checkout da Bob (`@bobpayments/checkout-sdk`) — a sua aplicação e a API só recebem um token seguro.
 
 <Warning>

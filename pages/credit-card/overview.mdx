@@ -4,7 +4,11 @@ description: "Aceite cartão de crédito pelo checkout hospedado ou SDK embutív
 icon: "credit-card"
 ---
 
-A Bob Payments também processa **cartão de crédito**. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível da Bob. Eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e gerenciam o processamento internamente.
+<Note>
+  **Em breve.** O pagamento com cartão de crédito ainda não está disponível na Bob. Esta página descreve como vai funcionar quando lançar — por enquanto, use **PIX**.
+</Note>
+
+A Bob Payments também vai processar **cartão de crédito**. Para a maioria das integrações, você usará o checkout hospedado ou o SDK embutível da Bob. Eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e gerenciam o processamento internamente.
 
 <Note>
   Para aceitar cartão no checkout, o cartão **deve ser tokenizado no navegador** pelo pacote de checkout da Bob (`@bobpayments/checkout-sdk`). A sua aplicação e a API só recebem um token seguro — PAN, CVV e validade nunca passam pela API Bob. Veja o [SDK Checkout](/pages/sdk/checkout) e a [Referência](/pages/credit-card/reference).

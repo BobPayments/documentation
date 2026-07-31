@@ -1,0 +1,65 @@
+---
+title: "Configurar sua conta"
+description: "Prepare seu projeto, gere as chaves de API e ative os webhooks antes do primeiro pagamento."
+icon: "gear"
+---
+
+Antes de criar sua primeira cobrança, deixe o projeto pronto: acesse o Dashboard, gere uma chave de API e configure o webhook que confirma cada pagamento. Leva poucos minutos e vale para o ambiente sandbox e para produção.
+
+<Steps>
+  <Step title="Acesse o Dashboard">
+    Entre em [app.payments.bob.company](https://app.payments.bob.company) com sua conta. Se ainda não tem acesso, fale com o time da Bob para criar sua conta.
+  </Step>
+  <Step title="Selecione ou crie um projeto">
+    Cada projeto tem suas próprias chaves, webhooks e transações. Escolha o projeto que vai receber a integração — ou crie um novo.
+  </Step>
+  <Step title="Gere sua chave de API">
+    No menu lateral, abra **Chaves de API** e clique em **Nova chave**. Dê um nome descritivo (ex.: `backend-sandbox`) e confirme. A chave é exibida **apenas uma vez** — guarde em um gerenciador de segredos ou variável de ambiente.
+  </Step>
+  <Step title="Configure o webhook">
+    Informe uma rota HTTPS do seu servidor para receber os eventos do projeto (`transaction.paid`, `transaction.expired`). É por aqui que você confirma cada pagamento sem depender de polling.
+  </Step>
+  <Step title="Comece no sandbox">
+    Use a chave `sk_test_` para rodar o fluxo completo sem movimentar dinheiro real. Quando estiver pronto, troque pela chave `sk_live_` para produção.
+  </Step>
+</Steps>
+
+## Suas chaves de API
+
+Cada projeto tem duas chaves, uma para cada ambiente:
+
+| Prefixo | Ambiente | Processa pagamentos? |
+|---------|----------|-----------------------|
+| `sk_test_*` | Sandbox | Não |
+| `sk_live_*` | Produção | Sim |
+
+A chave vai no header `Authorization` de todas as requisições:
+
+```
+Authorization: Bearer sk_test_sua_chave_aqui
+```
+
+<Warning>
+  Crie e use as chaves apenas no backend. Nunca exponha uma chave `sk_test_` ou `sk_live_` no navegador, em repositórios públicos ou variáveis de ambiente não protegidas.
+</Warning>
+
+<Tip>
+  Use variáveis de ambiente (`process.env.BOB_API_KEY`) para nunca deixar a chave no código. Em caso de vazamento, revogue a chave pelo Dashboard e gere uma nova.
+</Tip>
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Criar seu primeiro pagamento" icon="bolt" href="/pages/quickstart">
+    Crie uma sessão de checkout no sandbox e acompanhe o resultado por webhook.
+  </Card>
+  <Card title="Autenticação" icon="key" href="/pages/authentication">
+    Entenda em detalhe as chaves `sk_test_` e `sk_live_` e os erros de auth.
+  </Card>
+  <Card title="Testar no sandbox" icon="flask" href="/pages/sandbox">
+    Simule os estados do pagamento sem processar dinheiro real.
+  </Card>
+  <Card title="Configurar webhooks" icon="bell" href="/pages/webhooks">
+    Implemente a confirmação assíncrona no seu servidor.
+  </Card>
+</CardGroup>
