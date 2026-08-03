@@ -1,17 +1,13 @@
 ---
 title: "Cartão de crédito"
-description: "Aceite cartão de crédito pelo checkout hospedado ou SDK embutível da Bob."
+description: "Aceite cartão de crédito pelo checkout hospedado, SDK embutível ou API direta com token btk_."
 icon: "credit-card"
 ---
 
-<Note>
-  **Em breve.** O pagamento com cartão de crédito ainda não está disponível na Bob. Esta página descreve como vai funcionar quando lançar — por enquanto, use **PIX**.
-</Note>
-
-A Bob Payments também vai processar **cartão de crédito**. Para a maioria das integrações, você usará o checkout hospedado ou o SDK embutível da Bob. Eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e gerenciam o processamento internamente.
+A Bob Payments processa **cartão de crédito** quando o método está **habilitado no projeto**. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível: eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e gerenciam o processamento.
 
 <Note>
-  Para aceitar cartão no checkout, o cartão **deve ser tokenizado no navegador** pelo pacote de checkout da Bob (`@bobpayments/checkout-sdk`). A sua aplicação e a API só recebem um token seguro — PAN, CVV e validade nunca passam pela API Bob. Veja o [SDK Checkout](/pages/sdk/checkout) e a [Referência](/pages/credit-card/reference).
+  O cartão **deve ser tokenizado no navegador**. A sua aplicação e a API só recebem um token opaco `btk_...` — PAN, CVV e validade nunca passam pela API Bob. Veja o [SDK Checkout](/pages/sdk/checkout) e a [Referência](/pages/credit-card/reference).
 </Note>
 
 ## Escolha o nível de integração
@@ -20,27 +16,27 @@ A Bob Payments também vai processar **cartão de crédito**. Para a maioria das
 |---|---|
 | **Checkout hospedado** | Caminho padrão. Você cria uma sessão e redireciona o comprador para a `checkoutUrl`. |
 | **SDK embutível** | Use quando você já tem uma página própria e quer montar o checkout da Bob dentro dela. |
-| **API direta** | Use apenas em integrações avançadas que já possuem tokenização, conformidade e tratamento de 3DS próprios. |
+| **API direta (headless)** | Checkouts próprios: crie uma sessão de tokenização, tokenise no browser com Bob.js/Secure Fields e cobre com `transactions.create`. |
 
 ## Fluxo recomendado
 
 ```text
-Cartão
-  -> Bob Checkout ou @bobpayments/checkout-sdk
-  -> tokenização segura
-  -> API Bob
-  -> processamento interno da Bob
+Cartão no browser
+  -> Bob Checkout / Secure Fields (Bob.js)
+  -> token btk_... (uso único, por valor)
+  -> API Bob (paymentMethod: credit_card + card.token)
+  -> nextActionUrl se 3DS · webhook no desfecho
 ```
 
-O número do cartão, CVV e validade nunca passam pela API Bob. O comprador não vê detalhes do processamento interno.
+O número do cartão, CVV e validade nunca passam pela API Bob.
 
 <Warning>
-  Nunca envie cartão bruto para a API Bob. Payloads com PAN, CVV ou validade devem continuar sendo rejeitados.
+  Nunca envie cartão bruto para a API Bob. Payloads com PAN, CVV ou validade são rejeitados.
 </Warning>
 
 ## Checkout hospedado
 
-Para aceitar cartão no checkout hospedado, envie `credit_card` em `paymentMethods`:
+Envie `credit_card` em `paymentMethods`:
 
 ```bash
 curl -X POST https://api.payments.bob.company/api/v1/checkout-sessions/ \
@@ -60,8 +56,6 @@ A sessão aceita `credit_card` quando o método está habilitado no projeto. Cas
 
 ## SDK embutível
 
-Use o SDK embutível quando você quer manter o comprador no seu site, mas não quer implementar os campos seguros, a tokenização, o 3DS ou o fallback.
-
 ```tsx
 import { BobCheckout } from '@bobpayments/checkout-sdk';
 
@@ -72,7 +66,7 @@ import { BobCheckout } from '@bobpayments/checkout-sdk';
 />
 ```
 
-Ou monte o checkout em uma página sem React:
+Ou sem React:
 
 ```typescript
 const checkout = await BobCheckout.create({
@@ -82,23 +76,79 @@ const checkout = await BobCheckout.create({
 checkout.mount('#bob-payment');
 ```
 
-O SDK gerencia os campos seguros, cria um identificador seguro de método de pagamento, envia o token para a API Bob e conduz 3DS quando necessário. O lojista não precisa importar bibliotecas adicionais.
+O SDK gerencia os campos seguros, emite o token e conduz 3DS quando necessário.
 
 <Card title="SDK Checkout" icon="code" href="/pages/sdk/checkout">
   Veja como embutir o checkout da Bob no seu site.
 </Card>
 
-## API direta avançada
+## API direta (tokenização + cobrança)
 
-Use a API direta com cartão somente quando você já possui sua própria implementação de tokenização e autenticação 3DS. Nesse modo, o frontend cria um identificador seguro de método de pagamento (`pm_...`) e envia para a Bob apenas esse token, junto com `paymentMethod: "credit_card"`.
+Para checkouts **próprios** (headless):
 
-O `pm_...` deve existir apenas em memória durante a tentativa. Não salve esse valor em logs, analytics, URL ou banco do checkout.
+1. No servidor, crie uma sessão de tokenização:
 
-## Processamento e fallback
+```bash
+curl -X POST https://api.payments.bob.company/api/v1/card-tokenization-sessions/ \
+  -H "Authorization: Bearer $BOB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: $(uuidgen)" \
+  -d '{
+    "amount_cents": 30000,
+    "currency": "BRL",
+    "origin": "https://loja.example.com"
+  }'
+```
 
-Para cartão, a Bob gerencia as tentativas e o fallback internamente. O comprador recebe uma única resposta final e não vê detalhes do processamento.
+Resposta: `id` (`cts_...`), `client_secret` (`cts_secret_...`), `payment_id`, `expires_at` (~10 min).
 
-Quando o pagamento exigir ação do comprador, como autenticação 3DS, o checkout deve mostrar a autenticação segura, abrir a URL retornada e consultar o status ao voltar. Mostre sucesso somente quando a sessão ou transação estiver `PAID`/`paid`.
+2. No navegador, monte o Bob.js/Secure Fields com `id` + `client_secret` e obtenha o token `btk_...`.
+
+3. No servidor, cobre:
+
+```bash
+curl -X POST https://api.payments.bob.company/api/v1/transactions/ \
+  -H "Authorization: Bearer $BOB_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: $(uuidgen)" \
+  -d '{
+    "customer": { "...": "..." },
+    "payment": { "amountCents": 30000, "product": "Assinatura" },
+    "paymentMethod": "credit_card",
+    "card": {
+      "token": "btk_...",
+      "installments": 3,
+      "returnUrl": "https://loja.example.com/retorno-3ds"
+    },
+    "originDomain": "loja.example.com"
+  }'
+```
+
+Se o emissor exigir 3DS, a resposta traz `nextActionUrl` (e `nextAction`) — redirecione o portador. A transação fica em `waiting_payment` até o webhook (`transaction.paid` / `transaction.failed`).
+
+Com o SDK de servidor:
+
+```typescript
+const cts = await bob.cardTokenizationSessions.create({
+  amountCents: 30_000,
+  origin: 'https://loja.example.com',
+});
+// entregue cts.id + cts.clientSecret ao browser → btk_...
+
+const result = await bob.transactions.create({
+  customer,
+  payment: { amountCents: 30_000, product: 'Assinatura' },
+  paymentMethod: 'credit_card',
+  card: { token: 'btk_...', installments: 3, returnUrl: 'https://loja.example.com/retorno-3ds' },
+  originDomain: 'loja.example.com',
+});
+
+if (result.nextActionUrl) {
+  // redirecione para 3DS
+}
+```
+
+O token `btk_...` é de **uso único e por valor**. Recusa ou mudança de total exigem sessão e token novos. Não persista nem logue o `client_secret`.
 
 ## Estados públicos
 
@@ -106,20 +156,16 @@ Quando o pagamento exigir ação do comprador, como autenticação 3DS, o checko
 |---|---|
 | `paid` | Pagamento aprovado |
 | `waiting_payment` | Aguardando autenticação 3DS ou confirmação assíncrona |
-| `failed` | O processamento não foi concluído |
-| `pending` | Pagamento criado, mas ainda sem confirmação final |
+| `processing` | Pagamento recebido, aguardando confirmação |
+| `refunded` / `cancelled` / `expired` | Desfechos terminais sem aprovação |
 
 Use webhook e/ou consulta de status para confirmar o desfecho financeiro. Não considere apenas o HTTP `201` como confirmação de pagamento.
 
 ## O que você configura
 
-No seu lado, a configuração é feita pelo Dashboard:
-
-1. Habilite cartão para o projeto, quando necessário.
-2. Use o checkout hospedado ou o SDK Checkout para coletar o cartão.
-3. Configure o webhook da Bob para receber a confirmação do pagamento.
-
-A Bob gerencia o processamento do cartão, a reconciliação e os detalhes internos da operação. Você não precisa enviar credenciais de provedores de pagamento para a sua aplicação.
+1. Habilite cartão para o projeto no Dashboard.
+2. Use o checkout hospedado, o SDK Checkout ou a API direta com tokenização no browser.
+3. Configure o webhook para receber a confirmação do pagamento.
 
 <Warning>
   Nunca envie credenciais secretas nem dados brutos do cartão para o navegador, para a API Bob ou para repositórios.

@@ -4,19 +4,63 @@ description: "Estrutura e atributos de uma transação de cartão de crédito na
 icon: "book-open-cover"
 ---
 
-<Note>
-  **Em breve.** O pagamento com cartão de crédito ainda não está disponível na Bob. Esta referência descreve a estrutura que a API vai retornar quando lançar — por enquanto, use **PIX**.
-</Note>
-
-Para aceitar cartão de crédito você **não** envia os dados do cartão para a API Bob. O número do cartão, CVV e validade são coletados e tokenizados no navegador pelo pacote de checkout da Bob (`@bobpayments/checkout-sdk`) — a sua aplicação e a API só recebem um token seguro.
+Para aceitar cartão de crédito você **não** envia os dados do cartão para a API Bob. O número, CVV e validade são coletados e tokenizados no navegador (checkout Bob ou Bob.js/Secure Fields) — a API só recebe o token `btk_...`.
 
 <Warning>
-  Nunca envie cartão bruto (PAN, CVV ou validade) para a API Bob. Use o pacote de checkout JS da Bob para tokenizar o cartão no browser. Veja o [SDK Checkout](/pages/sdk/checkout).
+  Nunca envie cartão bruto (PAN, CVV ou validade) para a API Bob. Veja o [fluxo de cartão](/pages/credit-card/overview) e o [SDK Checkout](/pages/sdk/checkout).
 </Warning>
 
-## Estrutura
+## Criação (`POST /api/v1/transactions/`)
 
-Uma transação de cartão de crédito é representada pela seguinte estrutura:
+Corpo relevante:
+
+```json
+{
+  "customer": { "...": "..." },
+  "payment": { "amountCents": 25000, "product": "Assinatura Pro" },
+  "paymentMethod": "credit_card",
+  "card": {
+    "token": "btk_...",
+    "installments": 3,
+    "holderName": "JOAO SILVA",
+    "returnUrl": "https://loja.example.com/retorno-3ds"
+  },
+  "originDomain": "loja.example.com"
+}
+```
+
+Resposta `201` (campos de cartão):
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "status": "waiting_payment",
+    "cardBrand": "visa",
+    "cardLastFour": "4242",
+    "installments": 3,
+    "nextActionUrl": "https://3ds.example.com/challenge",
+    "nextAction": {
+      "type": "redirect",
+      "url": "https://3ds.example.com/challenge"
+    }
+  }
+}
+```
+
+| Campo | Descrição |
+|---|---|
+| `card.token` | Token Bob opaco `btk_...` de uso único, emitido no browser |
+| `card.installments` | Parcelas 1–12 (default 1) |
+| `card.returnUrl` | URL HTTPS de volta após 3DS |
+| `cardBrand` / `cardLastFour` | Dados de exibição (não sensíveis) na resposta da criação |
+| `nextActionUrl` / `nextAction` | Presentes quando o emissor exige 3DS — redirecione o portador |
+
+## Leitura (`GET /api/v1/transactions/{id}`)
+
+A leitura devolve a transação com `paymentMethod: "credit_card"` e os campos comuns (valor, status, cliente, etc.). O desfecho final chega por webhook (`transaction.paid` / `transaction.failed`).
 
 ```json
 {
@@ -26,88 +70,31 @@ Uma transação de cartão de crédito é representada pela seguinte estrutura:
   "product": "Assinatura Pro",
   "paymentMethod": "credit_card",
   "status": "paid",
-  "card": {
-    "brand": "visa",
-    "last4": "4242"
-  },
   "customerEmail": "joao@email.com",
   "customerName": "João Silva",
-  "customer": {
-    "name": "João Silva",
-    "email": "joao@email.com",
-    "document": "12345678900"
-  },
+  "paidAt": "2026-02-28T09:05:00.000Z",
   "createdAt": "2026-02-28T09:00:00.000Z",
-  "updatedAt": "2026-02-28T09:00:00.000Z"
+  "updatedAt": "2026-02-28T09:05:00.000Z"
 }
 ```
 
-## Atributos
+## Status
 
-<ResponseField name="id" type="string">
-  Identificador único da transação no formato CUID.
-</ResponseField>
+| Status | Descrição |
+|--------|-----------|
+| `waiting_payment` | Aguardando 3DS ou confirmação assíncrona |
+| `processing` | Pagamento recebido, aguardando confirmação |
+| `paid` | Pagamento aprovado |
+| `refunded` | Valor devolvido |
+| `cancelled` / `expired` | Transação encerrada sem aprovação |
 
-<ResponseField name="externalId" type="string">
-  Identificador da transação no seu sistema. Use para cruzar dados sem armazenar o `id` interno. Deve ser único por projeto.
-</ResponseField>
-
-<ResponseField name="amountCents" type="integer">
-  Valor da transação em centavos. Exemplo: `25000` = R$ 250,00.
-</ResponseField>
-
-<ResponseField name="product" type="string">
-  Nome ou descrição do produto/serviço cobrado.
-</ResponseField>
-
-<ResponseField name="paymentMethod" type="string">
-  Método de pagamento da transação. Para cartão, o valor é `credit_card`. A Bob gerencia internamente o processamento da tentativa.
-</ResponseField>
-
-<ResponseField name="status" type="string">
-  Status atual da transação.
-  <Note>
-    | Status | Descrição |
-    |--------|-----------|
-    | `pending` | **Transação criada, ainda sem confirmação final** |
-    | `waiting_payment` | **Aguardando autenticação 3DS ou confirmação assíncrona** |
-    | `paid` | **Pagamento aprovado** |
-    | `failed` | **O processamento não foi concluído** |
-    | `refunded` | **O valor foi devolvido ao cliente** |
-    | `cancelled` | **A transação foi cancelada** |
-  </Note>
-  Não considere apenas o HTTP `201` como confirmação de pagamento — use webhook e/ou consulta de status para confirmar o desfecho financeiro.
-</ResponseField>
-
-<ResponseField name="card" type="object | null">
-  Dados de exibição do cartão, seguros para armazenar e mostrar ao comprador. `brand` é a bandeira e `last4` são os quatro últimos dígitos. **PAN, CVV e validade nunca são retornados** — o cartão é tokenizado no browser pelo pacote de checkout da Bob.
-</ResponseField>
-
-<ResponseField name="customerEmail" type="string | null">
-  E-mail do comprador. Atalho direto ao campo `customer.email`, disponível no nível raiz da transação.
-</ResponseField>
-
-<ResponseField name="customerName" type="string | null">
-  Nome do comprador. Atalho direto ao campo `customer.name`, disponível no nível raiz da transação.
-</ResponseField>
-
-<ResponseField name="customer" type="object">
-  Dados do comprador vinculado à transação. Consulte a [entidade Customer](/pages/customers/reference).
-</ResponseField>
-
-<ResponseField name="createdAt" type="date-time">
-  Data e hora de criação da transação.
-</ResponseField>
-
-<ResponseField name="updatedAt" type="date-time">
-  Data e hora da última atualização.
-</ResponseField>
+Não considere apenas o HTTP `201` como confirmação de pagamento — use webhook e/ou consulta de status.
 
 ## Próximos passos
 
 <CardGroup cols={2}>
   <Card title="Cartão de crédito" icon="credit-card" href="/pages/credit-card/overview">
-    Modos de integração, tokenização via SDK e configuração de rota.
+    Modos de integração, tokenização e 3DS.
   </Card>
   <Card title="SDK Checkout" icon="browser" href="/pages/sdk/checkout">
     Tokenize o cartão no navegador sem tocar em PAN ou CVV.

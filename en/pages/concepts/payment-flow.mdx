@@ -7,7 +7,7 @@ icon: "diagram-project"
 Every payment on Bob goes through the same sequence — **customer**, **checkout session**, **payment collection**, and **transaction creation** — regardless of the integration approach. The options change; the order is always the same.
 
 <Note>
-  The method available today is **PIX**. The **credit card** is coming soon — the sections below about card tokenization apply once it launches.
+  Methods available when enabled on the project: **PIX**, **crypto**, and **credit card**. The direct API also accepts the matching `paymentMethod`.
 </Note>
 
 ## The payment process on Bob
@@ -17,12 +17,12 @@ Every payment on Bob goes through the same sequence — **customer**, **checkout
     Every payment is associated with a **customer** (name, document, contact). Bob stores this data to reuse it in future charges and generates an identifier used in the following steps.
   </Step>
   <Step title="2. Create the checkout session">
-    The session connects the customer to the payment, stores the charge details, and loads the available methods (today PIX; card coming soon). Server-to-server integrations that use **PIX directly via the API** can skip this step and create the transaction directly.
+    The session connects the customer to the payment, stores the charge details, and loads the available methods (PIX, crypto, card). Server-to-server integrations that use the **direct transactions API** can skip this step.
   </Step>
   <Step title="3. Collect the payment">
     There are two ways to collect:
 
-    - **Hosted checkout or Checkout SDK** — Bob collects it securely: it shows PIX (QR Code and copy-and-paste) and, for card, tokenizes the data in the browser, generating a secure identifier (`pm_...`). PAN, CVV, and expiry never pass through your application.
+    - **Hosted checkout or Checkout SDK** — Bob collects it securely: it shows PIX (QR Code and copy-and-paste) and, for card, tokenizes the data in the browser, generating an opaque token (`btk_...`). PAN, CVV, and expiry never pass through your application.
     - **Direct API** — you take on tokenization and PCI compliance, sending Bob only the secure token.
   </Step>
   <Step title="4. Create the transaction">

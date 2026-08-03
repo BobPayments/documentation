@@ -1,46 +1,42 @@
 ---
 title: "Credit card"
-description: "Accept credit cards through Bob's hosted checkout or embeddable SDK."
+description: "Accept credit cards via hosted checkout, embeddable SDK, or direct API with a btk_ token."
 icon: "credit-card"
 ---
 
-<Note>
-  **Coming soon.** Credit card payments are not available on Bob yet. This page describes how it will work once it launches — for now, use **PIX**.
-</Note>
-
-Bob Payments will also process **credit cards**. For most integrations, you'll use Bob's hosted checkout or embeddable SDK. They load the secure fields, tokenize the card, run 3DS, and handle processing internally.
+Bob Payments processes **credit cards** when the method is **enabled on the project**. For most integrations, use hosted checkout or the embeddable SDK: they load secure fields, tokenize the card, run 3DS, and handle processing.
 
 <Note>
-  To accept cards at checkout, the card **must be tokenized in the browser** by Bob's checkout package (`@bobpayments/checkout-sdk`). Your application and the API only receive a secure token — PAN, CVV, and expiration date never pass through the Bob API. See the [Checkout SDK](/en/pages/sdk/checkout) and the [Reference](/en/pages/credit-card/reference).
+  The card **must be tokenized in the browser**. Your application and the API only receive an opaque `btk_...` token — PAN, CVV, and expiry never pass through the Bob API. See the [Checkout SDK](/en/pages/sdk/checkout) and the [Reference](/en/pages/credit-card/reference).
 </Note>
 
 ## Choose the integration level
 
 | Level | When to use |
 |---|---|
-| **Hosted checkout** | The default path. You create a session and redirect the buyer to the `checkoutUrl`. |
-| **Embeddable SDK** | Use it when you already have your own page and want to build Bob's checkout inside it. |
-| **Direct API** | Use it only for advanced integrations that already have their own tokenization, compliance, and 3DS handling. |
+| **Hosted checkout** | Default path. Create a session and redirect the buyer to `checkoutUrl`. |
+| **Embeddable SDK** | Keep the buyer on your site and mount Bob checkout inside it. |
+| **Direct API (headless)** | Own checkouts: create a tokenization session, tokenize in the browser with Bob.js/Secure Fields, charge with `transactions.create`. |
 
 ## Recommended flow
 
 ```text
-Card
-  -> Bob Checkout or @bobpayments/checkout-sdk
-  -> secure tokenization
-  -> Bob API
-  -> Bob's internal processing
+Card in the browser
+  -> Bob Checkout / Secure Fields (Bob.js)
+  -> btk_... token (single-use, amount-bound)
+  -> Bob API (paymentMethod: credit_card + card.token)
+  -> nextActionUrl if 3DS · webhook on outcome
 ```
 
-The card number, CVV, and expiration date never pass through the Bob API. The buyer doesn't see any internal processing details.
+Card number, CVV, and expiry never pass through the Bob API.
 
 <Warning>
-  Never send raw card data to the Bob API. Payloads containing PAN, CVV, or expiration date must continue to be rejected.
+  Never send raw card data to the Bob API. Payloads with PAN, CVV, or expiry are rejected.
 </Warning>
 
 ## Hosted checkout
 
-To accept cards at the hosted checkout, send `credit_card` in `paymentMethods`:
+Pass `credit_card` in `paymentMethods`:
 
 ```bash
 curl -X POST https://api.payments.bob.company/api/v1/checkout-sessions/ \
@@ -48,19 +44,17 @@ curl -X POST https://api.payments.bob.company/api/v1/checkout-sessions/ \
   -H "Content-Type: application/json" \
   -d '{
     "amountCents": 25000,
-    "items": [{ "name": "Pro Subscription", "quantity": 1, "unitAmountCents": 25000 }],
+    "items": [{ "name": "Pro Plan", "quantity": 1, "unitAmountCents": 25000 }],
     "paymentMethods": ["credit_card", "pix"],
-    "successUrl": "https://store.example.com/thank-you",
+    "successUrl": "https://store.example.com/thanks",
     "webhookUrl": "https://store.example.com/webhooks/bob",
     "webhookVersion": "v2"
   }'
 ```
 
-The session accepts `credit_card` when the method is enabled on the project. Otherwise, the API reports that the method is not available.
+The session accepts `credit_card` when the method is enabled on the project. Otherwise the API reports that the method is unavailable.
 
 ## Embeddable SDK
-
-Use the embeddable SDK when you want to keep the buyer on your site but don't want to implement the secure fields, tokenization, 3DS, or fallback.
 
 ```tsx
 import { BobCheckout } from '@bobpayments/checkout-sdk';
@@ -72,66 +66,36 @@ import { BobCheckout } from '@bobpayments/checkout-sdk';
 />
 ```
 
-Or mount the checkout on a page without React:
+## Direct API (tokenize + charge)
 
-```typescript
-const checkout = await BobCheckout.create({
-  sessionToken: checkoutToken,
-});
+1. On the server, create a tokenization session (`POST /api/v1/card-tokenization-sessions/` with `amount_cents`, `currency`, `origin` and required `Idempotency-Key`).
+2. In the browser, mount Bob.js/Secure Fields with `id` + `client_secret` and obtain `btk_...`.
+3. On the server, charge with `paymentMethod: "credit_card"` and `card: { token, installments?, returnUrl? }`.
 
-checkout.mount('#bob-payment');
-```
+If the issuer requires 3DS, the response includes `nextActionUrl` / `nextAction` — redirect the cardholder. The transaction stays `waiting_payment` until the webhook (`transaction.paid` / `transaction.failed`).
 
-The SDK handles the secure fields, creates a secure payment method identifier, sends the token to the Bob API, and runs 3DS when needed. The merchant doesn't need to import any additional libraries.
+With the server SDK: `bob.cardTokenizationSessions.create` then `bob.transactions.create({ paymentMethod: 'credit_card', card: { token: 'btk_...' } })`.
 
-<Card title="Checkout SDK" icon="code" href="/en/pages/sdk/checkout">
-  See how to embed Bob's checkout on your site.
-</Card>
+The `btk_...` token is **single-use and amount-bound**. A decline or amount change requires a new session and token. Do not persist or log `client_secret`.
 
-## Advanced direct API
-
-Use the direct API with cards only when you already have your own tokenization and 3DS authentication implementation. In this mode, the frontend creates a secure payment method identifier (`pm_...`) and sends Bob only that token, along with `paymentMethod: "credit_card"`.
-
-The `pm_...` should exist only in memory during the attempt. Don't store this value in logs, analytics, the URL, or the checkout database.
-
-## Processing and fallback
-
-For cards, Bob manages retries and fallback internally. The buyer receives a single final response and doesn't see any processing details.
-
-When the payment requires action from the buyer, such as 3DS authentication, the checkout must show the secure authentication, open the returned URL, and query the status on return. Show success only when the session or transaction is `PAID`/`paid`.
-
-## Public states
+## Public statuses
 
 | Status | Meaning |
 |---|---|
 | `paid` | Payment approved |
-| `waiting_payment` | Awaiting 3DS authentication or asynchronous confirmation |
-| `failed` | Processing was not completed |
-| `pending` | Payment created, but still without final confirmation |
+| `waiting_payment` | Waiting for 3DS or async confirmation |
+| `processing` | Payment received, awaiting confirmation |
+| `refunded` / `cancelled` / `expired` | Terminal outcomes without approval |
 
-Use webhooks and/or status queries to confirm the financial outcome. Don't treat an HTTP `201` alone as payment confirmation.
-
-## What you configure
-
-On your side, configuration is done through the Dashboard:
-
-1. Enable cards for the project, when needed.
-2. Use the hosted checkout or the Checkout SDK to collect the card.
-3. Configure Bob's webhook to receive the payment confirmation.
-
-Bob manages card processing, reconciliation, and the internal details of the operation. You don't need to send payment provider credentials to your application.
-
-<Warning>
-  Never send secret credentials or raw card data to the browser, to the Bob API, or to repositories.
-</Warning>
+Use webhooks and/or status polling for the financial outcome. Do not treat HTTP `201` alone as payment confirmation.
 
 ## Next steps
 
 <CardGroup cols={2}>
   <Card title="Checkout SDK" icon="browser" href="/en/pages/sdk/checkout">
-    Tokenize the card in the browser and embed the checkout on your site.
+    Tokenize the card in the browser and embed checkout on your site.
   </Card>
   <Card title="Card transaction" icon="book-open" href="/en/pages/credit-card/reference">
-    Structure and attributes of a card transaction in the API.
+    Structure and fields of a card transaction in the API.
   </Card>
 </CardGroup>

@@ -3,7 +3,7 @@ title: "Criar sessão de checkout"
 openapi: "POST /api/v1/checkout-sessions/"
 ---
 
-Crie uma sessão no seu backend e redirecione o comprador para o `checkoutUrl` retornado. Em `paymentMethods`, use `['pix']` (o padrão) ou `['crypto']` para pagamento em criptomoeda. O suporte a `credit_card` entra quando o cartão for lançado.
+Crie uma sessão no seu backend e redirecione o comprador para o `checkoutUrl` retornado. Em `paymentMethods`, use `['pix']` (o padrão), `['crypto']`, `['credit_card']` ou combinações — apenas métodos habilitados no projeto.
 
 <Warning>
   Nunca crie uma sessão no frontend com uma chave `sk_test_` ou `sk_live_`. O endpoint exige uma chave secreta e deve ser chamado pelo seu servidor.

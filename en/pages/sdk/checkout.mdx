@@ -4,11 +4,7 @@ description: "Embed Bob's checkout on your site with card, PIX, and 3DS."
 icon: "credit-card"
 ---
 
-<Note>
-  **Credit card is still coming soon.** Today the SDK mounts the **PIX** checkout on your site. The card features (secure fields, tokenization, 3DS) described below arrive when card is launched.
-</Note>
-
-Use `@bobpayments/checkout-sdk` when you want your own page but don't want to implement the secure card fields. The SDK mounts Bob's checkout inside your site and handles card, PIX, tokenization, 3DS, fallback, and screen states.
+Use `@bobpayments/checkout-sdk` when you want your own page and Bob to mount the embedded checkout. The SDK loads the session, shows enabled methods (PIX, crypto, card), tokenizes cards in the browser, and runs 3DS when needed.
 
 <Warning>
   The SDK runs in the browser, but session creation stays on your backend. Never send `sk_live_` or `sk_test_` to the frontend.
@@ -61,7 +57,7 @@ checkout.destroy();
 - Loads the session by the `checkoutToken`.
 - Shows only enabled methods, such as PIX and card.
 - Mounts secure card fields, with no inputs of its own for PAN, expiry, or CVV.
-- Tokenizes the card without exposing `pm_...` to your application.
+- Tokenizes the card in the browser (`btk_...` token); PAN/CVV/expiry never reach your application.
 - Runs 3DS authentication when the API returns `nextActionUrl`.
 - Waits for the final status before calling `onSuccess`.
 - Hides internal IDs and processing details from the buyer.
@@ -85,7 +81,7 @@ loading_session
 ## Security
 
 - Do not import additional libraries directly to use the Bob SDK.
-- Do not store card tokens, `pm_...`, or the raw payment body.
+- Do not store card tokens, `btk_...`, or the raw payment body.
 - Do not send sensitive data in events, analytics, or `postMessage`.
 - Configure your CSP to allow the domains required for Bob's checkout.
 - Unmount the checkout with `destroy()` when the session changes or the component leaves the screen.

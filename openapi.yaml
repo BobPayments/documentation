@@ -1,429 +1,54 @@
 openapi: 3.0.3
 info:
   title: Bob Payments API
-  description: API de pagamentos Bob Payments para criar, acompanhar e conciliar transações com PIX e cartão de crédito.
+  description: API de pagamentos Bob Payments — PIX, cartão de crédito e cripto. Crie cobranças, gerencie
+    clientes e receba webhooks.
   version: 1.0.0
+servers:
+- url: https://api.payments.bob.company
+  description: Servidor de produção
 components:
   securitySchemes:
-    BearerAuth:
-      type: http
+    ApiKeyAuth:
+      bearerFormat: API Key
+      description: 'Autenticação por API Key usando token SK (sk_live_xxx ou sk_test_xxx). Envie como:
+        Authorization: Bearer sk_live_xxx'
       scheme: bearer
+      type: http
+    BearerAuth:
       bearerFormat: JWT
       description: Token JWT para endpoints autenticados do dashboard
-    ApiKeyAuth:
-      type: http
       scheme: bearer
-      bearerFormat: API Key
-      description: 'Autenticação por API Key usando token SK (sk_live_xxx ou sk_test_xxx).
-        Envie como: Authorization: Bearer sk_live_xxx'
+      type: http
   schemas: {}
 paths:
   /api/v1/transactions/:
-    post:
-      summary: Criar nova transação
-      description: Cria uma nova transação de pagamento. Aceita o header opcional `Idempotency-Key` para
-        repetição segura — a resposta 2xx original é replayada por 1 hora
-        (com o header `x-idempotent-replayed`); requisição em voo com a mesma
-        chave retorna 409; reusar a chave com body diferente retorna 422.
-      parameters:
-      - name: Idempotency-Key
-        in: header
-        required: false
-        description: Identificador único da operação (até 256 caracteres, ex.
-          UUID ou ID do pedido). Torna a criação segura de repetir em timeout
-          ou falha de rede, sem risco de pagamento duplicado.
-        schema:
-          type: string
-          maxLength: 256
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                customer:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      minLength: 1
-                      maxLength: 255
-                    document:
-                      type: string
-                      minLength: 11
-                      maxLength: 14
-                    documentType:
-                      type: string
-                      enum:
-                      - CPF
-                      - CNPJ
-                    email:
-                      type: string
-                      format: email
-                      pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
-                    phone:
-                      type: string
-                      minLength: 10
-                      maxLength: 15
-                    address:
-                      type: object
-                      properties:
-                        street:
-                          type: string
-                          minLength: 1
-                          maxLength: 255
-                        streetNumber:
-                          type: string
-                          minLength: 1
-                          maxLength: 20
-                        complement:
-                          type: string
-                          maxLength: 100
-                        neighborhood:
-                          type: string
-                          minLength: 1
-                          maxLength: 100
-                        zipCode:
-                          type: string
-                          minLength: 8
-                          maxLength: 9
-                        city:
-                          type: string
-                          minLength: 1
-                          maxLength: 100
-                        state:
-                          type: string
-                          minLength: 2
-                          maxLength: 2
-                        country:
-                          default: BR
-                          type: string
-                          minLength: 2
-                          maxLength: 2
-                      required:
-                      - street
-                      - streetNumber
-                      - neighborhood
-                      - zipCode
-                      - city
-                      - state
-                  required:
-                  - name
-                  - document
-                  - documentType
-                  - email
-                  - phone
-                  - address
-                payment:
-                  type: object
-                  properties:
-                    amountCents:
-                      type: integer
-                      minimum: 1
-                      maximum: 50000000
-                    product:
-                      type: string
-                      minLength: 1
-                      maxLength: 255
-                    quantity:
-                      default: 1
-                      type: integer
-                      minimum: 1
-                      maximum: 9007199254740991
-                    expirationDays:
-                      type: integer
-                      minimum: 1
-                      maximum: 30
-                  required:
-                  - amountCents
-                  - product
-                originDomain:
-                  description: 'Domínio da loja/site que originou a transação (ex:
-                    loja.exemplo.com.br). Obrigatório para rastreio de múltiplas lojas.
-                    Use apenas o hostname, sem protocolo ou caminho.'
-                  type: string
-                  minLength: 1
-                  maxLength: 253
-                customerIp:
-                  description: IP do usuário final que originou a requisição (IPv4
-                    ou IPv6). Quando informado, é usado para detecção de fraude e
-                    bloqueio de IPs.
-                  anyOf:
-                  - type: string
-                    format: ipv4
-                    pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$
-                  - type: string
-                    format: ipv6
-                    pattern: ^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$
-              required:
-              - customer
-              - payment
-              - originDomain
-      security:
-      - ApiKeyAuth: []
-      responses:
-        '201':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    default: true
-                    type: boolean
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      pixCode:
-                        type: string
-                      expirationDate:
-                        type: string
-                      status:
-                        type: string
-                    required:
-                    - id
-                    - status
-                    additionalProperties: false
-                required:
-                - success
-                - data
-                additionalProperties: false
-        '400':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '401':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '403':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '404':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '429':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '500':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '503':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    properties:
-                      retryAfterSeconds:
-                        type: integer
-                        description: Tempo recomendado de espera (em segundos) antes de tentar novamente
-                        example: 30
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
     get:
-      summary: Listar todas as transações
-      description: Retorna uma lista paginada de transações com filtros opcionais.
-        Suporta Bearer Token (sk_live_xxx / sk_test_xxx) ou autenticação JWT.
+      description: Retorna uma lista paginada de transações com filtros opcionais. Suporta Bearer Token
+        (sk_live_xxx / sk_test_xxx) ou autenticação JWT.
       parameters:
-      - schema:
-          default: 1
-          type: integer
-          exclusiveMinimum: true
-          maximum: 9007199254740991
-        in: query
+      - in: query
         name: page
         required: false
-      - schema:
-          default: 10
-          type: integer
+        schema:
+          default: 1
           exclusiveMinimum: true
-          maximum: 100
-        in: query
+          maximum: 9007199254740991
+          minimum: 0
+          type: integer
+      - in: query
         name: limit
         required: false
-      - schema:
-          type: string
+        schema:
+          default: 10
+          exclusiveMinimum: true
+          maximum: 100
+          minimum: 0
+          type: integer
+      - in: query
+        name: status
+        required: false
+        schema:
           enum:
           - waiting_payment
           - paid
@@ -431,116 +56,193 @@ paths:
           - cancelled
           - expired
           - processing
-        in: query
-        name: status
-        required: false
-      - schema:
           type: string
-          format: cuid
-          pattern: ^[cC][^\s-]{8,}$
-        in: query
+      - in: query
+        name: paymentMethod
+        required: false
+        schema:
+          enum:
+          - pix
+          - credit_card
+          - crypto
+          - boleto
+          type: string
+      - in: query
         name: customerId
         required: false
-      - schema: {}
-        in: query
+        schema:
+          format: cuid
+          pattern: ^[cC][0-9a-z]{6,}$
+          type: string
+      - in: query
         name: dateFrom
         required: false
-      - schema: {}
-        in: query
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
         name: dateTo
         required: false
-      - schema:
-          type: string
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
+        name: environment
+        required: false
+        schema:
           enum:
           - live
           - sandbox
-        in: query
-        name: environment
-        required: false
-      - schema:
           type: string
-        in: query
+      - in: query
         name: originDomain
         required: false
-      - schema:
+        schema:
           type: string
-        in: query
+      - in: query
         name: domain
         required: false
-      - schema:
-          type: integer
-          minimum: 0
-          maximum: 9007199254740991
-        in: query
+        schema:
+          type: string
+      - in: query
         name: amountMin
         required: false
-      - schema:
-          type: integer
-          minimum: 0
+        schema:
           maximum: 9007199254740991
-        in: query
+          minimum: 0
+          type: integer
+      - in: query
         name: amountMax
         required: false
-      - schema:
-          type: string
-          minLength: 1
-          maxLength: 200
-        in: query
+        schema:
+          maximum: 9007199254740991
+          minimum: 0
+          type: integer
+      - in: query
         name: search
         required: false
-      - schema: {}
-        in: query
+        schema:
+          maxLength: 200
+          minLength: 1
+          type: string
+      - in: query
         name: paidAtFrom
         required: false
-      - schema: {}
-        in: query
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
         name: paidAtTo
         required: false
-      - schema: {}
-        in: query
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
         name: expiredAtFrom
         required: false
-      - schema: {}
-        in: query
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
         name: expiredAtTo
         required: false
-      - schema:
-          type: string
-          format: email
-          pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
-        in: query
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
         name: customerEmail
         required: false
-      security:
-      - ApiKeyAuth: []
-      - BearerAuth: []
+        schema:
+          format: email
+          pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+          type: string
       responses:
         '200':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  success:
-                    default: true
-                    type: boolean
-                  message:
-                    type: string
                   data:
-                    type: array
                     items:
-                      type: object
+                      additionalProperties: false
                       properties:
-                        id:
+                        amountCents:
+                          type: number
+                        createdAt:
+                          type: string
+                        customer:
+                          additionalProperties: false
+                          properties:
+                            email:
+                              type: string
+                            id:
+                              type: string
+                            name:
+                              type: string
+                          required:
+                          - id
+                          - name
+                          - email
+                          type: object
+                        customerEmail:
+                          nullable: true
+                          type: string
+                        customerName:
+                          nullable: true
                           type: string
                         externalId:
                           type: string
-                        transactionCode:
+                        id:
+                          type: string
+                        originDomain:
                           nullable: true
                           type: string
-                        status:
+                        paidAt:
+                          nullable: true
                           type: string
+                        paymentMethod:
+                          enum:
+                          - pix
+                          - credit_card
+                          - crypto
+                          - boleto
+                          type: string
+                        product:
+                          type: string
+                        quantity:
+                          type: number
+                        status:
                           enum:
                           - waiting_payment
                           - paid
@@ -548,47 +250,18 @@ paths:
                           - cancelled
                           - expired
                           - processing
-                        amountCents:
-                          type: number
-                        product:
                           type: string
-                        quantity:
-                          type: number
-                        paidAt:
+                        transactionCode:
                           nullable: true
-                          type: string
-                        createdAt:
                           type: string
                         updatedAt:
-                          type: string
-                        customer:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            name:
-                              type: string
-                            email:
-                              type: string
-                          required:
-                          - id
-                          - name
-                          - email
-                          additionalProperties: false
-                        originDomain:
-                          nullable: true
-                          type: string
-                        customerEmail:
-                          nullable: true
-                          type: string
-                        customerName:
-                          nullable: true
                           type: string
                       required:
                       - id
                       - externalId
                       - transactionCode
                       - status
+                      - paymentMethod
                       - amountCents
                       - product
                       - quantity
@@ -599,175 +272,705 @@ paths:
                       - originDomain
                       - customerEmail
                       - customerName
-                      additionalProperties: false
+                      type: object
+                    type: array
+                  message:
+                    type: string
                   meta:
-                    type: object
+                    additionalProperties: false
                     properties:
-                      total:
-                        type: integer
-                        minimum: -9007199254740991
-                        maximum: 9007199254740991
-                      page:
-                        type: integer
-                        minimum: -9007199254740991
-                        maximum: 9007199254740991
                       limit:
-                        type: integer
-                        minimum: -9007199254740991
                         maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
+                      page:
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
+                      total:
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
                       totalPages:
-                        type: integer
-                        minimum: -9007199254740991
                         maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
                     required:
                     - total
                     - page
                     - limit
                     - totalPages
-                    additionalProperties: false
+                    type: object
+                  success:
+                    default: true
+                    type: boolean
                 required:
                 - success
                 - data
                 - meta
-                additionalProperties: false
+                type: object
+          description: Default Response
         '401':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '500':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
-  /api/v1/transactions/{id}:
-    get:
-      summary: Buscar transação por ID
-      description: Retorna uma transação específica por ID com todos os detalhes (requer
-        autenticação JWT)
-      parameters:
-      - schema:
-          type: string
-          format: cuid
-          pattern: ^[cC][^\s-]{8,}$
-        in: path
-        name: id
-        required: true
+                type: object
+          description: Default Response
       security:
       - ApiKeyAuth: []
       - BearerAuth: []
+      summary: Listar todas as transações
+      tags:
+      - Transactions
+    post:
+      description: Cria uma nova transação usando a rota publicada do método de pagamento selecionado.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                card:
+                  additionalProperties: false
+                  description: Obrigatório quando paymentMethod = "credit_card".
+                  properties:
+                    holderName:
+                      maxLength: 255
+                      minLength: 1
+                      type: string
+                    installments:
+                      description: Número de parcelas. 1 (padrão) = à vista.
+                      maximum: 12
+                      minimum: 1
+                      type: integer
+                    returnUrl:
+                      description: URL para onde o portador retorna após uma ação de autenticação.
+                      format: uri
+                      maxLength: 2048
+                      type: string
+                    token:
+                      description: Token Bob opaco (`btk_...`) criado no navegador por Bob.js/Secure Fields.
+                      maxLength: 255
+                      minLength: 1
+                      type: string
+                  required:
+                  - token
+                  type: object
+                customer:
+                  properties:
+                    address:
+                      properties:
+                        city:
+                          maxLength: 100
+                          minLength: 1
+                          type: string
+                        complement:
+                          maxLength: 100
+                          type: string
+                        country:
+                          default: BR
+                          maxLength: 2
+                          minLength: 2
+                          type: string
+                        neighborhood:
+                          maxLength: 100
+                          minLength: 1
+                          type: string
+                        state:
+                          maxLength: 2
+                          minLength: 2
+                          type: string
+                        street:
+                          maxLength: 255
+                          minLength: 1
+                          type: string
+                        streetNumber:
+                          maxLength: 20
+                          minLength: 1
+                          type: string
+                        zipCode:
+                          maxLength: 9
+                          minLength: 8
+                          type: string
+                      required:
+                      - street
+                      - streetNumber
+                      - neighborhood
+                      - zipCode
+                      - city
+                      - state
+                      type: object
+                    document:
+                      maxLength: 14
+                      minLength: 11
+                      type: string
+                    documentType:
+                      enum:
+                      - CPF
+                      - CNPJ
+                      type: string
+                    email:
+                      format: email
+                      pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                      type: string
+                    name:
+                      maxLength: 255
+                      minLength: 1
+                      type: string
+                    phone:
+                      maxLength: 25
+                      minLength: 8
+                      type: string
+                  required:
+                  - name
+                  - document
+                  - documentType
+                  - email
+                  - address
+                  type: object
+                customerIp:
+                  anyOf:
+                  - format: ipv4
+                    pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$
+                    type: string
+                  - format: ipv6
+                    pattern: ^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$
+                    type: string
+                  description: IP do usuário final que originou a requisição (IPv4 ou IPv6). Quando informado,
+                    é usado para detecção de fraude e bloqueio de IPs.
+                originDomain:
+                  description: 'Domínio da loja/site que originou a transação (ex: loja.exemplo.com.br).
+                    Obrigatório para rastreio de múltiplas lojas. Use apenas o hostname, sem protocolo
+                    ou caminho.'
+                  maxLength: 253
+                  minLength: 1
+                  type: string
+                payment:
+                  properties:
+                    amountCents:
+                      maximum: 50000000
+                      minimum: 1
+                      type: integer
+                    expirationDays:
+                      maximum: 30
+                      minimum: 1
+                      type: integer
+                    product:
+                      maxLength: 255
+                      minLength: 1
+                      type: string
+                    quantity:
+                      default: 1
+                      maximum: 9007199254740991
+                      minimum: 1
+                      type: integer
+                  required:
+                  - amountCents
+                  - product
+                  type: object
+                paymentMethod:
+                  default: pix
+                  description: 'Método de pagamento da transação. Suportados: "pix", "credit_card" e "crypto";
+                    se omitido, assume "pix".'
+                  enum:
+                  - pix
+                  - credit_card
+                  - crypto
+                  - boleto
+                  type: string
+              required:
+              - customer
+              - payment
+              - originDomain
+              type: object
+        required: true
       responses:
-        '200':
-          description: Default Response
+        '201':
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  success:
-                    default: true
-                    type: boolean
-                  message:
+                  billingWarning:
                     type: string
                   data:
-                    type: object
+                    additionalProperties: false
                     properties:
-                      id:
+                      cardBrand:
+                        type: string
+                      cardLastFour:
+                        type: string
+                      checkoutUrl:
+                        description: 'URL do checkout hospedado (paymentMethod = "crypto"): redirecione
+                          o pagador para esta URL para concluir o pagamento em criptomoeda.'
+                        type: string
+                      expirationDate:
                         type: string
                       externalId:
                         type: string
-                      transactionCode:
+                      id:
                         nullable: true
+                        type: string
+                      installments:
+                        type: number
+                      nextAction:
+                        oneOf:
+                        - additionalProperties: false
+                          properties:
+                            type:
+                              enum:
+                              - redirect
+                              type: string
+                            url:
+                              format: uri
+                              maxLength: 2048
+                              type: string
+                          required:
+                          - type
+                          - url
+                          type: object
+                        - additionalProperties: false
+                          properties:
+                            clientData:
+                              additionalProperties: false
+                              properties:
+                                actionId:
+                                  maxLength: 128
+                                  pattern: ^bca_[a-z0-9]+$
+                                  type: string
+                              required:
+                              - actionId
+                              type: object
+                            type:
+                              enum:
+                              - sdk
+                              type: string
+                          required:
+                          - type
+                          - clientData
+                          type: object
+                        - additionalProperties: false
+                          properties:
+                            type:
+                              enum:
+                              - none
+                              type: string
+                          required:
+                          - type
+                          type: object
+                      nextActionUrl:
+                        description: 'Presente quando o emissor exigiu 3-D Secure: redirecione o portador
+                          para esta URL. A transação fica em "waiting_payment" até o desfecho chegar por
+                          webhook.'
+                        format: uri
+                        maxLength: 2048
                         type: string
                       pixCode:
-                        nullable: true
-                        type: string
-                      expirationDate:
-                        nullable: true
                         type: string
                       status:
                         type: string
-                        enum:
-                        - waiting_payment
-                        - paid
-                        - refunded
-                        - cancelled
-                        - expired
-                        - processing
-                      amountCents:
-                        type: number
-                      product:
+                    required:
+                    - id
+                    - externalId
+                    - status
+                    type: object
+                  message:
+                    type: string
+                  success:
+                    default: true
+                    type: boolean
+                required:
+                - success
+                - data
+                type: object
+          description: Default Response
+        '202':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  billingWarning:
+                    type: string
+                  data:
+                    additionalProperties: false
+                    properties:
+                      cardBrand:
                         type: string
-                      quantity:
-                        type: number
-                      paidAt:
+                      cardLastFour:
+                        type: string
+                      checkoutUrl:
+                        description: 'URL do checkout hospedado (paymentMethod = "crypto"): redirecione
+                          o pagador para esta URL para concluir o pagamento em criptomoeda.'
+                        type: string
+                      expirationDate:
+                        type: string
+                      externalId:
+                        type: string
+                      id:
                         nullable: true
                         type: string
-                      refundedAt:
+                      installments:
+                        type: number
+                      nextAction:
+                        oneOf:
+                        - additionalProperties: false
+                          properties:
+                            type:
+                              enum:
+                              - redirect
+                              type: string
+                            url:
+                              format: uri
+                              maxLength: 2048
+                              type: string
+                          required:
+                          - type
+                          - url
+                          type: object
+                        - additionalProperties: false
+                          properties:
+                            clientData:
+                              additionalProperties: false
+                              properties:
+                                actionId:
+                                  maxLength: 128
+                                  pattern: ^bca_[a-z0-9]+$
+                                  type: string
+                              required:
+                              - actionId
+                              type: object
+                            type:
+                              enum:
+                              - sdk
+                              type: string
+                          required:
+                          - type
+                          - clientData
+                          type: object
+                        - additionalProperties: false
+                          properties:
+                            type:
+                              enum:
+                              - none
+                              type: string
+                          required:
+                          - type
+                          type: object
+                      nextActionUrl:
+                        description: 'Presente quando o emissor exigiu 3-D Secure: redirecione o portador
+                          para esta URL. A transação fica em "waiting_payment" até o desfecho chegar por
+                          webhook.'
+                        format: uri
+                        maxLength: 2048
+                        type: string
+                      pixCode:
+                        type: string
+                      status:
+                        type: string
+                    required:
+                    - id
+                    - externalId
+                    - status
+                    type: object
+                  message:
+                    type: string
+                  success:
+                    default: true
+                    type: boolean
+                required:
+                - success
+                - data
+                type: object
+          description: Default Response
+        '400':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '401':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '403':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '404':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '500':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '503':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+      security:
+      - ApiKeyAuth: []
+      summary: Criar nova transação
+      tags:
+      - Transactions
+  /api/v1/transactions/{id}:
+    get:
+      description: Retorna uma transação específica por ID com todos os detalhes (requer autenticação
+        JWT)
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: cuid
+          pattern: ^[cC][0-9a-z]{6,}$
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  data:
+                    additionalProperties: false
+                    properties:
+                      amountCents:
+                        type: number
+                      checkoutToken:
+                        nullable: true
+                        type: string
+                      checkoutUrl:
                         nullable: true
                         type: string
                       createdAt:
                         type: string
-                      updatedAt:
-                        type: string
                       customer:
-                        type: object
+                        additionalProperties: false
                         properties:
-                          id:
-                            type: string
-                          name:
-                            type: string
                           document:
                             type: string
                           email:
+                            type: string
+                          id:
+                            type: string
+                          name:
                             type: string
                           phone:
                             type: string
@@ -777,15 +980,122 @@ paths:
                         - document
                         - email
                         - phone
-                        additionalProperties: false
-                      originDomain:
-                        nullable: true
-                        type: string
+                        type: object
                       customerEmail:
                         nullable: true
                         type: string
                       customerName:
                         nullable: true
+                        type: string
+                      expirationDate:
+                        nullable: true
+                        type: string
+                      externalId:
+                        type: string
+                      fxRate:
+                        nullable: true
+                        type: number
+                      gatewayAmountCents:
+                        nullable: true
+                        type: number
+                      gatewayCurrency:
+                        nullable: true
+                        type: string
+                      id:
+                        type: string
+                      originDomain:
+                        nullable: true
+                        type: string
+                      paidAt:
+                        nullable: true
+                        type: string
+                      paymentMethod:
+                        enum:
+                        - pix
+                        - credit_card
+                        - crypto
+                        - boleto
+                        type: string
+                      pixCode:
+                        nullable: true
+                        type: string
+                      product:
+                        type: string
+                      quantity:
+                        type: number
+                      refundedAt:
+                        nullable: true
+                        type: string
+                      riskEvaluation:
+                        additionalProperties: false
+                        nullable: true
+                        properties:
+                          decision:
+                            enum:
+                            - block
+                            - review
+                            - allow
+                            - approved
+                            type: string
+                          evaluatedAt:
+                            type: string
+                          matchedRuleId:
+                            nullable: true
+                            type: string
+                          matchedRuleName:
+                            nullable: true
+                            type: string
+                          reason:
+                            nullable: true
+                            type: string
+                        required:
+                        - decision
+                        type: object
+                      shippingAddress:
+                        additionalProperties: false
+                        nullable: true
+                        properties:
+                          city:
+                            type: string
+                          complement:
+                            nullable: true
+                            type: string
+                          country:
+                            type: string
+                          neighborhood:
+                            nullable: true
+                            type: string
+                          state:
+                            type: string
+                          street:
+                            type: string
+                          streetNumber:
+                            type: string
+                          zipCode:
+                            type: string
+                        required:
+                        - street
+                        - streetNumber
+                        - complement
+                        - neighborhood
+                        - zipCode
+                        - city
+                        - state
+                        - country
+                        type: object
+                      status:
+                        enum:
+                        - waiting_payment
+                        - paid
+                        - refunded
+                        - cancelled
+                        - expired
+                        - processing
+                        type: string
+                      transactionCode:
+                        nullable: true
+                        type: string
+                      updatedAt:
                         type: string
                     required:
                     - id
@@ -794,6 +1104,7 @@ paths:
                     - pixCode
                     - expirationDate
                     - status
+                    - paymentMethod
                     - amountCents
                     - product
                     - quantity
@@ -805,281 +1116,278 @@ paths:
                     - originDomain
                     - customerEmail
                     - customerName
-                    additionalProperties: false
+                    type: object
+                  message:
+                    type: string
+                  success:
+                    default: true
+                    type: boolean
                 required:
                 - success
                 - data
-                additionalProperties: false
+                type: object
+          description: Default Response
         '401':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '403':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '404':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '500':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      summary: Buscar transação por ID
+      tags:
+      - Transactions
   /api/v1/checkout-sessions/:
     post:
-      summary: Criar sessão de checkout
-      description: Cria uma sessão de checkout hospedado. Redirecione o comprador para a `checkoutUrl`
-        retornada — a Bob cuida da tela de pagamento, dos métodos disponíveis e da confirmação. Requer API
-        key (Bearer).
+      description: Cria uma sessão de checkout dirigida por valor (amount-driven). Retorna o checkoutToken
+        e a checkoutUrl do widget hospedado.
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
               properties:
                 amountCents:
-                  type: integer
-                  minimum: 1
                   maximum: 50000000
-                  description: Valor total em centavos (ex. 10000 = R$ 100,00)
-                currency:
+                  minimum: 1
+                  type: integer
+                cancelUrl:
+                  format: uri
                   type: string
+                currency:
+                  default: BRL
                   enum:
                   - BRL
-                  default: BRL
+                  type: string
                 customer:
-                  type: object
-                  description: Dados do comprador para pré-preencher o checkout (opcional)
                   properties:
-                    name:
-                      type: string
-                      minLength: 1
-                      maxLength: 255
-                    email:
-                      type: string
-                      format: email
                     document:
-                      type: string
-                      minLength: 11
                       maxLength: 14
-                    documentType:
+                      minLength: 11
                       type: string
+                    documentType:
                       enum:
                       - CPF
                       - CNPJ
-                    phone:
                       type: string
-                      minLength: 8
+                    email:
+                      format: email
+                      pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                      type: string
+                    name:
+                      maxLength: 255
+                      minLength: 1
+                      type: string
+                    phone:
                       maxLength: 25
+                      minLength: 8
+                      type: string
+                  type: object
+                expiresAt: {}
                 items:
-                  type: array
-                  description: Itens exibidos no resumo do pedido (metadado de exibição — o
-                    catálogo é seu)
                   items:
-                    type: object
                     properties:
                       name:
-                        type: string
-                        minLength: 1
                         maxLength: 255
+                        minLength: 1
+                        type: string
                       quantity:
-                        type: integer
+                        maximum: 9007199254740991
                         minimum: 1
-                      unitAmountCents:
                         type: integer
+                      unitAmountCents:
+                        maximum: 9007199254740991
                         minimum: 0
+                        type: integer
                     required:
                     - name
                     - quantity
                     - unitAmountCents
-                paymentMethods:
+                    type: object
                   type: array
-                  minItems: 1
+                metadata:
+                  additionalProperties: {}
+                  type: object
+                paymentMethods:
                   items:
-                    type: string
                     enum:
                     - pix
                     - credit_card
+                    - crypto
                     - boleto
-                  description: Métodos aceitos no checkout. Default [pix]. Use credit_card
-                    para oferecer cartão de crédito quando houver rota publicada.
-                metadata:
-                  type: object
-                  additionalProperties: true
+                    type: string
+                  minItems: 1
+                  type: array
                 successUrl:
-                  type: string
                   format: uri
-                cancelUrl:
                   type: string
-                  format: uri
                 webhookUrl:
-                  type: string
                   format: uri
-                  description: URL que recebe os webhooks desta sessão. Quando presente, a resposta
-                    traz o `webhookSecret` de assinatura.
-                webhookVersion:
                   type: string
+                webhookVersion:
                   enum:
                   - v1
                   - v2
-                  default: v1
-                  description: Versão do payload/assinatura do webhook. Recomendado v2 (valores
-                    em centavos + assinatura anti-replay). O SDK oficial envia v2 por padrão.
-                expiresAt:
                   type: string
-                  format: date-time
-                  description: Expiração do LINK de checkout (default 24h). Para PIX, não confundir
-                    com a expiração da cobrança gerada dentro dele.
               required:
               - amountCents
+              type: object
+        required: true
       responses:
         '201':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  success:
-                    default: true
-                    type: boolean
-                  message:
-                    type: string
                   data:
-                    type: object
+                    additionalProperties: false
                     properties:
-                      sessionId:
-                        type: string
                       checkoutToken:
                         type: string
                       checkoutUrl:
                         type: string
-                        description: URL do checkout hospedado — redirecione o comprador para
-                          cá
-                      status:
+                      expiresAt:
+                        nullable: true
                         type: string
-                        enum: &id001
+                      sessionId:
+                        type: string
+                      status:
+                        enum:
                         - PENDING
                         - PAID
                         - EXPIRED
                         - CANCELLED
                         - FAILED
                         - REFUNDED
-                      expiresAt:
                         type: string
-                        nullable: true
-                      webhookSecret:
-                        type: string
-                        nullable: true
-                        description: Secret HMAC dos webhooks desta sessão — exibido apenas
-                          aqui, guarde com segurança (null quando webhookUrl não foi enviado)
                       webhookApiVersion:
-                        type: string
                         enum:
                         - v1
                         - v2
+                        type: string
+                      webhookSecret:
+                        nullable: true
+                        type: string
                     required:
                     - sessionId
                     - checkoutToken
@@ -1088,178 +1396,449 @@ paths:
                     - expiresAt
                     - webhookSecret
                     - webhookApiVersion
-                required:
-                - success
-                - message
-                - data
-      tags:
-      - Checkout
-      security:
-      - BearerAuth: []
-  /api/v1/checkout-sessions/{token}/status:
-    get:
-      summary: Consultar status da sessão
-      description: Endpoint PÚBLICO de polling do status da sessão (não requer autenticação;
-        rate limit por IP de 120 req/min). Prefira webhooks para confirmação em tempo real e
-        use este endpoint como complemento.
-      parameters:
-      - name: token
-        in: path
-        required: true
-        schema:
-          type: string
-        description: O `checkoutToken` retornado na criação da sessão
-      responses:
-        '200':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
+                    type: object
+                  message:
+                    type: string
                   success:
                     default: true
                     type: boolean
-                  data:
-                    type: object
-                    properties:
-                      status:
-                        type: string
-                        enum: *id001
-                      paidAt:
-                        type: string
-                        nullable: true
-                    required:
-                    - status
-                    - paidAt
                 required:
                 - success
                 - data
+                type: object
+          description: Default Response
+        '400':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '401':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '403':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '404':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '422':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '500':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+      security:
+      - ApiKeyAuth: []
+      summary: Criar sessão de checkout
+      tags:
+      - Checkout
+  /api/v1/checkout-sessions/{token}/status:
+    get:
+      parameters:
+      - in: path
+        name: token
+        required: true
+        schema:
+          maxLength: 255
+          minLength: 1
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  data:
+                    additionalProperties: false
+                    properties:
+                      paidAt:
+                        nullable: true
+                        type: string
+                      status:
+                        enum:
+                        - PENDING
+                        - PAID
+                        - EXPIRED
+                        - CANCELLED
+                        - FAILED
+                        - REFUNDED
+                        type: string
+                    required:
+                    - status
+                    - paidAt
+                    type: object
+                  message:
+                    type: string
+                  success:
+                    default: true
+                    type: boolean
+                required:
+                - success
+                - data
+                type: object
+          description: Default Response
+        '404':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '429':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+      summary: Status de pagamento da sessão de checkout
       tags:
       - Checkout
   /api/v1/customers/:
     get:
-      summary: Listar todos os clientes
-      description: Retorna uma lista de todos os clientes com filtro opcional por
-        projeto.
+      description: Retorna uma lista de todos os clientes com filtro opcional por projeto.
       parameters:
-      - schema:
-          default: 1
-          type: integer
-          exclusiveMinimum: true
-          maximum: 9007199254740991
-        in: query
+      - in: query
         name: page
         required: false
-      - schema:
-          default: 10
-          type: integer
+        schema:
+          default: 1
           exclusiveMinimum: true
-          maximum: 100
-        in: query
+          maximum: 9007199254740991
+          minimum: 0
+          type: integer
+      - in: query
         name: limit
         required: false
-      - schema: {}
-        in: query
+        schema:
+          default: 10
+          exclusiveMinimum: true
+          maximum: 100
+          minimum: 0
+          type: integer
+      - in: query
         name: dateFrom
         required: false
-      - schema: {}
-        in: query
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
         name: dateTo
         required: false
-      - schema:
-          type: string
-          minLength: 1
-          maxLength: 200
-        in: query
+        schema:
+          anyOf:
+          - format: date-time
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|([+-](?:[01]\d|2[0-3]):[0-5]\d)))$
+            type: string
+          - format: date
+            pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+            type: string
+      - in: query
         name: search
         required: false
-      - schema:
-          type: string
+        schema:
+          maxLength: 200
           minLength: 1
-          maxLength: 20
-        in: query
+          type: string
+      - in: query
         name: document
         required: false
-      - schema:
-          type: string
-          minLength: 1
+        schema:
           maxLength: 20
-        in: query
+          minLength: 1
+          type: string
+      - in: query
         name: phone
         required: false
-      - schema:
+        schema:
+          maxLength: 20
+          minLength: 1
           type: string
-          maxLength: 200
-          format: email
-          pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
-        in: query
+      - in: query
         name: email
         required: false
-      security:
-      - ApiKeyAuth: []
-      - BearerAuth: []
+        schema:
+          format: email
+          maxLength: 200
+          pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+          type: string
       responses:
         '200':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  success:
-                    type: boolean
                   data:
-                    type: array
                     items:
-                      type: object
+                      additionalProperties: false
                       properties:
-                        id:
-                          type: string
-                        projectId:
-                          type: string
-                        name:
-                          type: string
-                        document:
-                          type: string
-                        email:
-                          type: string
-                        phone:
-                          type: string
-                        street:
-                          type: string
-                        streetNumber:
-                          type: string
-                        neighborhood:
-                          type: string
-                        complement:
-                          nullable: true
-                          type: string
-                        zipCode:
-                          type: string
-                        city:
-                          type: string
-                        state:
-                          type: string
-                        country:
-                          type: string
-                        isBlocked:
-                          type: boolean
-                        blockedAt:
-                          nullable: true
-                          type: string
-                        blockedReason:
-                          nullable: true
-                          type: string
                         blockExpiresAt:
                           nullable: true
                           type: string
                         blockType:
                           nullable: true
                           type: string
+                        blockedAt:
+                          nullable: true
+                          type: string
+                        blockedReason:
+                          nullable: true
+                          type: string
+                        city:
+                          type: string
+                        complement:
+                          nullable: true
+                          type: string
+                        country:
+                          type: string
                         createdAt:
                           type: string
+                        document:
+                          type: string
+                        email:
+                          type: string
+                        id:
+                          type: string
+                        isBlocked:
+                          type: boolean
+                        name:
+                          type: string
+                        neighborhood:
+                          type: string
+                        phone:
+                          type: string
+                        projectId:
+                          type: string
+                        state:
+                          type: string
+                        street:
+                          type: string
+                        streetNumber:
+                          type: string
                         updatedAt:
+                          type: string
+                        zipCode:
                           type: string
                       required:
                       - id
@@ -1283,275 +1862,235 @@ paths:
                       - blockType
                       - createdAt
                       - updatedAt
-                      additionalProperties: false
+                      type: object
+                    type: array
                   meta:
-                    type: object
+                    additionalProperties: false
                     properties:
-                      total:
-                        type: integer
-                        minimum: -9007199254740991
-                        maximum: 9007199254740991
-                      page:
-                        type: integer
-                        minimum: -9007199254740991
-                        maximum: 9007199254740991
                       limit:
-                        type: integer
-                        minimum: -9007199254740991
                         maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
+                      page:
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
+                      total:
+                        maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
                       totalPages:
-                        type: integer
-                        minimum: -9007199254740991
                         maximum: 9007199254740991
+                        minimum: -9007199254740991
+                        type: integer
                     required:
                     - total
                     - page
                     - limit
                     - totalPages
-                    additionalProperties: false
+                    type: object
+                  success:
+                    type: boolean
                 required:
                 - success
                 - data
                 - meta
-                additionalProperties: false
+                type: object
+          description: Default Response
         '400':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '404':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '429':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '500':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
-  /api/v1/customers/{id}:
-    get:
-      summary: Buscar cliente por ID
-      description: Retorna um cliente específico por ID.
-      parameters:
-      - schema:
-          type: string
-          format: cuid
-          pattern: ^[cC][^\s-]{8,}$
-        in: path
-        name: id
-        required: true
+                type: object
+          description: Default Response
       security:
       - ApiKeyAuth: []
       - BearerAuth: []
+      summary: Listar todos os clientes
+      tags:
+      - Customers
+  /api/v1/customers/{id}:
+    get:
+      description: Retorna um cliente específico por ID.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: cuid
+          pattern: ^[cC][0-9a-z]{6,}$
+          type: string
       responses:
         '200':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  success:
-                    type: boolean
                   data:
-                    type: object
+                    additionalProperties: false
                     properties:
-                      id:
-                        type: string
-                      projectId:
-                        type: string
-                      name:
-                        type: string
-                      document:
-                        type: string
-                      phone:
-                        type: string
-                      email:
-                        type: string
-                      street:
-                        type: string
-                      streetNumber:
-                        type: string
-                      neighborhood:
-                        type: string
-                      complement:
-                        nullable: true
-                        type: string
-                      zipCode:
-                        type: string
-                      city:
-                        type: string
-                      state:
-                        type: string
-                      country:
-                        type: string
-                      isBlocked:
-                        type: boolean
-                      blockedAt:
-                        nullable: true
-                        type: string
-                      blockedReason:
-                        nullable: true
-                        type: string
                       blockExpiresAt:
                         nullable: true
                         type: string
                       blockType:
                         nullable: true
                         type: string
+                      blockedAt:
+                        nullable: true
+                        type: string
+                      blockedReason:
+                        nullable: true
+                        type: string
+                      city:
+                        type: string
+                      complement:
+                        nullable: true
+                        type: string
+                      country:
+                        type: string
                       createdAt:
                         type: string
-                      updatedAt:
+                      document:
                         type: string
-                      recentTransactions:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            amountCents:
-                              type: number
-                            status:
-                              type: string
-                            product:
-                              type: string
-                            createdAt:
-                              type: string
-                            paidAt:
-                              nullable: true
-                              type: string
-                          required:
-                          - id
-                          - amountCents
-                          - status
-                          - product
-                          - createdAt
-                          - paidAt
-                          additionalProperties: false
-                      totalTransactions:
-                        type: number
+                      email:
+                        type: string
                       fraudEvents:
-                        type: array
                         items:
-                          type: object
+                          additionalProperties: false
                           properties:
-                            id:
-                              type: string
-                            reason:
+                            amountCents:
+                              nullable: true
+                              type: number
+                            createdAt:
                               type: string
                             fraudType:
                               nullable: true
                               type: string
-                            amountCents:
-                              nullable: true
-                              type: number
+                            id:
+                              type: string
                             product:
                               nullable: true
                               type: string
-                            createdAt:
+                            reason:
                               type: string
                           required:
                           - id
@@ -1560,7 +2099,58 @@ paths:
                           - amountCents
                           - product
                           - createdAt
+                          type: object
+                        type: array
+                      id:
+                        type: string
+                      isBlocked:
+                        type: boolean
+                      name:
+                        type: string
+                      neighborhood:
+                        type: string
+                      phone:
+                        type: string
+                      projectId:
+                        type: string
+                      recentTransactions:
+                        items:
                           additionalProperties: false
+                          properties:
+                            amountCents:
+                              type: number
+                            createdAt:
+                              type: string
+                            id:
+                              type: string
+                            paidAt:
+                              nullable: true
+                              type: string
+                            product:
+                              type: string
+                            status:
+                              type: string
+                          required:
+                          - id
+                          - amountCents
+                          - status
+                          - product
+                          - createdAt
+                          - paidAt
+                          type: object
+                        type: array
+                      state:
+                        type: string
+                      street:
+                        type: string
+                      streetNumber:
+                        type: string
+                      totalTransactions:
+                        type: number
+                      updatedAt:
+                        type: string
+                      zipCode:
+                        type: string
                     required:
                     - id
                     - projectId
@@ -1586,451 +2176,737 @@ paths:
                     - recentTransactions
                     - totalTransactions
                     - fraudEvents
-                    additionalProperties: false
+                    type: object
+                  success:
+                    type: boolean
                 required:
                 - success
                 - data
-                additionalProperties: false
+                type: object
+          description: Default Response
         '400':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '404':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '429':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '500':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
-  /api/v1/sandbox/transactions/{transactionId}/pay:
-    post:
-      summary: Simular pagamento de transação sandbox
-      description: "\n          Simula o pagamento de uma transação em modo sandbox.\n\
-        \          Funciona apenas com transações criadas usando chaves de API de\
-        \ teste (sk_test_*).\n          A transação deve estar no status 'waiting_payment'.\n\
-        \        "
-      parameters:
-      - schema:
-          type: string
-          format: cuid
-          pattern: ^[cC][^\s-]{8,}$
-        in: path
-        name: transactionId
-        required: true
+                type: object
+          description: Default Response
       security:
       - ApiKeyAuth: []
+      - BearerAuth: []
+      summary: Buscar cliente por ID
+      tags:
+      - Customers
+  /api/v1/store/:
+    get:
+      description: Retorna os detalhes da loja associados à API Key autenticada.
       responses:
         '200':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
+                  data:
+                    additionalProperties: false
+                    properties:
+                      devMode:
+                        type: boolean
+                      id:
+                        type: string
+                      maxTransactionAmountCents:
+                        nullable: true
+                        type: number
+                      pixExpirationMinutes:
+                        type: number
+                    required:
+                    - id
+                    - devMode
+                    - pixExpirationMinutes
+                    - maxTransactionAmountCents
+                    type: object
+                  message:
+                    type: string
                   success:
                     default: true
                     type: boolean
-                  message:
+                required:
+                - success
+                - data
+                type: object
+          description: Default Response
+        '401':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
                     type: string
-                  data:
+                  details:
+                    additionalProperties: {}
                     type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '404':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '500':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+      security:
+      - ApiKeyAuth: []
+      summary: Buscar detalhes da loja
+      tags:
+      - Store
+  /api/v1/sandbox/transactions/{transactionId}/pay:
+    post:
+      description: "Simula o pagamento de uma transação em modo sandbox.\n          Funciona apenas com\
+        \ transações criadas usando chaves de API de teste (sk_test_*).\n          A transação deve estar\
+        \ no status 'waiting_payment'."
+      parameters:
+      - in: path
+        name: transactionId
+        required: true
+        schema:
+          format: cuid
+          pattern: ^[cC][0-9a-z]{6,}$
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  data:
+                    additionalProperties: false
                     properties:
-                      transactionId:
+                      paidAt:
                         type: string
                       status:
                         type: string
-                      paidAt:
+                      transactionId:
                         type: string
                     required:
                     - transactionId
                     - status
                     - paidAt
-                    additionalProperties: false
-                required:
-                - success
-                - data
-                additionalProperties: false
-        '400':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
                     type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '401':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
+                  message:
                     type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '403':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '404':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-        '500':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
-                  detail:
-                    type: string
-                  instance:
-                    type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
-                required:
-                - type
-                - title
-                - status
-                - detail
-                - instance
-                additionalProperties: false
-  /api/v1/store/:
-    get:
-      summary: Buscar detalhes da loja
-      description: Retorna os detalhes da loja associados à API Key autenticada.
-      security:
-      - ApiKeyAuth: []
-      responses:
-        '200':
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
                   success:
                     default: true
                     type: boolean
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      name:
-                        type: string
-                      devMode:
-                        type: boolean
-                      pixExpirationMinutes:
-                        type: number
-                      maxTransactionAmountCents:
-                        nullable: true
-                        type: number
-                    required:
-                    - id
-                    - name
-                    - devMode
-                    - pixExpirationMinutes
-                    - maxTransactionAmountCents
-                    additionalProperties: false
                 required:
                 - success
                 - data
+                type: object
+          description: Default Response
+        '400':
+          content:
+            application/json:
+              schema:
                 additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
         '401':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
+                type: object
+          description: Default Response
+        '403':
+          content:
+            application/json:
+              schema:
                 additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
         '404':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
-                additionalProperties: false
+                type: object
+          description: Default Response
         '500':
-          description: Default Response
           content:
             application/json:
               schema:
-                type: object
+                additionalProperties: false
                 properties:
-                  type:
-                    type: string
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                    minimum: 400
-                    maximum: 599
                   detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
                     type: string
                   instance:
                     type: string
-                  details:
-                    type: object
-                    additionalProperties: {}
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
                 required:
                 - type
                 - title
                 - status
                 - detail
                 - instance
+                type: object
+          description: Default Response
+      security:
+      - ApiKeyAuth: []
+      summary: Simular pagamento de transação sandbox
+      tags:
+      - Sandbox
+  /api/v1/card-tokenization-sessions/:
+    post:
+      description: Vincula uma sessão curta a projeto, ambiente, origem e pagamento. Aceita somente metadados;
+        dados de cartão são proibidos.
+      parameters:
+      - in: header
+        name: idempotency-key
+        required: true
+        schema:
+          maxLength: 256
+          minLength: 1
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              additionalProperties: false
+              properties:
+                amount_cents:
+                  maximum: 50000000
+                  minimum: 1
+                  type: integer
+                currency:
+                  enum:
+                  - BRL
+                  type: string
+                origin:
+                  maxLength: 2048
+                  minLength: 1
+                  type: string
+                payment_id:
+                  maxLength: 128
+                  pattern: ^pay_[a-z0-9]+$
+                  type: string
+              required:
+              - amount_cents
+              - currency
+              - origin
+              type: object
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
                 additionalProperties: false
-servers:
-- url: https://api.payments.bob.company
-  description: Servidor de produção
+                properties:
+                  client_secret:
+                    pattern: ^cts_secret_.*
+                    type: string
+                  expires_at:
+                    type: string
+                  id:
+                    pattern: ^cts_[a-z0-9]+$
+                    type: string
+                  payment_id:
+                    pattern: ^pay_[a-z0-9]+$
+                    type: string
+                required:
+                - id
+                - payment_id
+                - client_secret
+                - expires_at
+                type: object
+          description: Default Response
+        '400':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '401':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '403':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '409':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '422':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+        '500':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  details:
+                    additionalProperties: {}
+                    type: object
+                  errorCode:
+                    type: string
+                  instance:
+                    type: string
+                  status:
+                    maximum: 599
+                    minimum: 400
+                    type: integer
+                  title:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - title
+                - status
+                - detail
+                - instance
+                type: object
+          description: Default Response
+      security:
+      - ApiKeyAuth: []
+      summary: Criar uma sessão de tokenização Bob
+      tags:
+      - Card Tokenization
