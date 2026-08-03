@@ -10,16 +10,12 @@ Bob Payments offers a single integration to create, track, and reconcile payment
 
 | Method | Availability | Best path | What you get |
 |---|---|---|---|
-| **PIX** | Available | Direct API, hosted checkout, or Checkout SDK | Copy-and-paste code, QR Code, and status events |
-| **Credit card** | **Coming soon** | Hosted checkout or Checkout SDK | Secure tokenization, 3DS, and status events |
-| **Crypto** | Available | Hosted checkout | Hosted crypto payment page and status events |
+| **PIX** | Available | Direct API, hosted checkout, or Checkout SDK | Copy-and-paste code (`pixCode`), QR Code, and status events |
+| **Credit card** | When enabled on the project | Hosted checkout, Checkout SDK, or direct API with `btk_...` token | Browser tokenization, 3DS (`nextActionUrl`), and status events |
+| **Crypto** | When enabled on the project | Hosted checkout or `paymentMethod: "crypto"` on the API | Hosted page `checkoutUrl` and status events |
 
 <Note>
-  **Credit card is not available yet.** The card pages describe how it will work once it launches. For now, use **PIX**.
-</Note>
-
-<Note>
-  A method can only be used when it's enabled on the project. Don't enable a method just because it appears in an old API payload or enum.
+  A method can only be used when it's **enabled on the project**. The API enum lists contract methods; creation fails if the method is not published for your account.
 </Note>
 
 ## Choose how to integrate
@@ -42,10 +38,10 @@ Bob Payments offers a single integration to create, track, and reconcile payment
     Create an `sk_test_` key and enable the methods you want to accept. Start with the [Sandbox](/en/pages/sandbox).
   </Step>
   <Step title="Create the payment">
-    Use a direct transaction for PIX, or create a checkout session with `paymentMethods`, such as `['pix']` or `['crypto']`.
+    Use a direct transaction (`paymentMethod` omitted or `"pix"`, `"credit_card"`, or `"crypto"`) or create a checkout session with `paymentMethods` (e.g. `['pix']`, `['crypto']`, `['credit_card', 'pix']`).
   </Step>
   <Step title="Show the next step to the buyer">
-    For PIX, display the `pixCode` and the QR Code. For crypto, redirect the buyer to the hosted page's `checkoutUrl`. For card, use the hosted checkout or the SDK for tokenization and 3DS authentication.
+    For PIX, display the `pixCode` and the QR Code. For crypto, redirect the buyer to `checkoutUrl`. For card, use hosted checkout/Checkout SDK or the direct API with a `btk_...` token (and `nextActionUrl` if 3DS is required).
   </Step>
   <Step title="Confirm on the server">
     Receive the `transaction.paid` event, verify the signature, and release the order only after confirmation. The checkout return page does not replace the webhook.

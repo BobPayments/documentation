@@ -1,3 +1,13 @@
+# Não lançado
+
+### Documentação
+
+* alinha openapi.yaml ao contrato da API (`paymentMethod`, `card`, cripto, FX, tokenização, 202)
+* documenta cartão com token `btk_...` e endpoint de card-tokenization-sessions
+* remove "em breve" de cartão onde a API já expõe o contrato; métodos dependem de habilitação no projeto
+* SDKs Node (`@bob-payments/sdk`) e PHP: exemplos com crypto/cartão e campos de resposta atuais
+* webhooks v2 documentam `paymentMethod` e `checkoutUrl`
+
 # Changelog
 
 Histórico de alterações na documentação da API Bob Payments.

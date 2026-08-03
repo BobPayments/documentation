@@ -7,7 +7,7 @@ icon: "diagram-project"
 Todo pagamento na Bob passa pela mesma sequência — **cliente**, **sessão de checkout**, **coleta do pagamento** e **criação da transação** — independente da forma de integração. As opções mudam; a ordem é sempre a mesma.
 
 <Note>
-  Hoje o método disponível é **PIX**. O **cartão de crédito** está em breve — os trechos abaixo sobre tokenização de cartão valem para quando ele for lançado.
+  Métodos disponíveis quando habilitados no projeto: **PIX**, **cripto** e **cartão de crédito**. A API direta também aceita `paymentMethod` correspondente.
 </Note>
 
 ## O processo de pagamento na Bob
@@ -17,12 +17,12 @@ Todo pagamento na Bob passa pela mesma sequência — **cliente**, **sessão de 
     Todo pagamento se associa a um **cliente** (nome, documento, contato). A Bob guarda esses dados para reaproveitar em cobranças futuras e gera um identificador usado nos passos seguintes.
   </Step>
   <Step title="2. Crie a sessão de checkout">
-    A sessão conecta o cliente ao pagamento, guarda os detalhes da cobrança e carrega os métodos disponíveis (hoje PIX; cartão em breve). Integrações server-to-server que usam **PIX direto pela API** podem pular este passo e criar a transação diretamente.
+    A sessão conecta o cliente ao pagamento, guarda os detalhes da cobrança e carrega os métodos disponíveis (PIX, cripto, cartão). Integrações server-to-server que usam a **API direta de transações** podem pular este passo.
   </Step>
   <Step title="3. Colete o pagamento">
     Há duas formas de coletar:
 
-    - **Checkout hospedado ou SDK Checkout** — a Bob coleta com segurança: mostra o PIX (QR Code e copia-e-cola) e, para cartão, tokeniza os dados no navegador gerando um identificador seguro (`pm_...`). PAN, CVV e validade nunca passam pela sua aplicação.
+    - **Checkout hospedado ou SDK Checkout** — a Bob coleta com segurança: mostra o PIX (QR Code e copia-e-cola) e, para cartão, tokeniza os dados no navegador gerando um token opaco (`btk_...`). PAN, CVV e validade nunca passam pela sua aplicação.
     - **API direta** — você assume a tokenização e a conformidade PCI, enviando à Bob apenas o token seguro.
   </Step>
   <Step title="4. Crie a transação">

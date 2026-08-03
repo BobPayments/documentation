@@ -7,7 +7,7 @@ icon: "cubes"
 Bob offers official SDKs in **two layers**. They solve different problems and are typically used together: a **server** library creates the charge and verifies webhooks on your backend; the **frontend** SDK mounts the checkout and tokenizes the card in the browser.
 
 <Note>
-  **Credit card is still coming soon.** Today the SDKs operate with **PIX**; card tokenization in the Checkout SDK arrives when card is launched.
+  Server SDKs cover PIX, card (`btk_...` + tokenization), and crypto. The [Checkout SDK](/en/pages/sdk/checkout) embeds the UI in the browser. Use only methods **enabled on the project**.
 </Note>
 
 ## Choose your SDK

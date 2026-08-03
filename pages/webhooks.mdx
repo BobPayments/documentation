@@ -52,6 +52,7 @@ Exemplo de `transaction.paid` na **v2** (repare em `apiVersion` e `amountCents`)
     "externalId": "pedido-001",
     "amountCents": 15000,
     "product": "Plano Premium",
+    "paymentMethod": "pix",
     "customerName": "João Silva",
     "isSandbox": false,
     "createdAt": "2026-03-10T14:30:00.000Z"
@@ -60,10 +61,12 @@ Exemplo de `transaction.paid` na **v2** (repare em `apiVersion` e `amountCents`)
 }
 ```
 
+Na **v2**, `data` também pode incluir `checkoutUrl` quando a transação tiver checkout hospedado (ex.: cripto). Esses campos **não** existem no payload v1 (formato congelado).
+
 ## Eventos disponíveis
 
 <Note>
-  Os exemplos abaixo mostram o formato **v1** (legado). Na **v2**, a única diferença de dados é que `data.amount` (reais) é substituído por `data.amountCents` (centavos) e o envelope ganha `apiVersion: "v2"` — os demais campos são idênticos.
+  Os exemplos abaixo mostram o formato **v1** (legado). Na **v2**: `data.amount` vira `data.amountCents`, o envelope ganha `apiVersion: "v2"`, e entram `data.paymentMethod` e (quando houver) `data.checkoutUrl`.
 </Note>
 
 <AccordionGroup>

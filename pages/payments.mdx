@@ -10,16 +10,12 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
 
 | Método | Disponibilidade | Melhor caminho | O que você recebe |
 |---|---|---|---|
-| **PIX** | Disponível | API direta, checkout hospedado ou SDK Checkout | Código copia-e-cola, QR Code e eventos de status |
-| **Cartão de crédito** | **Em breve** | Checkout hospedado ou SDK Checkout | Tokenização segura, 3DS e eventos de status |
-| **Cripto** | Disponível | Checkout hospedado | Página hospedada de pagamento em criptomoeda e eventos de status |
+| **PIX** | Disponível | API direta, checkout hospedado ou SDK Checkout | Código copia-e-cola (`pixCode`), QR Code e eventos de status |
+| **Cartão de crédito** | Quando habilitado no projeto | Checkout hospedado, SDK Checkout ou API direta com token `btk_...` | Tokenização no browser, 3DS (`nextActionUrl`) e eventos de status |
+| **Cripto** | Quando habilitado no projeto | Checkout hospedado ou `paymentMethod: "crypto"` na API | `checkoutUrl` da página hospedada e eventos de status |
 
 <Note>
-  **Cartão de crédito ainda não está disponível.** As páginas de cartão descrevem como vai funcionar quando lançar. Por enquanto, use **PIX**.
-</Note>
-
-<Note>
-  Um método só pode ser usado quando estiver habilitado no projeto. Não habilite um método apenas porque ele aparece em um payload ou enum antigo da API.
+  Um método só pode ser usado quando estiver **habilitado no projeto**. O enum da API lista os métodos do contrato; a criação falha se o método não estiver publicado na sua conta.
 </Note>
 
 ## Escolha como integrar
@@ -42,10 +38,10 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
     Crie uma chave `sk_test_` e habilite os métodos que deseja aceitar. Comece pelo [Sandbox](/pages/sandbox).
   </Step>
   <Step title="Crie o pagamento">
-    Use uma transação direta para PIX ou crie uma sessão de checkout com `paymentMethods`, como `['pix']` ou `['crypto']`.
+    Use uma transação direta (`paymentMethod` omitido ou `"pix"`, `"credit_card"` ou `"crypto"`) ou crie uma sessão de checkout com `paymentMethods` (ex.: `['pix']`, `['crypto']`, `['credit_card', 'pix']`).
   </Step>
   <Step title="Mostre o próximo passo ao comprador">
-    No PIX, exiba o `pixCode` e o QR Code. Em cripto, redirecione o comprador para a `checkoutUrl` da página hospedada. No cartão, use o checkout hospedado ou o SDK para tokenização e autenticação 3DS.
+    No PIX, exiba o `pixCode` e o QR Code. Em cripto, redirecione o comprador para a `checkoutUrl`. No cartão, use o checkout hospedado/SDK Checkout ou a API direta com token `btk_...` (e `nextActionUrl` se houver 3DS).
   </Step>
   <Step title="Confirme no servidor">
     Receba o evento `transaction.paid`, verifique a assinatura e libere o pedido apenas depois da confirmação. A página de retorno do checkout não substitui o webhook.

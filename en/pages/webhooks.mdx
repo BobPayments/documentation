@@ -52,6 +52,7 @@ Example of `transaction.paid` on **v2** (note `apiVersion` and `amountCents`):
     "externalId": "pedido-001",
     "amountCents": 15000,
     "product": "Plano Premium",
+    "paymentMethod": "pix",
     "customerName": "João Silva",
     "isSandbox": false,
     "createdAt": "2026-03-10T14:30:00.000Z"
@@ -60,10 +61,12 @@ Example of `transaction.paid` on **v2** (note `apiVersion` and `amountCents`):
 }
 ```
 
+On **v2**, `data` may also include `checkoutUrl` when the transaction has hosted checkout (e.g. crypto). Those fields do **not** exist on v1 payloads (frozen format).
+
 ## Available events
 
 <Note>
-  The examples below show the **v1** (legacy) format. On **v2**, the only data difference is that `data.amount` (reais) is replaced by `data.amountCents` (cents) and the envelope gains `apiVersion: "v2"` — all other fields are identical.
+  The examples below show the **v1** (legacy) format. On **v2**: `data.amount` becomes `data.amountCents`, the envelope gains `apiVersion: "v2"`, and `data.paymentMethod` plus (when present) `data.checkoutUrl` are included.
 </Note>
 
 <AccordionGroup>

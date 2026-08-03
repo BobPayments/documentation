@@ -4,7 +4,7 @@ description: "Biblioteca oficial TypeScript/Node.js para criar pagamentos, usar 
 icon: "node-js"
 ---
 
-O [`@bobpayments/sdk`](https://github.com/BobPayments/bob-payments-sdk-node) é a forma recomendada de integrar em Node.js: zero dependências (usa `fetch` nativo e `node:crypto`), tipos TypeScript do contrato completo da API, ESM + CJS.
+O [`@bob-payments/sdk`](https://github.com/BobPayments/bob-payments-sdk-node) é a forma recomendada de integrar em Node.js: zero dependências (usa `fetch` nativo e `node:crypto`), tipos TypeScript do contrato completo da API, ESM + CJS.
 
 <Warning>
   Server-side only: a API key `sk_live_`/`sk_test_` é secreta e **nunca** deve ir para o browser.
@@ -13,16 +13,16 @@ O [`@bobpayments/sdk`](https://github.com/BobPayments/bob-payments-sdk-node) é 
 ## Instalação
 
 ```bash
-pnpm add @bobpayments/sdk
-# npm install @bobpayments/sdk · yarn add @bobpayments/sdk
+pnpm add @bob-payments/sdk
+# npm install @bob-payments/sdk · yarn add @bob-payments/sdk
 ```
 
-Requer Node.js 20 ou 22 (LTS).
+Requer Node.js >= 20.
 
 ## Cliente
 
 ```typescript
-import { BobPayments } from '@bobpayments/sdk';
+import { BobPayments } from '@bob-payments/sdk';
 
 const bob = new BobPayments({
   apiKey: process.env.BOB_API_KEY!, // sk_live_... ou sk_test_...
@@ -33,15 +33,15 @@ const bob = new BobPayments({
 bob.environment; // 'live' | 'sandbox' — detectado pelo prefixo da chave
 ```
 
-## Criar uma sessão de checkout (PIX)
+## Criar uma sessão de checkout
 
-Use o checkout hospedado quando quiser que a Bob apresente a tela de pagamento. Hoje o método disponível é PIX; `credit_card` entra quando o cartão for lançado:
+Use o checkout hospedado para a Bob apresentar a tela de pagamento (`pix`, `crypto`, `credit_card` — métodos habilitados no projeto):
 
 ```typescript
 const session = await bob.checkoutSessions.create({
   amountCents: 25_000,
   items: [{ name: 'Assinatura Pro', quantity: 1, unitAmountCents: 25_000 }],
-  paymentMethods: ['pix'],
+  paymentMethods: ['pix', 'crypto'],
   successUrl: 'https://loja.example.com/pedido/sucesso',
   webhookUrl: 'https://loja.example.com/webhooks/bob',
 });
@@ -50,9 +50,9 @@ const session = await bob.checkoutSessions.create({
 redirect(session.checkoutUrl);
 ```
 
-Veja os detalhes dos campos em [Checkout hospedado](/pages/checkout/overview).
+Veja os detalhes em [Checkout hospedado](/pages/checkout/overview).
 
-## Criar uma cobrança PIX
+## Criar uma cobrança
 
 ```typescript
 const tx = await bob.transactions.create({
@@ -72,23 +72,29 @@ const tx = await bob.transactions.create({
   },
   payment: { amountCents: 10_000, product: 'Assinatura Pro' }, // sempre centavos
   originDomain: 'loja.example.com',
+  // paymentMethod: 'pix' | 'credit_card' | 'crypto'  // default: pix
 });
 
 tx.pixCode;        // PIX copia-e-cola (EMV)
-tx.expirationDate; // quando o PIX expira
-tx.persisted;      // false = HTTP 202 (reconciliação pendente; PIX válido)
+tx.checkoutUrl;    // cripto: redirecione o pagador
+tx.nextActionUrl;  // cartão: 3DS, se exigido
+tx.persisted;      // false = HTTP 202 (reconciliação pendente)
 tx.replayed;       // true = resposta replayada por idempotência
 ```
 
-Todo `create` envia um header [`Idempotency-Key`](/pages/idempotency) automaticamente, o que torna a chamada segura de repetir — o SDK faz retry com backoff em timeout, falha de rede, 429 e 5xx sem risco de pagamento duplicado.
+Todo `create` envia um header [`Idempotency-Key`](/pages/idempotency) automaticamente — retry seguro sem cobrança duplicada.
+
+Cartão headless: `bob.cardTokenizationSessions.create` + token `btk_...` no browser → `transactions.create` com `paymentMethod: 'credit_card'`. Detalhes em [Cartão de crédito](/pages/credit-card/overview).
 
 ## Consultas
 
 ```typescript
 const detail = await bob.transactions.get('clx1abc123');
+// detail.paymentMethod · detail.gatewayAmountCents / gatewayCurrency / fxRate (cripto)
 
 const page = await bob.transactions.list({
   status: 'paid',
+  paymentMethod: 'pix',
   dateFrom: new Date('2026-07-01'),
   limit: 50,
 }); // { data, meta: { total, page, limit, totalPages } }
@@ -99,10 +105,8 @@ const customer = await bob.customers.get(customers.data[0].id);
 
 ## Webhooks
 
-`constructWebhookEvent` verifica a assinatura (v1 e v2, em tempo constante, com anti-replay) e retorna o evento tipado:
-
 ```typescript
-import { constructWebhookEvent, BobPaymentsWebhookVerificationError } from '@bobpayments/sdk';
+import { constructWebhookEvent, BobPaymentsWebhookVerificationError } from '@bob-payments/sdk';
 
 app.post('/webhooks/bob', express.raw({ type: 'application/json' }), (req, res) => {
   try {
@@ -113,7 +117,8 @@ app.post('/webhooks/bob', express.raw({ type: 'application/json' }), (req, res) 
     );
 
     if (event.event === 'transaction.paid') {
-      // v2: event.data.amountCents · v1: event.data.amount
+      // v2: event.data.amountCents · paymentMethod · checkoutUrl?
+      // v1: event.data.amount (reais)
     }
     res.status(200).send('ok');
   } catch (error) {
@@ -125,14 +130,12 @@ app.post('/webhooks/bob', express.raw({ type: 'application/json' }), (req, res) 
 });
 ```
 
-Detalhes de payload e assinatura: [Webhooks](/pages/webhooks).
+Detalhes: [Webhooks](/pages/webhooks).
 
 ## Tratamento de erros
 
-Toda resposta não-2xx vira `BobPaymentsApiError` com os campos RFC 7807 da API:
-
 ```typescript
-import { BobPaymentsApiError, BobPaymentsTimeoutError } from '@bobpayments/sdk';
+import { BobPaymentsApiError, BobPaymentsTimeoutError } from '@bob-payments/sdk';
 
 try {
   await bob.transactions.create(params);
@@ -140,7 +143,7 @@ try {
   if (error instanceof BobPaymentsApiError) {
     error.status;            // 400, 401, 422, 429, 503...
     error.code;              // 'ERR_INTEGRATION_006', ...
-    error.detail;            // mensagem descritiva
+    error.detail;
     error.retryAfterSeconds; // em 429/503 quando a API envia Retry-After
   } else if (error instanceof BobPaymentsTimeoutError) {
     // excedeu o timeout do cliente

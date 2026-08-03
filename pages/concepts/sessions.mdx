@@ -4,7 +4,7 @@ description: "O recurso que conecta o cliente ao pagamento e carrega os métodos
 icon: "receipt"
 ---
 
-Uma **sessão de checkout** conecta o cliente ao pagamento, guarda os detalhes da cobrança e carrega os métodos disponíveis (hoje **PIX**; cartão em breve). Você cria uma sessão para cada cobrança quando usa o **checkout hospedado** ou o **SDK Checkout**.
+Uma **sessão de checkout** conecta o cliente ao pagamento, guarda os detalhes da cobrança e carrega os métodos disponíveis (**PIX**, **cripto** e **cartão**, conforme habilitados no projeto). Você cria uma sessão para cada cobrança quando usa o **checkout hospedado** ou o **SDK Checkout**.
 
 <Note>
   Integrações server-to-server que usam **PIX direto pela API** podem pular a sessão e criar a transação diretamente.
@@ -17,7 +17,7 @@ Você define a cobrança ao criar a sessão:
 | Campo | Descrição |
 |---|---|
 | `amountCents` | Valor cobrado, sempre em centavos. É o valor final da cobrança. |
-| `paymentMethods` | Métodos exibidos ao comprador. Hoje `['pix']` (o padrão); `credit_card` entra quando o cartão for lançado. |
+| `paymentMethods` | Métodos exibidos ao comprador: `pix` (default), `crypto`, `credit_card` (e combinações), se habilitados no projeto. |
 | `items` | Metadado de exibição do pedido — não altera o valor cobrado. |
 | `successUrl` | Para onde o comprador volta após pagar. |
 | `webhookUrl` / `webhookVersion` | Endpoint que recebe a confirmação assinada. |
