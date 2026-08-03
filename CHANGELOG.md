@@ -1,3 +1,13 @@
+# Changelog
+
+Histórico de alterações na documentação da API Bob Payments.
+
+## [1.1.41](https://github.com/BobPayments/documentation/compare/v1.1.40...v1.1.41) (2026-08-03)
+
+### Documentação
+
+* alinha OpenAPI e páginas com API (cartão, cripto, paymentMethod) ([658e237](https://github.com/BobPayments/documentation/commit/658e23772ee09fa88cf433aec1f9f35d98a6851f))
+
 # Não lançado
 
 ### Documentação
