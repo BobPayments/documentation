@@ -128,6 +128,94 @@
     {
       "source": "/api-reference/buscar-detalhes-da-loja",
       "destination": "/pages/store/get"
+    },
+    {
+      "source": "/docs/public/introduction",
+      "destination": "/pages/introduction"
+    },
+    {
+      "source": "/docs/public/quickstart/authentication",
+      "destination": "/pages/authentication"
+    },
+    {
+      "source": "/docs/public/quickstart/first-transaction",
+      "destination": "/pages/quickstart"
+    },
+    {
+      "source": "/docs/public/guides/complete-integration",
+      "destination": "/pages/production"
+    },
+    {
+      "source": "/docs/public/guides/response-format",
+      "destination": "/pages/errors"
+    },
+    {
+      "source": "/docs/public/guides/rate-limiting",
+      "destination": "/pages/errors"
+    },
+    {
+      "source": "/docs/public/guides/idempotency",
+      "destination": "/pages/idempotency"
+    },
+    {
+      "source": "/docs/public/api-reference/transaction-lifecycle",
+      "destination": "/pages/concepts/transactions"
+    },
+    {
+      "source": "/docs/public/api-reference/create-pix",
+      "destination": "/pages/pix/create"
+    },
+    {
+      "source": "/docs/public/api-reference/list-transactions",
+      "destination": "/pages/pix/list"
+    },
+    {
+      "source": "/docs/public/api-reference/check-status",
+      "destination": "/pages/pix/check-status"
+    },
+    {
+      "source": "/docs/public/api-reference/errors",
+      "destination": "/pages/errors"
+    },
+    {
+      "source": "/docs/public/api-reference/create-customer",
+      "destination": "/pages/customers/reference"
+    },
+    {
+      "source": "/docs/public/api-reference/get-customer",
+      "destination": "/pages/customers/get"
+    },
+    {
+      "source": "/docs/public/api-reference/list-customers",
+      "destination": "/pages/customers/list"
+    },
+    {
+      "source": "/docs/public/api-reference/get-store",
+      "destination": "/pages/store/get"
+    },
+    {
+      "source": "/docs/public/sandbox/overview",
+      "destination": "/pages/sandbox"
+    },
+    {
+      "source": "/docs/public/sandbox/simulate-payment",
+      "destination": "/pages/pix/simulate-payment"
+    },
+    {
+      "source": "/docs/public/sdks/overview",
+      "destination": "/pages/sdk/overview"
+    },
+    {
+      "source": "/docs/public/webhooks/overview",
+      "destination": "/pages/concepts/webhooks"
+    },
+    {
+      "source": "/docs/public/webhooks/events",
+      "destination": "/pages/webhooks"
+    },
+    {
+      "source": "/docs/public/webhooks/signature-verification",
+      "destination": "/pages/webhooks"
     }
   ],
   "contextual": {
