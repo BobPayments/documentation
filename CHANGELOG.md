@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.42](https://github.com/BobPayments/documentation/compare/v1.1.41...v1.1.42) (2026-08-05)
+
+### Correções
+
+* **docs:** redireciona paths /docs/public do llms.txt para /pages ([#12](https://github.com/BobPayments/documentation/issues/12)) ([20a4068](https://github.com/BobPayments/documentation/commit/20a4068ba7d7ab874d5e153183c40d645abf8322))
+
 ## [1.1.41](https://github.com/BobPayments/documentation/compare/v1.1.40...v1.1.41) (2026-08-03)
 
 ### Documentação
