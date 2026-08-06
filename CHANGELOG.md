@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.43](https://github.com/BobPayments/documentation/compare/v1.1.42...v1.1.43) (2026-08-06)
+
+### Correções
+
+* **docs:** adiciona llms.txt na raiz com paths corretos /pages ([#13](https://github.com/BobPayments/documentation/issues/13)) ([88905bf](https://github.com/BobPayments/documentation/commit/88905bf98793b257a3e89ee36ad1b4bdf9b772a5)), closes [#12](https://github.com/BobPayments/documentation/issues/12)
+
 ## [1.1.42](https://github.com/BobPayments/documentation/compare/v1.1.41...v1.1.42) (2026-08-05)
 
 ### Correções
