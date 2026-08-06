@@ -1,0 +1,75 @@
+# Bob Payments
+
+> A infraestrutura de pagamentos para o seu produto. Aceite PIX e cartão de crédito via checkout hospedado, SDK embutível ou API REST direta, com clientes, sessões de checkout e webhooks em tempo real.
+
+## Primeiros passos
+
+- [Início](/): Integre PIX com checkout hospedado, SDK Checkout ou API direta
+- [O que é a Bob Payments?](/pages/introduction): Visão geral da API, recursos disponíveis e primeiros passos
+- [Configurar sua conta](/pages/setup-account): Prepare o projeto, gere as chaves de API e ative os webhooks antes do primeiro pagamento
+- [Criar seu primeiro pagamento com SDK](/pages/quickstart): Rode um projeto com o SDK da Bob e faça seu primeiro pagamento PIX no sandbox em poucos minutos
+
+## Conceitos principais
+
+- [Fluxo de pagamento](/pages/concepts/payment-flow): O caminho entre sua aplicação, a Bob Payments e o comprador
+- [Clientes](/pages/concepts/customers): Como a Bob associa compradores, dados cadastrais e transações
+- [Sessão de checkout](/pages/concepts/sessions): O recurso que conecta o cliente ao pagamento e carrega os métodos disponíveis
+- [Transações](/pages/concepts/transactions): O recurso da API que representa uma tentativa de pagamento e seu ciclo de vida
+- [Webhooks](/pages/concepts/webhooks): Por que os eventos assíncronos são a fonte de verdade da integração
+
+## Formas de integração
+
+- [Pagamentos](/pages/payments): Escolha o método de pagamento e o caminho de integração mais adequado para o seu produto
+- [Checkout hospedado](/pages/checkout/overview): A Bob cuida da tela de pagamento — você só cria a sessão e redireciona
+- [Cartão de crédito](/pages/credit-card/overview): Aceite cartão pelo checkout hospedado, SDK embutível ou API direta com token btk_
+
+## Webhooks
+
+- [Configurar webhooks](/pages/webhooks): Receba notificações automáticas quando eventos acontecem no seu projeto
+
+## Usando a Bob
+
+- [Ambientes](/pages/environments): Sandbox e produção convivem na mesma conta — o ambiente é definido pela chave de API
+- [Sandbox](/pages/sandbox): Teste sua integração no ambiente sandbox sem processar pagamentos reais
+- [Autenticação](/pages/authentication): Todas as rotas exigem um Bearer Token no header Authorization
+- [Indo para produção](/pages/production): Como sair do sandbox e começar a processar pagamentos reais
+
+## Fundamentos da API
+
+- [Idempotência](/pages/idempotency): Repita requisições de criação com segurança — sem pagamentos duplicados
+- [Erros](/pages/errors): Todo erro da API segue o mesmo formato — e cada um diz o que fazer
+
+## Referência da API — Transações
+
+- [Cobrança PIX](/pages/pix/reference): Estrutura e atributos de uma cobrança PIX na API Bob Payments
+- [Transação de cartão](/pages/credit-card/reference): Estrutura e atributos de uma transação de cartão de crédito
+- [Criar cobrança](/pages/pix/create): POST /api/transactions — cria uma cobrança PIX
+- [Listar transações](/pages/pix/list): GET /api/transactions — lista paginada com filtros
+- [Consultar status](/pages/pix/check-status): GET /api/transactions/:id — status e dados de uma transação
+
+## Referência da API — Checkout
+
+- [Criar sessão de checkout](/pages/checkout/create): POST — cria uma sessão de checkout hospedado
+- [Consultar status da sessão](/pages/checkout/status): GET — status de uma sessão de checkout
+
+## Referência da API — Clientes
+
+- [Estrutura do cliente](/pages/customers/reference): Gerencie os compradores do seu projeto com histórico de transações
+- [Buscar cliente por ID](/pages/customers/get): GET /api/customers/:id — detalhes de um cliente
+- [Listar clientes](/pages/customers/list): GET /api/customers — lista paginada de clientes
+
+## Referência da API — Projeto
+
+- [Estrutura do projeto](/pages/store/reference): Configurações e informações do seu projeto
+- [Dados da loja](/pages/store/get): GET /api/store — retorna as configurações do projeto
+
+## Referência da API — Sandbox
+
+- [Simular pagamento](/pages/pix/simulate-payment): POST /api/sandbox/transactions/:id/pay — simula a confirmação de um pagamento PIX
+
+## SDKs
+
+- [Visão geral](/pages/sdk/overview): Qual SDK usar — bibliotecas de servidor para o backend e o SDK de frontend para o checkout
+- [SDK Node.js](/pages/sdk/node): Biblioteca oficial TypeScript/Node.js para criar pagamentos, usar checkout e verificar webhooks
+- [SDK PHP](/pages/sdk/php): Biblioteca oficial PHP para criar pagamentos e verificar webhooks, sem dependências externas
+- [SDK Checkout](/pages/sdk/checkout): Embutir o checkout da Bob no seu site com cartão, PIX e 3DS
