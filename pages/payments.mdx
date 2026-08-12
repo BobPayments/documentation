@@ -11,11 +11,11 @@ A Bob Payments oferece uma única integração para criar, acompanhar e concilia
 | Método | Disponibilidade | Melhor caminho | O que você recebe |
 |---|---|---|---|
 | **PIX** | Disponível | API direta, checkout hospedado ou SDK Checkout | Código copia-e-cola (`pixCode`), QR Code e eventos de status |
-| **Cartão de crédito** | Quando habilitado no projeto | Checkout hospedado, SDK Checkout ou API direta com token `btk_...` | Tokenização no browser, 3DS (`nextActionUrl`) e eventos de status |
+| **Cartão de crédito (beta)** | Beta, quando habilitado no projeto | Checkout hospedado, SDK Checkout ou API direta com token `btk_...` | Tokenização no browser, 3DS (`nextActionUrl`) e eventos de status |
 | **Cripto** | Quando habilitado no projeto | Checkout hospedado ou `paymentMethod: "crypto"` na API | `checkoutUrl` da página hospedada e eventos de status |
 
 <Note>
-  Um método só pode ser usado quando estiver **habilitado no projeto**. O enum da API lista os métodos do contrato; a criação falha se o método não estiver publicado na sua conta.
+  A integração com cartão de crédito está em **beta**. Um método só pode ser usado quando estiver **habilitado no projeto**. O enum da API lista os métodos do contrato; a criação falha se o método não estiver publicado na sua conta.
 </Note>
 
 ## Escolha como integrar

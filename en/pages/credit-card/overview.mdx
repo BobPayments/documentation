@@ -2,9 +2,14 @@
 title: "Credit card"
 description: "Accept credit cards via hosted checkout, embeddable SDK, or direct API with a btk_ token."
 icon: "credit-card"
+tag: "BETA"
 ---
 
-Bob Payments processes **credit cards** when the method is **enabled on the project**. For most integrations, use hosted checkout or the embeddable SDK: they load secure fields, tokenize the card, run 3DS, and handle processing.
+<Note>
+  **Credit card integration is in beta.** It is available only for enabled projects. For most integrations, use hosted checkout or the embeddable SDK: they load secure fields, tokenize the card, run 3DS, and handle processing.
+</Note>
+
+Bob Payments processes **credit cards** when the method is **enabled on the project**.
 
 <Note>
   The card **must be tokenized in the browser**. Your application and the API only receive an opaque `btk_...` token — PAN, CVV, and expiry never pass through the Bob API. See the [Checkout SDK](/en/pages/sdk/checkout) and the [Reference](/en/pages/credit-card/reference).

@@ -11,11 +11,11 @@ Bob Payments offers a single integration to create, track, and reconcile payment
 | Method | Availability | Best path | What you get |
 |---|---|---|---|
 | **PIX** | Available | Direct API, hosted checkout, or Checkout SDK | Copy-and-paste code (`pixCode`), QR Code, and status events |
-| **Credit card** | When enabled on the project | Hosted checkout, Checkout SDK, or direct API with `btk_...` token | Browser tokenization, 3DS (`nextActionUrl`), and status events |
+| **Credit card (beta)** | Beta, when enabled on the project | Hosted checkout, Checkout SDK, or direct API with `btk_...` token | Browser tokenization, 3DS (`nextActionUrl`), and status events |
 | **Crypto** | When enabled on the project | Hosted checkout or `paymentMethod: "crypto"` on the API | Hosted page `checkoutUrl` and status events |
 
 <Note>
-  A method can only be used when it's **enabled on the project**. The API enum lists contract methods; creation fails if the method is not published for your account.
+  Credit card integration is in **beta**. A method can only be used when it's **enabled on the project**. The API enum lists contract methods; creation fails if the method is not published for your account.
 </Note>
 
 ## Choose how to integrate

@@ -2,9 +2,14 @@
 title: "Cartão de crédito"
 description: "Aceite cartão de crédito pelo checkout hospedado, SDK embutível ou API direta com token btk_."
 icon: "credit-card"
+tag: "BETA"
 ---
 
-A Bob Payments processa **cartão de crédito** quando o método está **habilitado no projeto**. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível: eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e gerenciam o processamento.
+<Note>
+  **A integração com cartão de crédito está em beta.** Ela fica disponível apenas para projetos habilitados. Para a maioria das integrações, use o checkout hospedado ou o SDK embutível: eles carregam os campos seguros, tokenizam o cartão, conduzem 3DS e gerenciam o processamento.
+</Note>
+
+A Bob Payments processa **cartão de crédito** quando o método está **habilitado no projeto**.
 
 <Note>
   O cartão **deve ser tokenizado no navegador**. A sua aplicação e a API só recebem um token opaco `btk_...` — PAN, CVV e validade nunca passam pela API Bob. Veja o [SDK Checkout](/pages/sdk/checkout) e a [Referência](/pages/credit-card/reference).

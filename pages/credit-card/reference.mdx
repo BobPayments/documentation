@@ -2,9 +2,14 @@
 title: "Transação de cartão"
 description: "Estrutura e atributos de uma transação de cartão de crédito na API Bob Payments"
 icon: "book-open-cover"
+tag: "BETA"
 ---
 
 Para aceitar cartão de crédito você **não** envia os dados do cartão para a API Bob. O número, CVV e validade são coletados e tokenizados no navegador (checkout Bob ou Bob.js/Secure Fields) — a API só recebe o token `btk_...`.
+
+<Note>
+  A integração com cartão de crédito está em **beta** e depende da habilitação no projeto.
+</Note>
 
 <Warning>
   Nunca envie cartão bruto (PAN, CVV ou validade) para a API Bob. Veja o [fluxo de cartão](/pages/credit-card/overview) e o [SDK Checkout](/pages/sdk/checkout).
