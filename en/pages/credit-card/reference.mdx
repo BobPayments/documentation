@@ -2,9 +2,14 @@
 title: "Card transaction"
 description: "Structure and fields of a credit card transaction in the Bob Payments API"
 icon: "book-open-cover"
+tag: "BETA"
 ---
 
 To accept credit cards you **do not** send card data to the Bob API. Number, CVV, and expiry are collected and tokenized in the browser (Bob checkout or Bob.js/Secure Fields) — the API only receives the `btk_...` token.
+
+<Note>
+  Credit card integration is in **beta** and requires the method to be enabled on the project.
+</Note>
 
 <Warning>
   Never send raw card data (PAN, CVV, or expiry) to the Bob API. See the [card flow](/en/pages/credit-card/overview) and the [Checkout SDK](/en/pages/sdk/checkout).

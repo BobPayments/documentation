@@ -6,11 +6,11 @@
     "strict": false
   },
   "name": "Bob Payments",
-  "description": "Documentação da API Bob Payments — uma integração para criar, acompanhar e conciliar pagamentos com PIX e cartão de crédito, com suporte a novos métodos no futuro.",
+  "description": "Documentação da API Bob Payments — uma integração para criar, acompanhar e conciliar pagamentos com PIX e cartão de crédito em beta, com suporte a novos métodos no futuro.",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
-    "href": "/"
+    "light": "/logo/bob-logo-sm.webp",
+    "dark": "/logo/bob-logo-sm.webp",
+    "href": "/pages/introduction"
   },
   "favicon": "/favicon.png",
   "colors": {
@@ -89,6 +89,14 @@
     "drilldown": false
   },
   "redirects": [
+    {
+      "source": "/",
+      "destination": "/pages/introduction"
+    },
+    {
+      "source": "/en",
+      "destination": "/en/pages/introduction"
+    },
     {
       "source": "/api-reference",
       "destination": "/pages/pix/reference"
@@ -246,7 +254,6 @@
               {
                 "group": "Primeiros passos",
                 "pages": [
-                  "index",
                   "pages/introduction",
                   {
                     "group": "Quickstart",
@@ -377,7 +384,6 @@
               {
                 "group": "Getting Started",
                 "pages": [
-                  "en/index",
                   "en/pages/introduction",
                   {
                     "group": "Quickstart",

@@ -1,58 +1,83 @@
 ---
-title: "O que é a Bob Payments?"
-description: "A infraestrutura de pagamentos para o seu produto."
+title: "Introdução"
+description: "Integre PIX e cartão de crédito com checkout hospedado, SDK Checkout ou API direta."
+mode: "wide"
 ---
 
-A Bob Payments é uma **infraestrutura de pagamentos completa**. Integre **uma vez** para criar cobranças PIX, acompanhar cada transação em tempo real e conciliar os resultados — com checkout hospedado, SDK Checkout ou API direta.
+<div className="bob-home not-prose">
+  <section className="bob-hero">
+    <div className="bob-hero-rings" aria-hidden="true"></div>
+    <div className="bob-hero-content">
+      <div className="bob-hero-copy">
+        <p className="bob-hero-kicker">
+          <span className="bob-kicker-dot" aria-hidden="true"></span>
+          Documentação para developers
+        </p>
+        <h1>Pagamentos que encaixam no seu produto</h1>
+        <p className="bob-hero-description">
+          Integre PIX e cartão de crédito (beta) com checkout hospedado, SDK Checkout ou API direta.
+        </p>
+        <a className="bob-hero-button" href="/pages/quickstart">
+          Começar a integrar <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
-A Bob fica entre o seu produto e o ecossistema de pagamentos: você cria uma sessão, o cliente paga e um webhook confirma o resultado.
+  <div className="bob-home-surface">
+    <div className="bob-home-container">
+      <a className="bob-feature-banner" href="/pages/sdk/overview">
+        <span className="bob-feature-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span className="bob-feature-copy">
+          <span className="bob-feature-title">SDKs oficiais</span>
+          <span>Integre no backend ou incorpore o checkout ao seu site.</span>
+        </span>
+        <span className="bob-feature-button">Explorar SDKs <span aria-hidden="true">→</span></span>
+      </a>
 
-## Por que a Bob?
+      <div className="bob-entry-grid">
+        <div className="bob-entry-card">
+          <div className="bob-entry-title">
+            <span className="bob-entry-icon" aria-hidden="true">↗</span>
+            <h2>Comece com a Bob</h2>
+          </div>
+          <a className="bob-entry-action" href="/pages/quickstart">Ver guia rápido</a>
+          <ul>
+            <li>Entenda o fluxo de pagamento.</li>
+            <li>Crie sua primeira sessão no sandbox.</li>
+            <li>Confirme o resultado por webhook.</li>
+            <li>Prepare sua integração para produção.</li>
+          </ul>
+        </div>
 
-<CardGroup cols={2}>
-  <Card title="Uma integração" icon="plug">
-    Checkout hospedado, SDK Checkout ou API direta — você escolhe o nível de controle.
-  </Card>
-  <Card title="PIX em tempo real" icon="bolt">
-    Cobranças com QR Code e confirmação em segundos, direto no fluxo do seu produto.
-  </Card>
-  <Card title="Sandbox completo" icon="flask">
-    Simule pagamentos de ponta a ponta antes de ir para produção.
-  </Card>
-  <Card title="Webhooks confiáveis" icon="bell">
-    Eventos assinados confirmam cada resultado sem depender de polling.
-  </Card>
-  <Card title="Idempotência" icon="rotate">
-    Repita requisições com segurança, sem risco de cobrança duplicada.
-  </Card>
-  <Card title="SDKs oficiais" icon="code">
-    Bibliotecas para Node.js e PHP, além do SDK Checkout para o frontend.
-  </Card>
-</CardGroup>
+        <div className="bob-entry-card">
+          <div className="bob-entry-title">
+            <span className="bob-entry-icon" aria-hidden="true">&lt;/&gt;</span>
+            <h2>Formas de integração</h2>
+          </div>
+          <a className="bob-entry-action" href="/pages/payments">Escolher integração</a>
+          <ul>
+            <li>Checkout hospedado para começar rápido.</li>
+            <li>SDK Checkout dentro do seu site.</li>
+            <li>API direta para controlar o fluxo de PIX.</li>
+            <li>SDKs de servidor para Node.js e PHP.</li>
+          </ul>
+        </div>
 
-## Como funciona
-
-Toda integração com a Bob segue o mesmo fluxo, independente da forma de integração escolhida:
-
-1. **Crie uma sessão de pagamento** pela API ou por um SDK de servidor.
-2. **O cliente paga** — no checkout hospedado, no SDK Checkout embutido no seu site ou pelo QR Code que você mesmo renderiza.
-3. **Receba a confirmação por webhook** e libere o produto ou serviço.
-
-Você acompanha tudo pelo [Dashboard](https://app.payments.bob.company) e pela API de transações.
-
-## Comece por aqui
-
-<CardGroup cols={2}>
-  <Card title="Guia rápido" icon="rocket" href="/pages/quickstart">
-    Crie sua primeira cobrança no sandbox em poucos minutos.
-  </Card>
-  <Card title="Fluxo de pagamento" icon="diagram-project" href="/pages/concepts/payment-flow">
-    Entenda o ciclo de vida de uma transação, do início à conciliação.
-  </Card>
-  <Card title="Formas de integração" icon="sliders" href="/pages/payments">
-    Compare checkout hospedado, SDK Checkout e API direta.
-  </Card>
-  <Card title="Referência da API" icon="book" href="/pages/pix/reference">
-    Endpoints, autenticação, erros e exemplos de requisição.
-  </Card>
-</CardGroup>
+        <div className="bob-entry-card">
+          <div className="bob-entry-title">
+            <span className="bob-entry-icon" aria-hidden="true">▥</span>
+            <h2>Referência da API</h2>
+          </div>
+          <a className="bob-entry-action" href="/pages/pix/create">Ver endpoints</a>
+          <ul>
+            <li>Autenticação por chave Bearer.</li>
+            <li>Sessões, transações e clientes.</li>
+            <li>Idempotência e códigos de erro.</li>
+            <li>Eventos e assinaturas de webhook.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
