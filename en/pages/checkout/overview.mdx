@@ -7,11 +7,11 @@ icon: "cart-shopping"
 If you don't want to build the payment screen, use the **hosted checkout**: your application creates a session via API and redirects the buyer to a Bob-hosted page. When they pay, you receive the webhook and the buyer returns to your `successUrl`.
 
 <Note>
-  Hosted checkout accepts methods **enabled on the project**: **PIX**, **crypto**, and **credit card (beta)**. Pass them in `paymentMethods` (default `["pix"]`).
+  Hosted checkout accepts methods **enabled on the project**: **PIX**, **crypto (beta)**, and **credit card (beta)**. Pass them in `paymentMethods` (default `["pix"]`).
 </Note>
 
 <Note>
-  To use credit card in hosted checkout, contact the sales team first to discuss and enable beta access: [talk on WhatsApp](https://wa.me/5521992614614) or [send an email](mailto:contato@payments.bob.company).
+  To use credit card or crypto in hosted checkout, contact the sales team first to discuss and enable beta access: [talk on WhatsApp](https://wa.me/5521992614614) or [send an email](mailto:contato@payments.bob.company).
 </Note>
 
 ## When to use each mode
@@ -62,7 +62,7 @@ If you don't want to build the payment screen, use the **hosted checkout**: your
 - **`expiresAt` belongs to the link, not the PIX** — the session lasts 24h by default; the PIX generated within it follows the expiration configured on the project.
 - **`paymentMethods` controls the displayed options** — use `["pix"]` (default), `["crypto"]`, `["credit_card"]`, or combinations (e.g. `["pix", "credit_card"]`). Only methods enabled on the project are accepted.
 - **Method not available** — session creation reports when a requested method is not enabled on the project.
-- **Crypto** — pass `crypto` in `paymentMethods`. The buyer is taken to the hosted crypto page via the same `checkoutUrl`; confirmation arrives via `transaction.paid` just like the other methods.
+- **Crypto (beta)** — pass `crypto` in `paymentMethods` only after talking to the sales team. The buyer is taken to the hosted crypto page via the same `checkoutUrl`; confirmation arrives via `transaction.paid` just like the other methods.
 - **Credit card** — pass `credit_card` in `paymentMethods`. Bob handles tokenization and 3DS in checkout. See [Credit card](/en/pages/credit-card/overview).
 - **Want to keep the buyer on your site?** Use the [Checkout SDK](/en/pages/sdk/checkout). It embeds Bob's checkout without exposing raw card data to your application.
 - **Sandbox works the same way** — create the session with `sk_test_` and the flow runs end to end in the test environment. See [Sandbox](/en/pages/sandbox).

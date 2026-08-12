@@ -6,7 +6,7 @@
     "strict": false
   },
   "name": "Bob Payments",
-  "description": "Documentação da API Bob Payments — uma integração para criar, acompanhar e conciliar pagamentos com PIX e cartão de crédito em beta, com suporte a novos métodos no futuro.",
+  "description": "Documentação da API Bob Payments — uma integração para criar, acompanhar e conciliar pagamentos com PIX, cartão de crédito e cripto em beta.",
   "logo": {
     "light": "/logo/bob-logo-sm.webp",
     "dark": "/logo/bob-logo-sm.webp",

@@ -7,11 +7,11 @@ icon: "cart-shopping"
 Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua aplicação cria uma sessão via API e redireciona o comprador para uma página da Bob. Quando pagar, você recebe o webhook e o comprador volta pra sua `successUrl`.
 
 <Note>
-  O checkout hospedado aceita os métodos **habilitados no projeto**: **PIX**, **cripto** e **cartão de crédito (beta)**. Informe-os em `paymentMethods` (default `["pix"]`).
+  O checkout hospedado aceita os métodos **habilitados no projeto**: **PIX**, **cripto (beta)** e **cartão de crédito (beta)**. Informe-os em `paymentMethods` (default `["pix"]`).
 </Note>
 
 <Note>
-  Para usar cartão de crédito no checkout hospedado, converse primeiro com o time de vendas para avaliar e habilitar o acesso beta: [falar pelo WhatsApp](https://wa.me/5521992614614) ou [enviar e-mail](mailto:contato@payments.bob.company).
+  Para usar cartão de crédito ou cripto no checkout hospedado, converse primeiro com o time de vendas para avaliar e habilitar o acesso beta: [falar pelo WhatsApp](https://wa.me/5521992614614) ou [enviar e-mail](mailto:contato@payments.bob.company).
 </Note>
 
 ## Quando usar cada modo
@@ -62,7 +62,7 @@ Se você não quer montar a tela de pagamento, use o **checkout hospedado**: sua
 - **`expiresAt` é do link, não do PIX** — a sessão dura 24h por padrão; o PIX gerado dentro dela segue a expiração configurada no projeto.
 - **`paymentMethods` controla as opções exibidas** — `["pix"]` (default), `["crypto"]`, `["credit_card"]` ou combinações (ex.: `["pix", "credit_card"]`). Só métodos habilitados no projeto são aceitos.
 - **Método não disponível** — a criação da sessão informa quando um método solicitado não está habilitado no projeto.
-- **Cripto** — informe `crypto` em `paymentMethods`. O comprador é levado à página hospedada de criptomoeda pela mesma `checkoutUrl`; a confirmação chega por `transaction.paid` como nos outros métodos.
+- **Cripto (beta)** — informe `crypto` em `paymentMethods` somente depois de falar com o time de vendas. O comprador é levado à página hospedada de criptomoeda pela mesma `checkoutUrl`; a confirmação chega por `transaction.paid` como nos outros métodos.
 - **Cartão de crédito** — informe `credit_card` em `paymentMethods`. A Bob cuida da tokenização e do 3DS no checkout. Veja [Cartão de crédito](/pages/credit-card/overview).
 - **Quer manter o comprador no seu site?** Use o [SDK Checkout](/pages/sdk/checkout). Ele embute o checkout da Bob sem expor os dados brutos do cartão à sua aplicação.
 - **Sandbox funciona igual** — crie a sessão com `sk_test_` e o fluxo roda de ponta a ponta no ambiente de teste. Veja [Sandbox](/pages/sandbox).
