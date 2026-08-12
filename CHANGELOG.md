@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.45](https://github.com/BobPayments/documentation/compare/v1.1.44...v1.1.45) (2026-08-12)
+
+### Documentação
+
+* use native Mintlify template ([#15](https://github.com/BobPayments/documentation/issues/15)) ([3431441](https://github.com/BobPayments/documentation/commit/3431441bd8b0815bbedf7217797987a6fbe66e75))
+
 ## [1.1.44](https://github.com/BobPayments/documentation/compare/v1.1.43...v1.1.44) (2026-08-12)
 
 ### Documentação
