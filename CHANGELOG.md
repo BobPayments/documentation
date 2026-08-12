@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.44](https://github.com/BobPayments/documentation/compare/v1.1.43...v1.1.44) (2026-08-12)
+
+### Documentação
+
+* restore previous visual and mark card beta ([#14](https://github.com/BobPayments/documentation/issues/14)) ([7e67257](https://github.com/BobPayments/documentation/commit/7e67257489fcdf4bfd27c410c43b3650392fcb59))
+
 ## [1.1.43](https://github.com/BobPayments/documentation/compare/v1.1.42...v1.1.43) (2026-08-06)
 
 ### Correções
