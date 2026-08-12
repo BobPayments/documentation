@@ -32,7 +32,11 @@ $bob->environment; // 'live' | 'sandbox' — detectado pelo prefixo da chave
 
 ## Criar uma sessão de checkout
 
-Use o checkout hospedado para a Bob apresentar a tela de pagamento (`pix`, `crypto`, `credit_card` — métodos habilitados no projeto):
+Use o checkout hospedado para a Bob apresentar a tela de pagamento (`pix`, `crypto` (beta), `credit_card` (beta) — métodos habilitados no projeto):
+
+<Note>
+  Para usar cripto ou cartão, fale com o time de vendas para avaliar e habilitar o projeto: [WhatsApp](https://wa.me/5521992614614) ou [e-mail](mailto:contato@payments.bob.company).
+</Note>
 
 ```php
 $session = $bob->checkoutSessions->create([

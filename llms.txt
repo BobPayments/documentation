@@ -1,6 +1,6 @@
 # Bob Payments
 
-> A infraestrutura de pagamentos para o seu produto. Aceite PIX e cartão de crédito em beta via checkout hospedado, SDK embutível ou API REST direta, com clientes, sessões de checkout e webhooks em tempo real.
+> A infraestrutura de pagamentos para o seu produto. Aceite PIX e avalie cartão de crédito e cripto em beta via checkout hospedado, SDK embutível ou API REST direta, com clientes, sessões de checkout e webhooks em tempo real.
 
 ## Primeiros passos
 

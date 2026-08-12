@@ -32,7 +32,11 @@ $bob->environment; // 'live' | 'sandbox' — detected from the key prefix
 
 ## Create a checkout session
 
-Use the hosted checkout when you want Bob to present the payment screen. Methods enabled on the project (`pix`, `crypto`, `credit_card`):
+Use the hosted checkout when you want Bob to present the payment screen. Methods enabled on the project (`pix`, `crypto` (beta), `credit_card` (beta)):
+
+<Note>
+  To use crypto or card, contact the sales team to discuss and enable the project: [WhatsApp](https://wa.me/5521992614614) or [email](mailto:contato@payments.bob.company).
+</Note>
 
 ```php
 $session = $bob->checkoutSessions->create([

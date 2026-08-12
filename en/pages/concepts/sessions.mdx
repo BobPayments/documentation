@@ -4,7 +4,7 @@ description: "The resource that connects the customer to the payment and loads t
 icon: "receipt"
 ---
 
-A **checkout session** connects the customer to the payment, stores the charge details, and loads the available methods (**PIX**, **crypto**, and **card**, depending on what's enabled on the project). You create a session for each charge when you use the **hosted checkout** or the **Checkout SDK**.
+A **checkout session** connects the customer to the payment, stores the charge details, and loads the available methods (**PIX**, **crypto (beta)**, and **card (beta)**, depending on what's enabled on the project). You create a session for each charge when you use the **hosted checkout** or the **Checkout SDK**.
 
 <Note>
   Server-to-server integrations that use **PIX directly via the API** can skip the session and create the transaction directly.
@@ -17,7 +17,7 @@ You define the charge when creating the session:
 | Field | Description |
 |---|---|
 | `amountCents` | Amount charged, always in cents. It is the final charge amount. |
-| `paymentMethods` | Methods shown to the buyer: `pix` (default), `crypto`, `credit_card` (and combinations), if enabled on the project. |
+| `paymentMethods` | Methods shown to the buyer: `pix` (default), `crypto` (beta), `credit_card` (beta), and combinations, if enabled on the project. |
 | `items` | Display metadata for the order — does not change the amount charged. |
 | `successUrl` | Where the buyer returns after paying. |
 | `webhookUrl` / `webhookVersion` | Endpoint that receives the signed confirmation. |
