@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.46](https://github.com/BobPayments/documentation/compare/v1.1.45...v1.1.46) (2026-08-12)
+
+### Documentação
+
+* route beta payment leads to sales ([#16](https://github.com/BobPayments/documentation/issues/16)) ([8e89543](https://github.com/BobPayments/documentation/commit/8e89543a2a1740891429a7085a67c5a67938d84c))
+
 ## [1.1.45](https://github.com/BobPayments/documentation/compare/v1.1.44...v1.1.45) (2026-08-12)
 
 ### Documentação
