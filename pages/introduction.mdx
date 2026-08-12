@@ -1,83 +1,104 @@
 ---
-title: "Introdução"
-description: "Integre PIX e cartão de crédito com checkout hospedado, SDK Checkout ou API direta."
-mode: "wide"
+title: "Comece aqui"
+description: "Uma integração para criar, acompanhar e conciliar pagamentos com PIX e cartão de crédito em beta."
+icon: "house"
 ---
 
-<div className="bob-home not-prose">
-  <section className="bob-hero">
-    <div className="bob-hero-rings" aria-hidden="true"></div>
-    <div className="bob-hero-content">
-      <div className="bob-hero-copy">
-        <p className="bob-hero-kicker">
-          <span className="bob-kicker-dot" aria-hidden="true"></span>
-          Documentação para developers
-        </p>
-        <h1>Pagamentos que encaixam no seu produto</h1>
-        <p className="bob-hero-description">
-          Integre PIX e cartão de crédito (beta) com checkout hospedado, SDK Checkout ou API direta.
-        </p>
-        <a className="bob-hero-button" href="/pages/quickstart">
-          Começar a integrar <span aria-hidden="true">→</span>
-        </a>
-      </div>
-    </div>
-  </section>
+A Bob Payments é uma plataforma de pagamentos. Você integra uma vez e usa a mesma base para criar cobranças e receber a confirmação quando o pagamento acontecer.
 
-  <div className="bob-home-surface">
-    <div className="bob-home-container">
-      <a className="bob-feature-banner" href="/pages/sdk/overview">
-        <span className="bob-feature-icon" aria-hidden="true">&lt;/&gt;</span>
-        <span className="bob-feature-copy">
-          <span className="bob-feature-title">SDKs oficiais</span>
-          <span>Integre no backend ou incorpore o checkout ao seu site.</span>
-        </span>
-        <span className="bob-feature-button">Explorar SDKs <span aria-hidden="true">→</span></span>
-      </a>
+<Note>
+  A integração com cartão de crédito está em **beta** e depende da habilitação no projeto. **PIX** continua disponível normalmente.
+</Note>
 
-      <div className="bob-entry-grid">
-        <div className="bob-entry-card">
-          <div className="bob-entry-title">
-            <span className="bob-entry-icon" aria-hidden="true">↗</span>
-            <h2>Comece com a Bob</h2>
-          </div>
-          <a className="bob-entry-action" href="/pages/quickstart">Ver guia rápido</a>
-          <ul>
-            <li>Entenda o fluxo de pagamento.</li>
-            <li>Crie sua primeira sessão no sandbox.</li>
-            <li>Confirme o resultado por webhook.</li>
-            <li>Prepare sua integração para produção.</li>
-          </ul>
-        </div>
+## <Icon icon="buildings" type="solid" /> O que é a Bob Payments?
 
-        <div className="bob-entry-card">
-          <div className="bob-entry-title">
-            <span className="bob-entry-icon" aria-hidden="true">&lt;/&gt;</span>
-            <h2>Formas de integração</h2>
-          </div>
-          <a className="bob-entry-action" href="/pages/payments">Escolher integração</a>
-          <ul>
-            <li>Checkout hospedado para começar rápido.</li>
-            <li>SDK Checkout dentro do seu site.</li>
-            <li>API direta para controlar o fluxo de PIX.</li>
-            <li>SDKs de servidor para Node.js e PHP.</li>
-          </ul>
-        </div>
+Você pode oferecer PIX e cartão de crédito. A Bob cuida do processamento e da confirmação, enquanto a sua aplicação trabalha com uma experiência consistente. Novos métodos, como cripto, serão adicionados à mesma arquitetura quando estiverem disponíveis.
 
-        <div className="bob-entry-card">
-          <div className="bob-entry-title">
-            <span className="bob-entry-icon" aria-hidden="true">▥</span>
-            <h2>Referência da API</h2>
-          </div>
-          <a className="bob-entry-action" href="/pages/pix/create">Ver endpoints</a>
-          <ul>
-            <li>Autenticação por chave Bearer.</li>
-            <li>Sessões, transações e clientes.</li>
-            <li>Idempotência e códigos de erro.</li>
-            <li>Eventos e assinaturas de webhook.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+Para oferecer PIX e cartão com uma única tela, crie uma sessão de checkout no seu backend:
+
+```javascript
+const response = await fetch('https://api.payments.bob.company/api/v1/checkout-sessions/', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sk_test_sua_chave',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    amountCents: 10000, // R$ 100,00 — sempre centavos
+    items: [{ name: 'Plano Premium', quantity: 1, unitAmountCents: 10000 }],
+    paymentMethods: ['pix', 'credit_card'],
+    successUrl: 'https://loja.example.com/pedido/sucesso',
+    webhookUrl: 'https://loja.example.com/webhooks/bob',
+  }),
+});
+
+const { data } = await response.json();
+console.log(data.checkoutUrl); // redirecione o comprador para esta URL
+```
+
+```json
+{
+  "success": true,
+  "message": "Checkout session created successfully",
+  "data": {
+    "sessionId": "sess_...",
+    "checkoutToken": "chk_...",
+    "checkoutUrl": "https://checkout.payments.bob.company/...",
+    "status": "PENDING"
+  }
+}
+```
+
+## <Icon icon="signs-post" type="solid" /> Escolha o seu caminho
+
+<CardGroup cols={2}>
+  <Card title="Pagamentos" icon="wallet" href="/pages/payments">
+    Escolha o método e o caminho de integração mais adequado para o seu produto.
+  </Card>
+  <Card title="API direta de PIX" icon="code" href="/pages/pix/create">
+    Receba o `pixCode` e monte a experiência de pagamento do seu jeito.
+  </Card>
+  <Card title="Cartão de crédito (beta)" icon="credit-card" href="/pages/credit-card/overview">
+    Aceite cartão pelo checkout hospedado ou SDK embutível, com tokenização segura.
+  </Card>
+  <Card title="Checkout hospedado" icon="cart-shopping" href="/pages/checkout/overview">
+    Uma chamada + redirect. A Bob cuida da tela de pagamento, métodos disponíveis e confirmação.
+  </Card>
+  <Card title="SDK Node.js" icon="node-js" href="/pages/sdk/node">
+    Tipos completos, idempotência automática e webhooks verificados em uma biblioteca oficial.
+  </Card>
+</CardGroup>
+
+## <Icon icon="laptop" type="solid" /> Como funciona
+
+Duas coisas que você vai notar rápido:
+
+1. **Endpoints que falam por si** — sem abstrações desnecessárias
+   ```
+   POST /api/v1/transactions/        // cria transação PIX
+   GET  /api/v1/transactions/{id}    // consulta status
+   POST /api/v1/checkout-sessions/   // checkout hospedado
+   GET  /api/v1/customers/           // lista clientes
+   ```
+
+2. **Valores sempre em centavos, resposta sempre no mesmo formato** — `10000` = R$ 100,00, em toda a API. Sucesso vem em `{ success, data }`; erro vem em [RFC 7807](/pages/errors) com código estável.
+
+## <Icon icon="list-check" type="solid" /> Próximos passos
+
+<Steps>
+  <Step title="Gere sua chave de teste">
+    [Autenticação](/pages/authentication) — crie a `sk_test_` no Dashboard.
+  </Step>
+  <Step title="Rode o fluxo no sandbox">
+    [Sandbox](/pages/sandbox) — crie, pague e expire cobranças sem dinheiro real.
+  </Step>
+  <Step title="Configure os métodos">
+    [PIX](/pages/pix/reference) e [cartão de crédito (beta)](/pages/credit-card/overview) — publique uma rota para cada método que você vai aceitar.
+  </Step>
+  <Step title="Configure webhooks">
+    [Webhooks](/pages/webhooks) — saiba na hora quando o pagamento cair.
+  </Step>
+  <Step title="Vá para produção">
+    [Indo para produção](/pages/production) — o checklist antes de trocar a chave.
+  </Step>
+</Steps>
