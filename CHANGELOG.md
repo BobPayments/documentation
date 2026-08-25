@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.50](https://github.com/BobPayments/documentation/compare/v1.1.49...v1.1.50) (2026-08-25)
+
+### Documentação
+
+* enrich PIX documentation navigation ([#21](https://github.com/BobPayments/documentation/issues/21)) ([0cb7210](https://github.com/BobPayments/documentation/commit/0cb7210495856c7662d81a4319a8d04ae2a25998))
+
 ## [1.1.49](https://github.com/BobPayments/documentation/compare/v1.1.48...v1.1.49) (2026-08-25)
 
 ### Documentação
