@@ -1,70 +1,92 @@
 ---
-title: "Integre pagamentos PIX"
-description: "Crie uma cobrança, apresente o PIX e confirme o pagamento no seu backend."
-icon: "house"
+title: "Integre PIX em 2 passos"
+sidebarTitle: "PIX em 2 passos"
+description: "Uma requisição cria o PIX. Um webhook confirma o pagamento."
+icon: "bolt"
 ---
 
-Você precisa implementar três ações:
+Você precisa de uma chave de API e duas ações no backend.
 
-1. Criar uma transação no seu backend.
-2. Apresentar o `pixCode` ao comprador.
-3. Confirmar o pagamento pelo webhook `transaction.paid`.
+<Columns cols={2}>
+  <Card title="1. Crie o PIX" icon="qr-code" href="/pages/pix/create" cta="Ver chamada" arrow="true">
+    Envie `POST /api/v1/transactions/` e mostre o `pixCode` retornado.
+  </Card>
+  <Card title="2. Confirme o pagamento" icon="bell" href="/pages/webhooks" cta="Ver webhook" arrow="true">
+    Receba `transaction.paid` e libere o pedido.
+  </Card>
+</Columns>
 
-<Card title="Faça o primeiro teste" icon="bolt" href="/pages/quickstart" horizontal>
-  Crie e confirme uma cobrança no sandbox usando a API REST.
-</Card>
+## Comece com uma chave de teste
 
-## O fluxo completo
+No [Dashboard](https://app.payments.bob.company), abra o projeto e acesse **Chaves de API**.
 
-<Steps>
-  <Step title="Obtenha uma chave de teste">
-    Crie uma chave `sk_test_` no Dashboard. Use a chave somente no backend.
-  </Step>
-  <Step title="Crie a transação">
-    Envie o valor, a descrição e os dados do comprador para `POST /api/v1/transactions/`.
-  </Step>
-  <Step title="Apresente o PIX">
-    Use o `pixCode` da resposta para mostrar o código copia-e-cola ou gerar um QR Code.
-  </Step>
-  <Step title="Confirme o pagamento">
-    Receba `transaction.paid` em um endpoint HTTPS. Valide a assinatura antes de liberar o pedido.
-  </Step>
-  <Step title="Troque para produção">
-    Depois de validar o fluxo no sandbox, substitua `sk_test_` por `sk_live_`.
-  </Step>
-</Steps>
+Crie uma chave `sk_test_`. Ela não movimenta dinheiro real.
 
-## Chame a API pelo backend
-
-Use qualquer cliente HTTP para chamar a API REST:
-
-```text
-https://api.payments.bob.company
+```bash
+export BOB_API_KEY=sk_test_sua_chave
 ```
 
-Envie a chave no header `Authorization` e consulte os campos de cada operação na [Referência da API](/pages/pix/create).
+<Warning>
+  Guarde a chave somente no backend.
+</Warning>
 
-## Regras que evitam erros
+## Crie sua primeira cobrança
 
-- Envie valores em centavos. `10000` representa R$ 100,00.
-- Nunca exponha `sk_test_` ou `sk_live_` no navegador.
-- Use `Idempotency-Key` ao criar uma transação pela API REST.
-- Trate `transaction.paid` como a confirmação do pagamento.
-- Processe webhooks de forma idempotente, pois uma entrega pode se repetir.
+Esta chamada retorna o `pixCode` que você mostra ao comprador:
 
-## Continue a integração
+```bash
+curl --request POST \
+  --url https://api.payments.bob.company/api/v1/transactions/ \
+  --header "Authorization: Bearer $BOB_API_KEY" \
+  --header "Content-Type: application/json" \
+  --header "Idempotency-Key: pedido-123" \
+  --data '{
+    "customer": {
+      "name": "João Silva",
+      "document": "12345678901",
+      "documentType": "CPF",
+      "email": "joao@example.com",
+      "address": {
+        "street": "Rua das Flores",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "zipCode": "01310-100",
+        "city": "São Paulo",
+        "state": "SP"
+      }
+    },
+    "payment": {
+      "amountCents": 10000,
+      "product": "Pedido 123"
+    },
+    "originDomain": "loja.example.com"
+  }'
+```
 
-<CardGroup cols={2}>
-  <Card title="Criar o primeiro pagamento" icon="bolt" href="/pages/quickstart">
-    Valide a API e o sandbox em poucos minutos.
+O valor `10000` representa R$ 100,00.
+
+## Confirme pelo webhook
+
+Cadastre uma URL HTTPS no Dashboard. Quando o pagamento for confirmado, seu backend recebe:
+
+```json
+{
+  "event": "transaction.paid",
+  "data": {
+    "transactionId": "clx1abc123",
+    "externalId": "pedido-123",
+    "amountCents": 10000
+  }
+}
+```
+
+Valide a assinatura e libere o pedido uma única vez.
+
+<Columns cols={2}>
+  <Card title="Ver a criação da cobrança" icon="code" href="/pages/pix/create">
+    Consulte todos os campos e respostas da API.
   </Card>
-  <Card title="Implementar o fluxo completo" icon="diagram-project" href="/pages/payments">
-    Conecte criação, interface, confirmação e estados.
+  <Card title="Configurar o webhook" icon="bell" href="/pages/webhooks">
+    Cadastre o endpoint e valide a assinatura.
   </Card>
-  <Card title="Configurar webhooks" icon="bell" href="/pages/webhooks">
-    Receba e valide a confirmação no seu servidor.
-  </Card>
-  <Card title="Consultar a API" icon="code" href="/pages/pix/create">
-    Veja todos os campos da operação de criação.
-  </Card>
-</CardGroup>
+</Columns>

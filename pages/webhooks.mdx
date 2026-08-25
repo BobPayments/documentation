@@ -1,49 +1,62 @@
 ---
-title: "Confirme pagamentos com webhooks"
-description: "Receba eventos assinados e atualize o pedido sem consultar a API continuamente."
+title: "Webhooks"
+description: "Receba e valide a confirmação de um pagamento."
 icon: "bell"
 ---
 
-O pagamento acontece de forma assíncrona. Use `transaction.paid` como a confirmação para liberar o pedido.
+Use o webhook `transaction.paid` para confirmar o pagamento. Não libere o pedido apenas porque a criação da transação retornou sucesso.
 
-## Configure o endpoint
+## Configure
 
-<Steps>
-  <Step title="Crie uma rota HTTPS">
-    Prepare uma rota pública, como `POST https://api.sualoja.com/webhooks/bob`.
-  </Step>
-  <Step title="Adicione o webhook no Dashboard">
-    Abra **Webhooks**, clique em **Adicionar webhook** e informe a URL.
-  </Step>
-  <Step title="Use a versão v2">
-    Canais novos usam v2. Essa versão envia valores em centavos e protege contra replay.
-  </Step>
-  <Step title="Guarde o secret">
-    Salve o secret do webhook em uma variável protegida, como `BOB_WEBHOOK_SECRET`.
-  </Step>
-</Steps>
+1. Crie uma rota pública HTTPS, como `POST https://api.sualoja.com/webhooks/bob`.
+2. No Dashboard, abra **Webhooks** e clique em **Adicionar webhook**.
+3. Informe a URL e use a versão v2.
+4. Guarde o secret em `BOB_WEBHOOK_SECRET` no seu backend.
 
-O sandbox envia eventos para o mesmo endpoint. O campo `data.isSandbox` diferencia os testes de produção.
+O sandbox usa o mesmo endpoint. O campo `data.isSandbox` identifica eventos de teste.
+
+## Receba o evento
+
+```json
+{
+  "event": "transaction.paid",
+  "apiVersion": "v2",
+  "type": "transaction",
+  "data": {
+    "transactionId": "clx1abc123",
+    "externalId": "pedido-123",
+    "amountCents": 15000,
+    "paymentMethod": "pix",
+    "isSandbox": true
+  },
+  "timestamp": "2026-08-25T14:35:00.000Z"
+}
+```
+
+| Evento | O que fazer |
+|---|---|
+| `transaction.created` | Registre a criação da cobrança. |
+| `transaction.paid` | Confirme o pedido uma única vez. |
+| `transaction.expired` | Encerre a cobrança e ofereça outra. |
+| `transaction.cancelled` | Encerre a cobrança. |
+| `transaction.refunded` | Marque o pedido como reembolsado. |
+| `transaction.failed` | Registre a falha e ofereça outra tentativa. |
 
 ## Valide a assinatura
 
-Use o corpo bruto da requisição. Se o framework converter o corpo para JSON antes da validação, a assinatura pode falhar.
+O header `X-Webhook-Signature` tem este formato:
 
-O header `X-Webhook-Signature` tem o formato `t=<unix>,v1=<hmac>`. A assinatura é o HMAC-SHA256 de `timestamp + "." + corpo_bruto`.
+```text
+t=<timestamp-unix>,v1=<hmac>
+```
 
-Sua validação precisa:
+Calcule o HMAC-SHA256 de `timestamp + "." + corpo_bruto` com o secret do webhook. Compare o resultado com `v1` e aceite timestamps com no máximo cinco minutos.
 
-1. Extrair o timestamp e o HMAC do header.
-2. Calcular o HMAC com o secret do webhook e o corpo bruto.
-3. Comparar as assinaturas em tempo constante.
-4. Rejeitar timestamps com mais de cinco minutos.
-
-<CodeGroup>
-```javascript Node.js
+```javascript
 import crypto from 'node:crypto';
 
-export function verifyWebhook(rawBody, signatureHeader, secret, tolerance = 300) {
-  const match = signatureHeader?.match(/^t=(\d+),v1=([0-9a-f]{64})$/);
+function verifyWebhook(rawBody, signature, secret) {
+  const match = signature?.match(/^t=(\d+),v1=([0-9a-f]{64})$/);
   if (!match) return false;
 
   const [, timestamp, received] = match;
@@ -55,110 +68,18 @@ export function verifyWebhook(rawBody, signatureHeader, secret, tolerance = 300)
 
   const receivedBuffer = Buffer.from(received, 'hex');
   const expectedBuffer = Buffer.from(expected, 'hex');
-  const fresh = Math.abs(Date.now() / 1000 - Number(timestamp)) <= tolerance;
+  const fresh = Math.abs(Date.now() / 1000 - Number(timestamp)) <= 300;
 
-  return receivedBuffer.length === expectedBuffer.length
-    && crypto.timingSafeEqual(receivedBuffer, expectedBuffer)
-    && fresh;
+  return fresh
+    && receivedBuffer.length === expectedBuffer.length
+    && crypto.timingSafeEqual(receivedBuffer, expectedBuffer);
 }
 ```
-
-```php PHP
-function verifyWebhook(
-    string $rawBody,
-    ?string $signatureHeader,
-    string $secret,
-    int $tolerance = 300
-): bool {
-    if (!preg_match('/^t=(\d+),v1=([0-9a-f]{64})$/', $signatureHeader ?? '', $matches)) {
-        return false;
-    }
-
-    $timestamp = $matches[1];
-    $received = $matches[2];
-    $expected = hash_hmac('sha256', $timestamp . '.' . $rawBody, $secret);
-    $fresh = abs(time() - (int) $timestamp) <= $tolerance;
-
-    return hash_equals($expected, $received) && $fresh;
-}
-```
-</CodeGroup>
 
 <Warning>
-  Valide os bytes originais do corpo. Nunca calcule a assinatura sobre um JSON reserializado.
+  Valide o corpo bruto recebido. Não transforme o JSON antes de calcular a assinatura.
 </Warning>
 
-## Processe o evento
+Depois de validar, processe o evento e responda com HTTP `2xx`. A Bob pode enviar o mesmo evento novamente. Use `data.transactionId` e `event` para evitar processamento duplicado.
 
-Depois de validar a assinatura, converta o corpo para JSON e trate o evento:
-
-```javascript
-if (!verifyWebhook(rawBody, signatureHeader, process.env.BOB_WEBHOOK_SECRET)) {
-  return response.status(401).send('invalid signature');
-}
-
-const event = JSON.parse(rawBody.toString('utf8'));
-
-if (event.event === 'transaction.paid') {
-  await confirmOrderOnce(event.data.transactionId);
-}
-
-return response.status(200).send('ok');
-```
-
-## Entenda o payload v2
-
-```json
-{
-  "event": "transaction.paid",
-  "apiVersion": "v2",
-  "type": "transaction",
-  "data": {
-    "transactionId": "clx1abc123",
-    "externalId": "pedido-001",
-    "amountCents": 15000,
-    "product": "Pedido 123",
-    "paymentMethod": "pix",
-    "customerName": "João Silva",
-    "isSandbox": true,
-    "createdAt": "2026-08-25T14:30:00.000Z"
-  },
-  "timestamp": "2026-08-25T14:35:00.000Z"
-}
-```
-
-Use `event` para decidir a ação e `data.transactionId` para deduplicar o processamento.
-
-## Trate os eventos necessários
-
-| Evento | Ação recomendada |
-|---|---|
-| `transaction.created` | Registrar que a cobrança foi criada |
-| `transaction.paid` | Confirmar o pedido uma única vez |
-| `transaction.expired` | Encerrar a tentativa e oferecer outra cobrança |
-| `transaction.cancelled` | Encerrar a tentativa |
-| `transaction.refunded` | Atualizar o pedido como reembolsado |
-| `transaction.failed` | Registrar a falha e orientar uma nova tentativa |
-
-## Responda com segurança
-
-- Valide `X-Webhook-Signature` antes de processar o evento.
-- Grave ou enfileire o evento antes de responder HTTP `2xx`.
-- Deduplique por `transactionId` e tipo do evento.
-- Não libere um pedido com base apenas no conteúdo da tela do comprador.
-- Registre falhas sem salvar o secret ou dados pessoais desnecessários.
-
-## Migre canais v1
-
-A versão v1 é legada. Ela usa `data.amount` em reais e uma assinatura HMAC simples, sem proteção contra replay. A versão v2 usa `data.amountCents`, inclui `apiVersion: "v2"` e assina também o timestamp.
-
-Atualize o canal para v2 somente depois que o consumidor aceitar o novo payload. Canais novos já usam v2.
-
-<CardGroup cols={2}>
-  <Card title="Testar no sandbox" icon="flask" href="/pages/sandbox">
-    Dispare eventos de pagamento e expiração.
-  </Card>
-  <Card title="Revisar idempotência" icon="rotate" href="/pages/idempotency">
-    Evite efeitos duplicados em criações e eventos.
-  </Card>
-</CardGroup>
+Para testar, crie uma transação com `sk_test_` e use a operação [Simular pagamento](/pages/pix/simulate-payment).
