@@ -275,8 +275,31 @@
             "group": "Comece aqui",
             "pages": [
               "pages/introduction",
-              "pages/authentication",
-              "pages/webhooks"
+              "pages/quickstart",
+              "pages/authentication"
+            ]
+          },
+          {
+            "group": "Pagamentos PIX",
+            "pages": [
+              "pages/payments",
+              "pages/webhooks",
+              "pages/sandbox",
+              "pages/production"
+            ]
+          },
+          {
+            "group": "Consultas",
+            "pages": [
+              "pages/concepts/transactions",
+              "pages/concepts/customers"
+            ]
+          },
+          {
+            "group": "Boas práticas",
+            "pages": [
+              "pages/idempotency",
+              "pages/errors"
             ]
           }
         ]
@@ -287,6 +310,7 @@
           {
             "group": "Transações",
             "pages": [
+              "pages/pix/reference",
               "pages/pix/create",
               "pages/pix/list",
               "pages/pix/check-status"
@@ -295,6 +319,7 @@
           {
             "group": "Clientes",
             "pages": [
+              "pages/customers/reference",
               "pages/customers/get",
               "pages/customers/list"
             ]
@@ -302,6 +327,7 @@
           {
             "group": "Projeto",
             "pages": [
+              "pages/store/reference",
               "pages/store/get"
             ]
           },
