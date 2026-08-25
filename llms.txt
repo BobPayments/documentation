@@ -2,25 +2,45 @@
 
 > API pública para criar, acompanhar e conciliar pagamentos PIX. Use somente no backend.
 
-## Integração
+## Comece aqui
 
-- [Integre PIX em 2 passos](/pages/introduction): Crie o PIX com uma requisição e confirme o pagamento por webhook
+- [Visão geral](/pages/introduction): Identifique os caminhos para pagamentos PIX, webhooks e consultas
+- [Crie seu primeiro pagamento](/pages/quickstart): Crie e confirme uma cobrança no sandbox usando a API REST
 - [Chaves de API](/pages/authentication): Use `sk_test_` e `sk_live_` no header `Authorization`
+
+## Pagamentos PIX
+
+- [Implemente o fluxo de pagamento](/pages/payments): Conecte criação, apresentação do PIX, estados e confirmação
 - [Webhooks](/pages/webhooks): Receba, valide e processe eventos de pagamento
+- [Teste no sandbox](/pages/sandbox): Simule pagamento, expiração e pendência sem movimentar dinheiro real
+- [Vá para produção](/pages/production): Revise segurança, idempotência, erros e monitoramento
+
+## Consultas
+
+- [Transações](/pages/concepts/transactions): Entenda os estados, consulte por ID ou liste as transações do projeto
+- [Clientes](/pages/concepts/customers): Entenda o recurso e consulte os clientes do projeto
+
+## Boas práticas
+
+- [Idempotência](/pages/idempotency): Repita criações com segurança usando `Idempotency-Key`
+- [Erros](/pages/errors): Trate os erros retornados pela API
 
 ## Referência da API — Transações
 
+- [Estrutura da cobrança PIX](/pages/pix/reference): Consulte atributos e estados da transação
 - [Criar cobrança](/pages/pix/create): `POST /api/v1/transactions/`
 - [Listar transações](/pages/pix/list): `GET /api/v1/transactions/`
 - [Consultar status](/pages/pix/check-status): `GET /api/v1/transactions/{id}`
 
 ## Referência da API — Clientes
 
+- [Estrutura do cliente](/pages/customers/reference): Consulte os dados do comprador
 - [Listar clientes](/pages/customers/list): `GET /api/v1/customers/`
 - [Buscar cliente por ID](/pages/customers/get): `GET /api/v1/customers/{id}`
 
 ## Referência da API — Projeto e sandbox
 
+- [Estrutura do projeto](/pages/store/reference): Consulte as configurações públicas do projeto
 - [Consultar o projeto](/pages/store/get): `GET /api/v1/store/`
 - [Simular pagamento](/pages/pix/simulate-payment): `POST /api/v1/sandbox/transactions/{transactionId}/pay`
 
