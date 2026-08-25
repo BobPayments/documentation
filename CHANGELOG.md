@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.49](https://github.com/BobPayments/documentation/compare/v1.1.48...v1.1.49) (2026-08-25)
+
+### Documentação
+
+* simplify PIX API integration guide ([#19](https://github.com/BobPayments/documentation/issues/19)) ([925578e](https://github.com/BobPayments/documentation/commit/925578ed211c65be4feffc0655f90c52c4462c14))
+
 ## [1.1.48](https://github.com/BobPayments/documentation/compare/v1.1.47...v1.1.48) (2026-08-25)
 
 ### Documentação
