@@ -2,3 +2,19 @@
 title: "Simular pagamento"
 openapi: "POST /api/v1/sandbox/transactions/{transactionId}/pay"
 ---
+
+Use uma chave `sk_test_` para criar e confirmar transações isoladas de produção. A URL e o contrato da API não mudam.
+
+## Escolha o resultado pelo valor
+
+Os dois últimos dígitos de `amountCents` controlam o resultado automático:
+
+| `amountCents` | Resultado no sandbox |
+|---|---|
+| Termina em `00`, como `10000` | Muda para `paid` em cerca de 5 segundos |
+| Termina em `01`, como `10001` | Muda para `expired` em cerca de 5 segundos |
+| Termina em `02`, como `10002` | Continua em `waiting_payment` até expirar |
+
+Cada mudança também envia o webhook correspondente ao projeto. O campo `data.isSandbox: true` identifica eventos de teste.
+
+Este endpoint aceita somente `sk_test_`. Ele muda a transação para `paid` e envia `transaction.paid`.

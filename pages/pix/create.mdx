@@ -1,4 +1,59 @@
 ---
-title: "Criar cobrança"
+title: "Criar uma nova cobrança"
 openapi: "POST /api/v1/transactions/"
 ---
+
+## Idempotência
+
+Timeouts e falhas de rede deixam a dúvida: a cobrança foi criada ou não? Envie um identificador único por pedido no header `Idempotency-Key`.
+
+| Cenário | O que acontece |
+|---|---|
+| Primeira requisição com a chave | Processada normalmente. A resposta 2xx fica guardada por **1 hora**. |
+| Repetição com a mesma chave e o mesmo body | A API replaya a resposta original, com `x-idempotent-replayed: true`. Nenhuma cobrança nova é criada. |
+| Repetição enquanto a original ainda processa | `409 Conflict`. Aguarde cerca de 1s e repita com a mesma chave. |
+| Mesma chave com body diferente | `422`. Cada requisição distinta precisa de uma chave nova. |
+| Requisição que terminou em erro (4xx/5xx) | A chave é liberada. Repetir re-executa a criação. |
+
+<Note>
+  O escopo da chave é o seu projeto. Use até 256 caracteres. Um UUID ou o ID do pedido são boas escolhas. Ao repetir após timeout, use a mesma chave da tentativa original.
+</Note>
+
+## HTTP 202
+
+`202` não é erro. O PIX foi gerado, mas a persistência ainda está em reconciliação:
+
+- `data.id` pode vir `null`. Use `data.externalId` como referência.
+- O `pixCode` é válido e pagável. Entregue ao comprador normalmente.
+- A transação aparece na listagem em alguns minutos.
+
+A criação pode levar até **30 segundos**. Configure o timeout do cliente HTTP acima disso.
+
+## Erros
+
+Toda resposta 4xx/5xx segue o [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807):
+
+```json
+{
+  "type": "ERR_INTEGRATION_006",
+  "title": "Método não disponível",
+  "status": 422,
+  "detail": "O método de pagamento informado não está habilitado no projeto.",
+  "instance": "/api/v1/transactions"
+}
+```
+
+Trate erros pelo `status` + `type`. As mensagens podem mudar; os códigos não.
+
+| Status | O que fazer |
+|---|---|
+| `400` | Não repita sem corrigir. Veja `details.issues`. |
+| `401` | Confira o header `Authorization: Bearer sk_...`. |
+| `403` | Cheque o tipo da chave e o modo do projeto. |
+| `404` | ID errado ou de outro projeto. |
+| `409` | Aguarde ~1s e repita com a mesma `Idempotency-Key`. |
+| `422` | Corrija a causa de negócio antes de repetir. |
+| `429` | Aguarde o header `Retry-After`. |
+| `500` / `503` | Repita com backoff e a mesma `Idempotency-Key`. |
+
+Não use o retorno da criação como confirmação financeira. Libere o pedido só depois de `transaction.paid`. [Veja como validar o webhook](/pages/webhooks).

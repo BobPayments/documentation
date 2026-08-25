@@ -99,16 +99,16 @@ Confirme que o campo `status` tem o valor `paid`.
 ## Próximos passos
 
 <CardGroup cols={2}>
-  <Card title="Implementar o fluxo completo" icon="diagram-project" href="/pages/payments">
-    Saiba o que fica no backend e o que aparece para o comprador.
-  </Card>
-  <Card title="Configurar webhooks" icon="bell" href="/pages/webhooks">
-    Confirme pagamentos sem consultar o status continuamente.
-  </Card>
-  <Card title="Explorar o sandbox" icon="flask" href="/pages/sandbox">
-    Teste pagamento, expiração e pendência.
-  </Card>
   <Card title="Consultar a operação" icon="code" href="/pages/pix/create">
-    Veja os campos e respostas de criação.
+    Veja os campos, a idempotência e as respostas de criação.
+  </Card>
+  <Card title="Consultar o status" icon="magnifying-glass" href="/pages/pix/check-status">
+    Verifique o estado atual de uma transação.
+  </Card>
+  <Card title="Simular pagamento" icon="flask" href="/pages/pix/simulate-payment">
+    Confirme, expire ou mantenha pendente no sandbox.
+  </Card>
+  <Card title="Configurar o webhook" icon="bell" href="/pages/webhooks">
+    Valide a assinatura e libere o pedido com `transaction.paid`.
   </Card>
 </CardGroup>
