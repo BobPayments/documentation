@@ -1,389 +1,164 @@
 ---
-title: "Configurar webhooks"
-description: "Receba notificações automáticas quando eventos acontecem no seu projeto."
+title: "Confirme pagamentos com webhooks"
+description: "Receba eventos assinados e atualize o pedido sem consultar a API continuamente."
 icon: "bell"
 ---
 
-Webhooks permitem que sua aplicação seja notificada automaticamente quando eventos ocorrem — como um pagamento confirmado ou uma transação expirada. Em vez de fazer polling, a Bob Payments avisa você.
+O pagamento acontece de forma assíncrona. Use `transaction.paid` como a confirmação para liberar o pedido.
 
-## Configurando um webhook
+## Configure o endpoint
 
 <Steps>
-  <Step title="Acesse o Dashboard">
-    Vá em **Webhooks → Adicionar webhook** no seu projeto.
+  <Step title="Crie uma rota HTTPS">
+    Prepare uma rota pública, como `POST https://api.sualoja.com/webhooks/bob`.
   </Step>
-  <Step title="Informe a URL">
-    Insira a URL HTTPS da sua aplicação que receberá os eventos (ex: `https://suaapi.com/webhooks/bob`).
+  <Step title="Adicione o webhook no Dashboard">
+    Abra **Webhooks**, clique em **Adicionar webhook** e informe a URL.
   </Step>
-  <Step title="Copie o secret">
-    Um secret é gerado automaticamente. Guarde-o para verificar a autenticidade das requisições.
+  <Step title="Use a versão v2">
+    Canais novos usam v2. Essa versão envia valores em centavos e protege contra replay.
+  </Step>
+  <Step title="Guarde o secret">
+    Salve o secret do webhook em uma variável protegida, como `BOB_WEBHOOK_SECRET`.
   </Step>
 </Steps>
 
-<Note>
-  Webhooks funcionam normalmente no sandbox. Use-os para testar o fluxo completo antes de ir a produção.
-</Note>
+O sandbox envia eventos para o mesmo endpoint. O campo `data.isSandbox` diferencia os testes de produção.
 
-## Versões do payload (v1 e v2)
+## Valide a assinatura
 
-O payload de webhook é **versionado**. A versão é fixada por canal no dashboard:
+Use o corpo bruto da requisição. Se o framework converter o corpo para JSON antes da validação, a assinatura pode falhar.
 
-| | **v2** (recomendada) | **v1** (legado, congelado) |
-|---|---|---|
-| Valor | `data.amountCents` em **centavos** — consistente com toda a API | `data.amount` em **reais** |
-| Envelope | inclui `apiVersion: "v2"` | sem marcador |
-| Assinatura | `t=<unix>,v1=<hmac>` com **proteção anti-replay** | HMAC-SHA256 hex simples |
+O header `X-Webhook-Signature` tem o formato `t=<unix>,v1=<hmac>`. A assinatura é o HMAC-SHA256 de `timestamp + "." + corpo_bruto`.
 
-- **Canais novos** criados no dashboard nascem em **v2**.
-- **Canais existentes** permanecem em v1 até você migrar — quando seu consumidor estiver pronto, atualize o canal com `webhookApiVersion: "v2"` (via dashboard ou `PATCH /api/v1/notification-channels/:id`).
-- O shape v1 é **congelado**: nunca muda. Toda evolução de payload acontece na v2.
+Sua validação precisa:
 
-Exemplo de `transaction.paid` na **v2** (repare em `apiVersion` e `amountCents`):
+1. Extrair o timestamp e o HMAC do header.
+2. Calcular o HMAC com o secret do webhook e o corpo bruto.
+3. Comparar as assinaturas em tempo constante.
+4. Rejeitar timestamps com mais de cinco minutos.
+
+<CodeGroup>
+```javascript Node.js
+import crypto from 'node:crypto';
+
+export function verifyWebhook(rawBody, signatureHeader, secret, tolerance = 300) {
+  const match = signatureHeader?.match(/^t=(\d+),v1=([0-9a-f]{64})$/);
+  if (!match) return false;
+
+  const [, timestamp, received] = match;
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(`${timestamp}.`)
+    .update(rawBody)
+    .digest('hex');
+
+  const receivedBuffer = Buffer.from(received, 'hex');
+  const expectedBuffer = Buffer.from(expected, 'hex');
+  const fresh = Math.abs(Date.now() / 1000 - Number(timestamp)) <= tolerance;
+
+  return receivedBuffer.length === expectedBuffer.length
+    && crypto.timingSafeEqual(receivedBuffer, expectedBuffer)
+    && fresh;
+}
+```
+
+```php PHP
+function verifyWebhook(
+    string $rawBody,
+    ?string $signatureHeader,
+    string $secret,
+    int $tolerance = 300
+): bool {
+    if (!preg_match('/^t=(\d+),v1=([0-9a-f]{64})$/', $signatureHeader ?? '', $matches)) {
+        return false;
+    }
+
+    $timestamp = $matches[1];
+    $received = $matches[2];
+    $expected = hash_hmac('sha256', $timestamp . '.' . $rawBody, $secret);
+    $fresh = abs(time() - (int) $timestamp) <= $tolerance;
+
+    return hash_equals($expected, $received) && $fresh;
+}
+```
+</CodeGroup>
+
+<Warning>
+  Valide os bytes originais do corpo. Nunca calcule a assinatura sobre um JSON reserializado.
+</Warning>
+
+## Processe o evento
+
+Depois de validar a assinatura, converta o corpo para JSON e trate o evento:
+
+```javascript
+if (!verifyWebhook(rawBody, signatureHeader, process.env.BOB_WEBHOOK_SECRET)) {
+  return response.status(401).send('invalid signature');
+}
+
+const event = JSON.parse(rawBody.toString('utf8'));
+
+if (event.event === 'transaction.paid') {
+  await confirmOrderOnce(event.data.transactionId);
+}
+
+return response.status(200).send('ok');
+```
+
+## Entenda o payload v2
 
 ```json
 {
   "event": "transaction.paid",
   "apiVersion": "v2",
   "type": "transaction",
-  "title": "Transação Paga",
-  "message": "Transação de R$ 150,00 confirmada",
   "data": {
     "transactionId": "clx1abc123",
     "externalId": "pedido-001",
     "amountCents": 15000,
-    "product": "Plano Premium",
+    "product": "Pedido 123",
     "paymentMethod": "pix",
     "customerName": "João Silva",
-    "isSandbox": false,
-    "createdAt": "2026-03-10T14:30:00.000Z"
+    "isSandbox": true,
+    "createdAt": "2026-08-25T14:30:00.000Z"
   },
-  "timestamp": "2026-03-10T14:35:00.000Z"
+  "timestamp": "2026-08-25T14:35:00.000Z"
 }
 ```
 
-## Eventos disponíveis
+Use `event` para decidir a ação e `data.transactionId` para deduplicar o processamento.
 
-<Note>
-  Os exemplos abaixo mostram o formato **v1** (legado). Na **v2**, `data.amount` vira `data.amountCents`, o envelope ganha `apiVersion: "v2"` e entra `data.paymentMethod`.
-</Note>
+## Trate os eventos necessários
 
-<AccordionGroup>
-  <Accordion title="transaction.created" icon="plus">
-    Disparado quando uma cobrança PIX é criada. Inclui `pixCode` e `expirationDate`.
+| Evento | Ação recomendada |
+|---|---|
+| `transaction.created` | Registrar que a cobrança foi criada |
+| `transaction.paid` | Confirmar o pedido uma única vez |
+| `transaction.expired` | Encerrar a tentativa e oferecer outra cobrança |
+| `transaction.cancelled` | Encerrar a tentativa |
+| `transaction.refunded` | Atualizar o pedido como reembolsado |
+| `transaction.failed` | Registrar a falha e orientar uma nova tentativa |
 
-    ```json
-    {
-      "event": "transaction.created",
-      "type": "transaction",
-      "title": "Transação Criada",
-      "message": "Nova transação de R$ 150,00 aguardando pagamento",
-      "data": {
-        "transactionId": "clx1abc123",
-        "externalId": "pedido-001",
-        "amount": 150.00,
-        "product": "Plano Premium",
-        "customerName": "João Silva",
-        "customer": {
-          "name": "João Silva",
-          "email": "joao@email.com",
-          "phone": "11999990000",
-          "document": "12345678901",
-          "documentType": "CPF",
-          "address": {
-            "street": "Rua das Flores",
-            "streetNumber": "123",
-            "neighborhood": "Centro",
-            "complement": "",
-            "zipCode": "01310100",
-            "city": "São Paulo",
-            "state": "SP",
-            "country": "BR"
-          }
-        },
-        "originDomain": "meusite.com.br",
-        "isSandbox": false,
-        "pixCode": "00020126580014br.gov.bcb.pix...",
-        "expirationDate": "2026-03-10T15:30:00.000Z",
-        "createdAt": "2026-03-10T14:30:00.000Z"
-      },
-      "timestamp": "2026-03-10T14:30:00.000Z"
-    }
-    ```
-  </Accordion>
+## Responda com segurança
 
-  <Accordion title="transaction.paid" icon="circle-check">
-    Disparado quando um pagamento PIX é confirmado. Use para liberar o produto ou serviço ao cliente. Inclui `fee` quando há taxa.
+- Valide `X-Webhook-Signature` antes de processar o evento.
+- Grave ou enfileire o evento antes de responder HTTP `2xx`.
+- Deduplique por `transactionId` e tipo do evento.
+- Não libere um pedido com base apenas no conteúdo da tela do comprador.
+- Registre falhas sem salvar o secret ou dados pessoais desnecessários.
 
-    ```json
-    {
-      "event": "transaction.paid",
-      "type": "transaction",
-      "title": "Transação Paga",
-      "message": "Transação de R$ 150,00 confirmada",
-      "data": {
-        "transactionId": "clx1abc123",
-        "externalId": "pedido-001",
-        "amount": 150.00,
-        "product": "Plano Premium",
-        "customerName": "João Silva",
-        "customer": {
-          "name": "João Silva",
-          "email": "joao@email.com",
-          "phone": "11999990000",
-          "document": "12345678901",
-          "documentType": "CPF",
-          "address": {
-            "street": "Rua das Flores",
-            "streetNumber": "123",
-            "neighborhood": "Centro",
-            "complement": "",
-            "zipCode": "01310100",
-            "city": "São Paulo",
-            "state": "SP",
-            "country": "BR"
-          }
-        },
-        "originDomain": "meusite.com.br",
-        "isSandbox": false,
-        "fee": { "amount": 3.50 },
-        "createdAt": "2026-03-10T14:30:00.000Z"
-      },
-      "timestamp": "2026-03-10T14:35:00.000Z"
-    }
-    ```
-  </Accordion>
+## Migre canais v1
 
-  <Accordion title="transaction.expired" icon="clock">
-    Disparado quando uma transação expira sem pagamento. Use para notificar o cliente ou criar nova cobrança.
+A versão v1 é legada. Ela usa `data.amount` em reais e uma assinatura HMAC simples, sem proteção contra replay. A versão v2 usa `data.amountCents`, inclui `apiVersion: "v2"` e assina também o timestamp.
 
-    ```json
-    {
-      "event": "transaction.expired",
-      "type": "transaction",
-      "title": "Transação Expirada",
-      "message": "Transação de R$ 150,00 expirou",
-      "data": {
-        "transactionId": "clx1abc123",
-        "externalId": "pedido-001",
-        "amount": 150.00,
-        "product": "Plano Premium",
-        "customerName": "João Silva",
-        "customer": {
-          "name": "João Silva",
-          "email": "joao@email.com",
-          "phone": "11999990000",
-          "document": "12345678901",
-          "documentType": "CPF",
-          "address": { "...": "..." }
-        },
-        "originDomain": "meusite.com.br",
-        "isSandbox": true,
-        "createdAt": "2026-03-10T14:30:00.000Z"
-      },
-      "timestamp": "2026-03-11T03:00:00.000Z"
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="transaction.refunded" icon="rotate-left">
-    Disparado quando uma transação é estornada.
-
-    ```json
-    {
-      "event": "transaction.refunded",
-      "type": "transaction",
-      "title": "Transação Reembolsada",
-      "message": "Transação de R$ 150,00 reembolsada",
-      "data": {
-        "transactionId": "clx1abc123",
-        "externalId": "pedido-001",
-        "amount": 150.00,
-        "product": "Plano Premium",
-        "customerName": "João Silva",
-        "customer": { "...": "igual ao paid" },
-        "originDomain": "meusite.com.br",
-        "isSandbox": false,
-        "createdAt": "2026-03-10T14:30:00.000Z"
-      },
-      "timestamp": "2026-03-10T15:00:00.000Z"
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="transaction.cancelled" icon="circle-xmark">
-    Disparado quando uma transação é cancelada manualmente.
-
-    ```json
-    {
-      "event": "transaction.cancelled",
-      "type": "transaction",
-      "title": "Transação Cancelada",
-      "message": "Transação de R$ 150,00 cancelada",
-      "data": {
-        "transactionId": "clx1abc123",
-        "externalId": "pedido-001",
-        "amount": 150.00,
-        "product": "Plano Premium",
-        "customerName": "João Silva",
-        "customer": { "...": "igual ao paid" },
-        "originDomain": "meusite.com.br",
-        "isSandbox": false,
-        "createdAt": "2026-03-10T14:30:00.000Z"
-      },
-      "timestamp": "2026-03-10T14:40:00.000Z"
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="transaction.failed" icon="triangle-exclamation">
-    Disparado quando uma transação falha no processamento.
-
-    ```json
-    {
-      "event": "transaction.failed",
-      "type": "transaction",
-      "title": "transaction_failed",
-      "message": "transaction_failed",
-      "data": {
-        "transactionId": "clx1abc123",
-        "externalId": "pedido-001",
-        "amount": 150.00,
-        "product": "Plano Premium",
-        "customerName": "João Silva",
-        "customer": { "...": "igual ao paid" },
-        "originDomain": "meusite.com.br",
-        "isSandbox": false,
-        "createdAt": "2026-03-10T14:30:00.000Z"
-      },
-      "timestamp": "2026-03-10T14:33:00.000Z"
-    }
-    ```
-  </Accordion>
-</AccordionGroup>
-
-## Verificando a assinatura
-
-Cada requisição inclui dois headers de segurança:
-
-| Header | Descrição |
-|--------|-----------|
-| `X-Webhook-Signature` | Assinatura HMAC-SHA256 (formato depende da versão — veja abaixo) |
-| `X-Webhook-Timestamp` | ISO 8601 do momento do envio (informativo) |
-
-Verifique a assinatura sempre para garantir que a requisição veio da Bob Payments.
-
-<Warning>
-  Use sempre o **corpo bruto (raw body)** da requisição para calcular o HMAC. Se o framework parsear o JSON e você re-serializar, a assinatura pode não conferir.
-</Warning>
-
-### Com o SDK Node.js (recomendado)
-
-O SDK detecta automaticamente o formato (v1 ou v2), compara em tempo constante e aplica a proteção anti-replay:
-
-```typescript
-import { constructWebhookEvent } from '@bobpayments/sdk';
-
-app.post('/webhooks/bob', express.raw({ type: 'application/json' }), (req, res) => {
-  const event = constructWebhookEvent(
-    req.body, // Buffer bruto
-    req.headers['x-webhook-signature'],
-    process.env.BOB_WEBHOOK_SECRET,
-  );
-
-  processEvent(event).catch(console.error); // assíncrono
-  res.status(200).send('ok');               // 200 imediato
-});
-```
-
-### Assinatura v2 (anti-replay)
-
-Na v2, o header tem o formato `t=<unix>,v1=<hex>`. O HMAC cobre `timestamp + "." + corpo`, então um webhook capturado não pode ser reenviado depois — rejeite eventos com `t` fora de uma janela de tolerância (recomendado: 5 minutos).
-
-<CodeGroup>
-```javascript JavaScript
-const crypto = require('crypto');
-
-function verifyV2(rawBody, signatureHeader, secret, toleranceSeconds = 300) {
-  const match = signatureHeader?.match(/^t=(\d+),v1=([0-9a-f]{64})$/);
-  if (!match) return false;
-  const [, t, digest] = match;
-
-  const expected = crypto
-    .createHmac('sha256', secret)
-    .update(`${t}.${rawBody}`)
-    .digest('hex');
-
-  const valid = crypto.timingSafeEqual(
-    Buffer.from(digest, 'hex'),
-    Buffer.from(expected, 'hex'),
-  );
-  const fresh = Math.abs(Date.now() / 1000 - Number(t)) <= toleranceSeconds;
-  return valid && fresh;
-}
-```
-
-```python Python
-import hmac, hashlib, re, time
-
-def verify_v2(raw_body: bytes, signature: str, secret: str, tolerance: int = 300) -> bool:
-    match = re.fullmatch(r"t=(\d+),v1=([0-9a-f]{64})", signature or "")
-    if not match:
-        return False
-    t, digest = match.groups()
-    expected = hmac.new(
-        secret.encode(),
-        f"{t}.".encode() + raw_body,
-        hashlib.sha256,
-    ).hexdigest()
-    return hmac.compare_digest(digest, expected) and abs(time.time() - int(t)) <= tolerance
-```
-</CodeGroup>
-
-### Assinatura v1 (legado)
-
-Na v1, o header é o HMAC-SHA256 hex do corpo, sem timestamp:
-
-<CodeGroup>
-```javascript JavaScript
-const crypto = require('crypto');
-
-// use express.raw() para receber o corpo bruto (Buffer)
-function verifyV1(rawBody, signature, secret) {
-  const expected = crypto
-    .createHmac('sha256', secret)
-    .update(rawBody)
-    .digest('hex');
-
-  const sigBuffer = Buffer.from(signature ?? '', 'utf8');
-  const expectedBuffer = Buffer.from(expected, 'utf8');
-  return (
-    sigBuffer.length === expectedBuffer.length &&
-    crypto.timingSafeEqual(sigBuffer, expectedBuffer)
-  );
-}
-```
-
-```python Python
-import hmac
-import hashlib
-
-def verify_v1(raw_body: bytes, signature: str, secret: str) -> bool:
-    expected = hmac.new(secret.encode(), raw_body, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(signature or "", expected)
-```
-</CodeGroup>
-
-<Tip>
-  Retorne HTTP 200 imediatamente e processe o evento de forma assíncrona para evitar timeouts. Entregas podem se repetir em retry — processe de forma **idempotente**.
-</Tip>
-
-## Próximos passos
+Atualize o canal para v2 somente depois que o consumidor aceitar o novo payload. Canais novos já usam v2.
 
 <CardGroup cols={2}>
-  <Card title="Idempotência" icon="rotate" href="/pages/idempotency">
-    Trate entregas repetidas sem liberar o pedido duas vezes.
-  </Card>
   <Card title="Testar no sandbox" icon="flask" href="/pages/sandbox">
-    Dispare `transaction.paid` e `transaction.expired` sem dinheiro real.
+    Dispare eventos de pagamento e expiração.
+  </Card>
+  <Card title="Revisar idempotência" icon="rotate" href="/pages/idempotency">
+    Evite efeitos duplicados em criações e eventos.
   </Card>
 </CardGroup>

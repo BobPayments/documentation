@@ -1,62 +1,84 @@
 ---
-title: "Pagamentos"
-description: "Entenda como criar, apresentar e confirmar uma cobrança PIX."
-icon: "wallet"
+title: "Implemente o fluxo de pagamento"
+description: "Conecte a criação da cobrança, a apresentação do PIX e a confirmação por webhook."
+icon: "diagram-project"
 ---
 
-A Bob Payments permite criar, acompanhar e conciliar pagamentos com PIX. Você cria uma transação, apresenta o código ao comprador e confirma o resultado pelo webhook.
+Uma integração completa cria a transação no backend, apresenta o PIX na interface e confirma o pagamento por webhook.
 
-## Método disponível
+```text
+Comprador ── solicita pagamento ──> Seu backend ── cria transação ──> API Bob
+    │                                      ▲                            │
+    └── vê e paga o PIX                    └── confirma o pedido <── webhook
+```
 
-| Método | Disponibilidade | O que você recebe |
-|---|---|---|
-| **PIX** | Disponível | Código copia-e-cola (`pixCode`), QR Code e eventos de status |
+## O que cada parte faz
 
-## Escolha como integrar
-
-| Se você quer... | Use... |
+| Parte | Responsabilidade |
 |---|---|
-| Controlar a experiência do pagamento e receber o código EMV | [API direta de transações](/pages/pix/create) |
-| Integrar no backend com menos código | [SDKs de servidor](/pages/sdk/overview) |
+| Seu backend | Guarda a chave, cria a transação e recebe webhooks |
+| Sua interface | Mostra o `pixCode`, o QR Code e o estado atual |
+| API Bob | Cria a cobrança e informa seu estado |
+| Webhook | Confirma mudanças como pagamento ou expiração |
 
-## Fluxo de pagamento
+## Implemente em cinco etapas
 
 <Steps>
-  <Step title="Configure o ambiente">
-    Crie uma chave `sk_test_` e comece pelo [sandbox](/pages/sandbox).
+  <Step title="Autentique no backend">
+    Envie `Authorization: Bearer sk_test_sua_chave` em cada chamada. [Veja como criar e proteger a chave](/pages/authentication).
   </Step>
-  <Step title="Crie a transação">
-    Envie os dados do cliente e da cobrança para `POST /api/v1/transactions/`.
+  <Step title="Crie uma transação">
+    Envie cliente, valor e produto para `POST /api/v1/transactions/`. Envie também `Idempotency-Key` se usar a API REST. [Consulte a operação](/pages/pix/create).
   </Step>
   <Step title="Apresente o PIX">
-    Exiba o `pixCode` retornado como código copia-e-cola ou QR Code.
+    Mostre o `pixCode` como código copia-e-cola ou transforme-o em QR Code. Um HTTP `201` confirma apenas a criação da cobrança.
   </Step>
-  <Step title="Confirme no servidor">
-    Receba o evento `transaction.paid`, verifique a assinatura e libere o pedido apenas depois da confirmação.
+  <Step title="Confirme pelo webhook">
+    Valide a assinatura e libere o pedido somente depois de receber `transaction.paid`. [Implemente o endpoint](/pages/webhooks).
+  </Step>
+  <Step title="Trate os outros estados">
+    Atualize a interface quando a transação expirar, for cancelada ou for reembolsada.
   </Step>
 </Steps>
 
-## Estados e confirmação
+## Use os estados corretos
 
-Use o status da transação para atualizar a interface. No backend, trate o webhook como a fonte de verdade. Um `201` confirma que a transação foi criada; não confirma que o pagamento foi concluído.
-
-| Estado | Significado geral |
+| Estado | O que sua aplicação deve fazer |
 |---|---|
-| `waiting_payment` | O comprador ainda precisa pagar |
-| `processing` | O pagamento foi recebido e aguarda confirmação |
-| `paid` | O pagamento foi confirmado |
-| `expired` / `cancelled` | O pagamento não pode mais ser concluído |
-| `refunded` | O valor foi devolvido |
+| `waiting_payment` | Mostrar o PIX e aguardar |
+| `processing` | Informar que a confirmação está em andamento |
+| `paid` | Liberar o pedido após validar o webhook |
+| `expired` | Encerrar a tentativa e oferecer uma nova cobrança |
+| `cancelled` | Encerrar a tentativa |
+| `refunded` | Atualizar o pedido como reembolsado |
 
-Consulte a [referência de PIX](/pages/pix/reference) e os [webhooks](/pages/webhooks) antes de implementar a máquina de estados do seu pedido.
+Não use o retorno da criação como confirmação financeira. O pagamento acontece de forma assíncrona.
 
-## Próximos passos
+## Checklist da integração
 
-<CardGroup cols={2}>
-  <Card title="Começar no sandbox" icon="flask" href="/pages/sandbox">
-    Teste criação, pagamento, expiração e webhooks sem movimentar dinheiro real.
+- [ ] A chave de API existe somente no backend.
+- [ ] Todos os valores são enviados em centavos.
+- [ ] A criação usa uma `Idempotency-Key` por pedido.
+- [ ] A interface mostra o `pixCode` retornado pela API.
+- [ ] O endpoint de webhook valida a assinatura com o corpo bruto.
+- [ ] O processamento de `transaction.paid` é idempotente.
+- [ ] Os estados `expired`, `cancelled` e `refunded` são tratados.
+- [ ] O fluxo completo foi testado com `sk_test_`.
+
+## Consulte durante a implementação
+
+<CardGroup cols={3}>
+  <Card title="Criar transação" icon="code" href="/pages/pix/create">
+    Consulte o contrato da operação REST.
   </Card>
-  <Card title="Ir para produção" icon="rocket" href="/pages/production">
-    Revise segurança, idempotência e confirmação antes de usar `sk_live_`.
+  <Card title="Autenticação" icon="key" href="/pages/authentication">
+    Proteja e envie sua chave de API.
+  </Card>
+  <Card title="Idempotência" icon="rotate" href="/pages/idempotency">
+    Repita chamadas sem duplicar transações.
   </Card>
 </CardGroup>
+
+<Card title="Revise antes de ir para produção" icon="rocket" href="/pages/production" horizontal>
+  Valide segurança, webhooks, idempotência e falhas antes de trocar a chave.
+</Card>

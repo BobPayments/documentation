@@ -63,7 +63,7 @@ Toda resposta de erro (4xx/5xx) segue o [RFC 7807](https://datatracker.ietf.org/
 
 ## Timeouts
 
-A criação de transação pode levar até **30 segundos** no pior caso. Configure o timeout do seu cliente HTTP acima disso (o [SDK](/pages/sdk/node) usa 35s) e, ao repetir após timeout, **use a mesma `Idempotency-Key`** — se a criação tiver concluído, você recebe o replay em vez de um pagamento duplicado.
+A criação de transação pode levar até **30 segundos** no pior caso. Configure o timeout do seu cliente HTTP acima disso e, ao repetir após timeout, **use a mesma `Idempotency-Key`**. Se a criação tiver concluído, você recebe o replay em vez de um pagamento duplicado.
 
 ## Próximos passos
 

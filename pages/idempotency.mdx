@@ -30,19 +30,6 @@ curl -X POST https://api.payments.bob.company/api/v1/transactions \
   O escopo da chave é o seu **projeto** — chaves de projetos diferentes nunca colidem. Use até 256 caracteres; um UUID ou o ID do seu pedido são boas escolhas.
 </Note>
 
-## Com o SDK Node.js
-
-O SDK envia uma chave automaticamente (UUID por chamada) e, graças a ela, faz **retry seguro** em timeout, falha de rede, 429 e 5xx:
-
-```typescript
-const tx = await bob.transactions.create(params);
-tx.idempotencyKey; // chave usada — guarde para repetir manualmente se precisar
-tx.replayed;       // true = esta resposta veio do replay de uma criação anterior
-
-// Amarrando ao seu pedido (repetições do mesmo pedido nunca duplicam):
-await bob.transactions.create(params, { idempotencyKey: `pedido-${orderId}` });
-```
-
 ## Boas práticas
 
 - **Gere uma chave nova por operação de negócio** (por pedido, por tentativa de cobrança) — nunca reuse uma chave fixa.

@@ -1,108 +1,114 @@
 ---
-title: "Criar seu primeiro pagamento com SDK"
-description: "Rode um projeto com o SDK da Bob e faça seu primeiro pagamento PIX no sandbox em poucos minutos."
+title: "Crie seu primeiro pagamento"
+description: "Crie e confirme uma cobrança PIX no sandbox usando a API REST."
 icon: "bolt"
 ---
 
-Este guia de cerca de cinco minutos usa o SDK de servidor da Bob para criar uma cobrança **PIX** e confirmar seu primeiro pagamento no sandbox.
+Ao final deste guia, você terá uma transação com status `paid` no sandbox. O teste não movimenta dinheiro real.
 
-<Note>
-  Você precisa de uma chave `sk_test_`. Se ainda não tem, veja [Configurar sua conta](/pages/setup-account).
-</Note>
+## Antes de começar
 
-<Steps>
-  <Step title="Instale os pré-requisitos">
-    Você precisa de [Node.js](https://nodejs.org/) **20 ou 22 (LTS)**.
+Você precisa de uma chave `sk_test_`. Se ainda não tem uma, [veja como criar a chave](/pages/authentication).
 
-    ```bash
-    node --version   # v20.x ou v22.x
-    ```
-  </Step>
+Exporte a chave no terminal:
 
-  <Step title="Crie o projeto e instale o SDK">
-    ```bash
-    mkdir bob-primeiro-pagamento && cd bob-primeiro-pagamento
-    npm init -y
-    npm install @bobpayments/sdk
-    ```
-  </Step>
+```bash
+export BOB_API_KEY=sk_test_sua_chave
+```
 
-  <Step title="Configure a chave de API">
-    Crie um arquivo `.env` na raiz com sua chave de sandbox:
+<Warning>
+  Execute as chamadas no backend. Uma chave de API nunca deve chegar ao navegador.
+</Warning>
 
-    ```bash
-    BOB_API_KEY=sk_test_sua_chave
-    ```
+## 1. Crie uma cobrança
 
-    <Warning>
-      A chave `sk_test_` é secreta e só existe no **backend**. Nunca envie ao navegador.
-    </Warning>
-  </Step>
+Use `10002` para manter a cobrança pendente até você confirmar o pagamento no próximo passo.
 
-  <Step title="Crie a cobrança PIX">
-    Crie uma transação e apresente o `pixCode` retornado ao comprador:
+```bash
+curl --request POST \
+  --url https://api.payments.bob.company/api/v1/transactions/ \
+  --header "Authorization: Bearer $BOB_API_KEY" \
+  --header "Content-Type: application/json" \
+  --header "Idempotency-Key: quickstart-pedido-123" \
+  --data '{
+    "customer": {
+      "name": "João Silva",
+      "document": "12345678901",
+      "documentType": "CPF",
+      "email": "joao@example.com",
+      "address": {
+        "street": "Rua das Flores",
+        "streetNumber": "123",
+        "neighborhood": "Centro",
+        "zipCode": "01310-100",
+        "city": "São Paulo",
+        "state": "SP"
+      }
+    },
+    "payment": {
+      "amountCents": 10002,
+      "product": "Pedido 123"
+    },
+    "originDomain": "loja.example.com"
+  }'
+```
 
-    ```typescript
-    import { BobPayments } from '@bobpayments/sdk';
+A resposta contém os dados que sua aplicação usa:
 
-    const bob = new BobPayments({ apiKey: process.env.BOB_API_KEY! });
+```json
+{
+  "success": true,
+  "data": {
+    "id": "clx7a8b9c0d1e2f3g4h5",
+    "externalId": "pedido_123",
+    "status": "waiting_payment",
+    "pixCode": "00020126580014br.gov.bcb.pix...",
+    "expirationDate": "2026-08-25T18:00:00.000Z"
+  }
+}
+```
 
-    const transaction = await bob.transactions.create({
-      customer: {
-        name: 'João Silva',
-        document: '12345678901',
-        documentType: 'CPF',
-        email: 'joao@example.com',
-        address: {
-          street: 'Rua das Flores',
-          streetNumber: '123',
-          neighborhood: 'Centro',
-          zipCode: '01310-100',
-          city: 'São Paulo',
-          state: 'SP',
-        },
-      },
-      payment: {
-        amountCents: 10_000,
-        product: 'Plano Premium',
-      },
-      originDomain: 'loja.example.com',
-    });
+Guarde `data.id`. Em uma integração real, apresente `data.pixCode` ao comprador.
 
-    console.log(transaction.pixCode);
-    ```
-  </Step>
+## 2. Confirme o pagamento no sandbox
 
-  <Step title="Faça seu primeiro pagamento">
-    No sandbox, o desfecho é controlado pelos **dois últimos dígitos do valor** — sem PIX real:
+Substitua `TRANSACTION_ID` pelo `id` retornado:
 
-    | Centavos do valor | Desfecho |
-    |---|---|
-    | `.00` (ex.: `10000`) | Pago em cerca de 5 segundos (`transaction.paid`) |
-    | `.01` (ex.: `10001`) | Expira em cerca de 5 segundos (`transaction.expired`) |
-    | `.02` (ex.: `10002`) | Fica pendente até expirar |
+```bash
+curl --request POST \
+  --url https://api.payments.bob.company/api/v1/sandbox/transactions/TRANSACTION_ID/pay \
+  --header "Authorization: Bearer $BOB_API_KEY"
+```
 
-    Como a transação acima usa `10_000`, o pagamento é confirmado em segundos e dispara o webhook `transaction.paid`.
-  </Step>
+O sandbox muda a transação para `paid`. Se você já configurou um webhook, ele também envia `transaction.paid`.
 
-  <Step title="Confira o pagamento no Dashboard">
-    Acesse **Transações** em [app.payments.bob.company](https://app.payments.bob.company) e veja a cobrança recém-paga com o campo `isSandbox: true`.
-  </Step>
-</Steps>
+## 3. Consulte o resultado
+
+```bash
+curl --request GET \
+  --url https://api.payments.bob.company/api/v1/transactions/TRANSACTION_ID \
+  --header "Authorization: Bearer $BOB_API_KEY"
+```
+
+Confirme que o campo `status` tem o valor `paid`.
+
+<Check>
+  Seu primeiro pagamento está concluído. Agora implemente a confirmação automática por webhook antes de usar produção.
+</Check>
 
 ## Próximos passos
 
 <CardGroup cols={2}>
-  <Card title="Entender o fluxo" icon="diagram-project" href="/pages/concepts/payment-flow">
-    Veja como transação, PIX e webhook se conectam.
+  <Card title="Implementar o fluxo completo" icon="diagram-project" href="/pages/payments">
+    Saiba o que fica no backend e o que aparece para o comprador.
   </Card>
   <Card title="Configurar webhooks" icon="bell" href="/pages/webhooks">
-    Implemente a confirmação assíncrona no seu servidor.
+    Confirme pagamentos sem consultar o status continuamente.
   </Card>
-  <Card title="Testar no sandbox" icon="flask" href="/pages/sandbox">
-    Simule os estados do pagamento sem movimentar dinheiro real.
+  <Card title="Explorar o sandbox" icon="flask" href="/pages/sandbox">
+    Teste pagamento, expiração e pendência.
   </Card>
-  <Card title="Consultar a API" icon="code" href="/pages/pix/create">
-    Veja os campos da operação de criação.
+  <Card title="Consultar a operação" icon="code" href="/pages/pix/create">
+    Veja os campos e respostas de criação.
   </Card>
 </CardGroup>

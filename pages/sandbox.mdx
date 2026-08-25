@@ -1,68 +1,65 @@
 ---
-title: "Sandbox"
-description: "Teste sua integração no ambiente sandbox sem processar pagamentos reais."
+title: "Teste no sandbox"
+description: "Valide pagamentos, expirações e webhooks sem movimentar dinheiro real."
 icon: "flask"
 ---
 
-O sandbox é um ambiente isolado para testar sua integração sem cobranças reais. Tudo funciona exatamente como em produção — incluindo webhooks — mas nenhuma transação é processada de verdade.
+Use uma chave `sk_test_` para criar transações isoladas de produção. A URL e o contrato da API não mudam.
 
-## Chaves de API
-
-Cada projeto tem duas chaves de API:
-
-| Prefixo | Ambiente | Processa pagamentos? |
-|---------|----------|-----------------------|
-| `sk_test_*` | Sandbox | Não |
-| `sk_live_*` | Produção | Sim |
-
-<Warning>
-  Nunca use `sk_live_*` em código frontend, repositórios públicos ou variáveis de ambiente não protegidas.
-</Warning>
-
-## Simulando pagamentos
-
-No sandbox, confirme uma transação sem precisar de um PIX real:
-
-```bash cURL
-curl -X POST https://api.payments.bob.company/api/v1/sandbox/transactions/TRANSACTION_ID/pay \
-  -H "Authorization: Bearer sk_test_sua_chave"
+```bash
+BOB_API_KEY=sk_test_sua_chave
 ```
 
-Após a simulação, o webhook configurado no projeto é disparado automaticamente com o evento `transaction.paid`.
+## Escolha o resultado pelo valor
+
+Os dois últimos dígitos de `amountCents` controlam o resultado automático:
+
+| `amountCents` | Resultado no sandbox |
+|---|---|
+| Termina em `00`, como `10000` | Muda para `paid` em cerca de 5 segundos |
+| Termina em `01`, como `10001` | Muda para `expired` em cerca de 5 segundos |
+| Termina em `02`, como `10002` | Continua em `waiting_payment` até expirar |
+
+Cada mudança também envia o webhook correspondente ao projeto.
+
+## Confirme uma transação manualmente
+
+Para confirmar uma transação pendente, use o `id` retornado na criação:
+
+```bash
+curl --request POST \
+  --url https://api.payments.bob.company/api/v1/sandbox/transactions/TRANSACTION_ID/pay \
+  --header "Authorization: Bearer $BOB_API_KEY"
+```
+
+Esse endpoint aceita somente uma chave `sk_test_`. Ele muda a transação para `paid` e envia `transaction.paid`.
+
+## Cenários mínimos de teste
+
+- [ ] Criar uma transação e apresentar o `pixCode`.
+- [ ] Receber e validar `transaction.paid`.
+- [ ] Receber `transaction.expired`.
+- [ ] Ignorar com segurança uma entrega de webhook repetida.
+- [ ] Repetir uma criação com a mesma `Idempotency-Key` sem duplicar a transação.
+- [ ] Tratar uma requisição inválida e um timeout.
 
 <Note>
-  Webhooks funcionam normalmente no sandbox — ideal para testar o fluxo completo de ponta a ponta.
+  O campo `isSandbox: true` identifica eventos de teste. Transações de sandbox não aparecem nos dados financeiros de produção.
 </Note>
-
-## Desfecho automático pelos centavos
-
-No sandbox, o desfecho da cobrança é controlado pelos **dois últimos dígitos** do valor — sem precisar chamar o endpoint de simulação:
-
-| Centavos do valor | Desfecho |
-|---|---|
-| `.01` (ex.: `10001`) | Expira em ~5 segundos (`transaction.expired`) |
-| `.02` (ex.: `10002`) | Fica pendente até expirar naturalmente |
-| Qualquer outro (ex.: `10000`) | Pago em ~5 segundos (`transaction.paid`) |
-
-Ideal para testes automatizados: crie três cobranças e valide os três fluxos de webhook de uma vez.
-
-## Identificando transações sandbox
-
-Transações criadas com `sk_test_*` ficam isoladas das de produção. O campo `isSandbox: true` é incluído no payload dos webhooks para facilitar a identificação.
 
 ## Próximos passos
 
 <CardGroup cols={2}>
-  <Card title="Simular pagamento" icon="play" href="/pages/pix/simulate-payment">
-    Force o pagamento de uma cobrança sandbox pela API.
+  <Card title="Executar a quickstart" icon="bolt" href="/pages/quickstart">
+    Crie e confirme o primeiro pagamento.
   </Card>
-  <Card title="Configurar webhooks" icon="webhook" href="/pages/webhooks">
-    Receba `transaction.paid` e `transaction.expired` no seu endpoint.
+  <Card title="Configurar webhooks" icon="bell" href="/pages/webhooks">
+    Receba os resultados no seu backend.
   </Card>
-  <Card title="Autenticação" icon="key" href="/pages/authentication">
-    Entenda as chaves `sk_test_` e `sk_live_`.
+  <Card title="Simular pela API" icon="play" href="/pages/pix/simulate-payment">
+    Consulte os parâmetros e as respostas do endpoint.
   </Card>
   <Card title="Ir para produção" icon="rocket" href="/pages/production">
-    Passe pelo checklist antes de processar pagamentos reais.
+    Revise o checklist de segurança e resiliência.
   </Card>
 </CardGroup>
