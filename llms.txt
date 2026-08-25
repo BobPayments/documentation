@@ -4,7 +4,7 @@
 
 ## Integração
 
-- [Comece aqui](/pages/introduction): Crie uma cobrança PIX e confirme o pagamento
+- [Integre PIX em 2 passos](/pages/introduction): Crie o PIX com uma requisição e confirme o pagamento por webhook
 - [Chaves de API](/pages/authentication): Use `sk_test_` e `sk_live_` no header `Authorization`
 - [Webhooks](/pages/webhooks): Receba, valide e processe eventos de pagamento
 

@@ -1,26 +1,38 @@
 ---
-title: "Comece aqui"
-description: "Crie uma cobrança PIX e confirme o pagamento."
+title: "Integre PIX em 2 passos"
+sidebarTitle: "PIX em 2 passos"
+description: "Uma requisição cria o PIX. Um webhook confirma o pagamento."
 icon: "bolt"
 ---
 
-Sua integração precisa fazer três coisas:
+Você precisa de uma chave de API e duas ações no backend.
 
-1. Criar uma transação no backend.
-2. Mostrar o `pixCode` ao comprador.
-3. Confirmar o pagamento pelo webhook `transaction.paid`.
+<Columns cols={2}>
+  <Card title="1. Crie o PIX" icon="qr-code" href="/pages/pix/create" cta="Ver chamada" arrow="true">
+    Envie `POST /api/v1/transactions/` e mostre o `pixCode` retornado.
+  </Card>
+  <Card title="2. Confirme o pagamento" icon="bell" href="/pages/webhooks" cta="Ver webhook" arrow="true">
+    Receba `transaction.paid` e libere o pedido.
+  </Card>
+</Columns>
 
-## 1. Crie uma chave
+## Comece com uma chave de teste
 
 No [Dashboard](https://app.payments.bob.company), abra o projeto e acesse **Chaves de API**.
 
-Use `sk_test_` para testar e `sk_live_` para produção. Guarde a chave somente no backend.
+Crie uma chave `sk_test_`. Ela não movimenta dinheiro real.
 
-[Veja como usar as chaves](/pages/authentication).
+```bash
+export BOB_API_KEY=sk_test_sua_chave
+```
 
-## 2. Crie a cobrança
+<Warning>
+  Guarde a chave somente no backend.
+</Warning>
 
-Envie a chave no header `Authorization`:
+## Crie sua primeira cobrança
+
+Esta chamada retorna o `pixCode` que você mostra ao comprador:
 
 ```bash
 curl --request POST \
@@ -51,12 +63,30 @@ curl --request POST \
   }'
 ```
 
-Mostre o `data.pixCode` retornado pela API. O valor `10000` representa R$ 100,00.
+O valor `10000` representa R$ 100,00.
 
-[Veja todos os campos e respostas da criação](/pages/pix/create).
+## Confirme pelo webhook
 
-## 3. Confirme o pagamento
+Cadastre uma URL HTTPS no Dashboard. Quando o pagamento for confirmado, seu backend recebe:
 
-Libere o pedido somente depois de receber e validar o webhook `transaction.paid`.
+```json
+{
+  "event": "transaction.paid",
+  "data": {
+    "transactionId": "clx1abc123",
+    "externalId": "pedido-123",
+    "amountCents": 10000
+  }
+}
+```
 
-[Configure o webhook](/pages/webhooks).
+Valide a assinatura e libere o pedido uma única vez.
+
+<Columns cols={2}>
+  <Card title="Ver a criação da cobrança" icon="code" href="/pages/pix/create">
+    Consulte todos os campos e respostas da API.
+  </Card>
+  <Card title="Configurar o webhook" icon="bell" href="/pages/webhooks">
+    Cadastre o endpoint e valide a assinatura.
+  </Card>
+</Columns>

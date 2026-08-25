@@ -272,7 +272,7 @@
         "tab": "Documentação",
         "groups": [
           {
-            "group": "Integração",
+            "group": "Comece aqui",
             "pages": [
               "pages/introduction",
               "pages/authentication",
