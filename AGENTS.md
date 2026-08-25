@@ -36,6 +36,6 @@
 
 ## Content boundaries
 
- - Document the public PIX API, server SDKs, sandbox, webhooks and integration workflows.
- - Do not document payment links, checkout, frontend checkout SDKs or crypto as public capabilities.
+ - Document the public PIX API, sandbox, webhooks and integration workflows.
+ - Do not document server SDKs, frontend SDKs, payment links, checkout or crypto as public capabilities.
  - Do not document internal admin features, gateway credentials, secret keys or unreleased payment methods as if they were available.

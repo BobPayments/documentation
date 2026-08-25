@@ -94,6 +94,22 @@
       "destination": "/pages/introduction"
     },
     {
+      "source": "/pages/setup-account",
+      "destination": "/pages/authentication"
+    },
+    {
+      "source": "/pages/environments",
+      "destination": "/pages/sandbox"
+    },
+    {
+      "source": "/pages/concepts/payment-flow",
+      "destination": "/pages/payments"
+    },
+    {
+      "source": "/pages/concepts/webhooks",
+      "destination": "/pages/webhooks"
+    },
+    {
       "source": "/en",
       "destination": "/pages/introduction"
     },
@@ -147,7 +163,7 @@
     },
     {
       "source": "/docs/public/guides/complete-integration",
-      "destination": "/pages/production"
+      "destination": "/pages/payments"
     },
     {
       "source": "/docs/public/guides/response-format",
@@ -207,11 +223,23 @@
     },
     {
       "source": "/docs/public/sdks/overview",
-      "destination": "/pages/sdk/overview"
+      "destination": "/pages/quickstart"
+    },
+    {
+      "source": "/pages/sdk/overview",
+      "destination": "/pages/quickstart"
+    },
+    {
+      "source": "/pages/sdk/node",
+      "destination": "/pages/quickstart"
+    },
+    {
+      "source": "/pages/sdk/php",
+      "destination": "/pages/quickstart"
     },
     {
       "source": "/docs/public/webhooks/overview",
-      "destination": "/pages/concepts/webhooks"
+      "destination": "/pages/webhooks"
     },
     {
       "source": "/docs/public/webhooks/events",
@@ -244,53 +272,34 @@
         "tab": "Documentação",
         "groups": [
           {
-            "group": "Primeiros passos",
+            "group": "Comece aqui",
             "pages": [
               "pages/introduction",
-              {
-                "group": "Quickstart",
-                "pages": [
-                  "pages/setup-account",
-                  "pages/quickstart"
-                ]
-              }
+              "pages/quickstart"
             ]
           },
           {
-            "group": "Conceitos principais",
+            "group": "Integre pagamentos",
             "pages": [
-              "pages/concepts/payment-flow",
-              "pages/concepts/customers",
-              "pages/concepts/transactions",
-              "pages/concepts/webhooks"
-            ]
-          },
-          {
-            "group": "Formas de integração",
-            "pages": [
-              "pages/payments"
-            ]
-          },
-          {
-            "group": "Webhooks",
-            "pages": [
-              "pages/webhooks"
-            ]
-          },
-          {
-            "group": "Usando a Bob",
-            "pages": [
-              "pages/environments",
+              "pages/payments",
+              "pages/webhooks",
               "pages/sandbox",
-              "pages/authentication",
               "pages/production"
             ]
           },
           {
-            "group": "Fundamentos da API",
+            "group": "Entenda a API",
             "pages": [
+              "pages/authentication",
               "pages/idempotency",
               "pages/errors"
+            ]
+          },
+          {
+            "group": "Conceitos",
+            "pages": [
+              "pages/concepts/transactions",
+              "pages/concepts/customers"
             ]
           }
         ]
@@ -326,24 +335,6 @@
             "group": "Sandbox",
             "pages": [
               "pages/pix/simulate-payment"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SDKs",
-        "groups": [
-          {
-            "group": "Comece aqui",
-            "pages": [
-              "pages/sdk/overview"
-            ]
-          },
-          {
-            "group": "Servidor",
-            "pages": [
-              "pages/sdk/node",
-              "pages/sdk/php"
             ]
           }
         ]

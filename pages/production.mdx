@@ -1,52 +1,67 @@
 ---
-title: "Indo para produção"
-description: "Como sair do sandbox e começar a processar pagamentos reais."
+title: "Vá para produção"
+description: "Valide segurança e resiliência antes de processar pagamentos reais."
 icon: "rocket"
 ---
 
-Simples: quando a integração estiver funcionando no sandbox, é só trocar a chave. Sem processo de aprovação, sem burocracia. Antes de trocar, passe pelo checklist — são os pontos que separam uma integração que funciona de uma integração que aguenta produção.
+Use produção somente depois que o fluxo completo funcionar com `sk_test_`.
 
-## Checklist de go-live
+## Checklist antes da troca
 
-<Steps>
-  <Step title="Fluxo completo validado no sandbox">
-    Criar cobrança → receber webhook `transaction.paid` → liberar o pedido. Teste também os caminhos tristes: expiração (`transaction.expired`) e cancelamento. No [sandbox](/pages/sandbox) dá pra simular todos.
-  </Step>
-  <Step title="Assinatura de webhook verificada">
-    Sua aplicação **rejeita** webhooks com assinatura inválida? Teste mandando um POST forjado no seu endpoint. Use o [SDK ou os exemplos de verificação](/pages/webhooks#verificando-a-assinatura) — sempre com o corpo bruto. Canais novos usam o formato **v2** (anti-replay).
-  </Step>
-  <Step title="Consumo de webhook idempotente">
-    Entregas podem se repetir (retry da plataforma). Processar o mesmo `transaction.paid` duas vezes não pode liberar o pedido duas vezes — deduplique por `transactionId`.
-  </Step>
-  <Step title="Criação com Idempotency-Key">
-    Timeout na criação não pode virar pagamento duplicado. Envie [`Idempotency-Key`](/pages/idempotency) (o SDK já faz sozinho) e repita com a mesma chave após falhas de rede.
-  </Step>
-  <Step title="HTTP 202 tratado">
-    Em degradação rara, a criação responde `202` com `id: null` — o PIX é **válido**, entregue ao comprador e use `externalId` como referência. Veja [Erros](/pages/errors).
-  </Step>
-  <Step title="Erros tratados pelo código, não pela mensagem">
-    Trate por `status` + `type` e repita erros transitórios com backoff. A [página de erros](/pages/errors) diz o que fazer com cada um.
-  </Step>
-  <Step title="Troque a chave">
-    Substitua `sk_test_*` por `sk_live_*` nas variáveis de ambiente. Só isso — mesma API, mesmos endpoints.
-  </Step>
-</Steps>
+- [ ] A chave de API existe somente no backend e não aparece em logs.
+- [ ] A criação usa uma `Idempotency-Key` por pedido.
+- [ ] Um timeout é repetido com a mesma chave de idempotência.
+- [ ] O endpoint de webhook usa HTTPS e valida a assinatura com o corpo bruto.
+- [ ] O evento `transaction.paid` libera o pedido uma única vez.
+- [ ] Os eventos `transaction.expired`, `transaction.cancelled` e `transaction.refunded` são tratados.
+- [ ] Respostas `4xx`, `5xx` e `202` são tratadas.
+- [ ] Pagamento e expiração foram testados no sandbox.
+
+## Troque a chave
+
+Substitua a variável de ambiente. A URL e o código da integração continuam iguais.
+
+```bash
+# Sandbox
+BOB_API_KEY=sk_test_sua_chave
+
+# Produção
+BOB_API_KEY=sk_live_sua_chave
+```
 
 <Warning>
-  Nunca exponha `sk_live_*` no frontend, em repositórios públicos ou em logs de aplicação. Em caso de vazamento, revogue no Dashboard imediatamente.
+  Uma chave `sk_live_` movimenta dinheiro real. Se ela vazar, revogue-a no Dashboard e gere outra.
 </Warning>
 
-<Note>
-  Transações de sandbox e produção são totalmente isoladas — nada do que você criou com `sk_test_` aparece nos números reais do projeto.
-</Note>
+## Monitore as primeiras transações
+
+Confirme estes pontos no Dashboard e nos logs do seu backend:
+
+- a transação criada tem o valor e o projeto esperados;
+- o webhook chega e passa pela validação de assinatura;
+- o pedido muda de estado uma única vez;
+- erros guardam o `type`, o `status`, o `instance` e o horário da requisição;
+- logs não contêm chaves, secrets nem dados pessoais desnecessários.
+
+## Trate o HTTP 202
+
+Uma criação pode retornar `202` quando o PIX foi gerado, mas a persistência ainda está em reconciliação. Nesse caso, `data.id` pode ser `null`.
+
+Apresente o `pixCode` e use `externalId` para acompanhar a transação. [Veja os detalhes e a estratégia de repetição](/pages/errors).
 
 ## Próximos passos
 
 <CardGroup cols={2}>
-  <Card title="Configurar webhooks" icon="webhook" href="/pages/webhooks">
-    Confirme cada pagamento pelo evento, não pela resposta da criação.
+  <Card title="Revisar webhooks" icon="bell" href="/pages/webhooks">
+    Confira assinatura e processamento idempotente.
   </Card>
-  <Card title="Idempotência" icon="rotate" href="/pages/idempotency">
-    Repita requisições de criação sem risco de cobrar duas vezes.
+  <Card title="Revisar idempotência" icon="rotate" href="/pages/idempotency">
+    Evite transações duplicadas após falhas de rede.
+  </Card>
+  <Card title="Tratar erros" icon="triangle-exclamation" href="/pages/errors">
+    Decida quando corrigir, repetir ou alertar.
+  </Card>
+  <Card title="Consultar transações" icon="magnifying-glass" href="/pages/pix/check-status">
+    Verifique o estado de uma transação pela API.
   </Card>
 </CardGroup>

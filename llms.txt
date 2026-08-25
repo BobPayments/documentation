@@ -1,65 +1,48 @@
 # Bob Payments
 
-> A infraestrutura de pagamentos para seu produto. Aceite PIX pela API direta, gerencie clientes e receba webhooks em tempo real.
+> API pública para criar, acompanhar e conciliar pagamentos PIX. Use somente no backend.
 
-## Primeiros passos
+## Caminho recomendado de integração
 
-- [Início](/): Integre pagamentos PIX pela API direta ou pelos SDKs de servidor
-- [O que é a Bob Payments?](/pages/introduction): Visão geral da API, recursos disponíveis e primeiros passos
-- [Configurar sua conta](/pages/setup-account): Prepare o projeto, gere as chaves de API e ative os webhooks antes do primeiro pagamento
-- [Criar seu primeiro pagamento com SDK](/pages/quickstart): Rode um projeto com o SDK da Bob e faça seu primeiro pagamento PIX no sandbox em poucos minutos
-
-## Conceitos principais
-
-- [Fluxo de pagamento](/pages/concepts/payment-flow): O caminho entre sua aplicação, a Bob Payments e o comprador
-- [Clientes](/pages/concepts/customers): Como a Bob associa compradores, dados cadastrais e transações
-- [Transações](/pages/concepts/transactions): O recurso da API que representa uma tentativa de pagamento e seu ciclo de vida
-- [Webhooks](/pages/concepts/webhooks): Por que os eventos assíncronos são a fonte de verdade da integração
-
-## Formas de integração
-
-- [Pagamentos](/pages/payments): Escolha o método de pagamento e o caminho de integração mais adequado para o seu produto
-
-## Webhooks
-
-- [Configurar webhooks](/pages/webhooks): Receba notificações automáticas quando eventos acontecem no seu projeto
-
-## Usando a Bob
-
-- [Ambientes](/pages/environments): Sandbox e produção convivem na mesma conta — o ambiente é definido pela chave de API
-- [Sandbox](/pages/sandbox): Teste sua integração no ambiente sandbox sem processar pagamentos reais
-- [Autenticação](/pages/authentication): Todas as rotas exigem um Bearer Token no header Authorization
-- [Indo para produção](/pages/production): Como sair do sandbox e começar a processar pagamentos reais
+- [Integre pagamentos PIX](/pages/introduction): Entenda o fluxo e as regras essenciais
+- [Crie seu primeiro pagamento](/pages/quickstart): Crie e confirme uma cobrança no sandbox usando a API REST
+- [Implemente o fluxo de pagamento](/pages/payments): Conecte criação, apresentação do PIX, estados e confirmação
+- [Confirme pagamentos com webhooks](/pages/webhooks): Valide eventos assinados e atualize o pedido
+- [Teste no sandbox](/pages/sandbox): Simule pagamento, expiração e pendência sem movimentar dinheiro real
+- [Vá para produção](/pages/production): Revise segurança, idempotência, erros e monitoramento
 
 ## Fundamentos da API
 
-- [Idempotência](/pages/idempotency): Repita requisições de criação com segurança — sem pagamentos duplicados
-- [Erros](/pages/errors): Todo erro da API segue o mesmo formato — e cada um diz o que fazer
+- [Autentique as requisições](/pages/authentication): Use chaves `sk_test_` e `sk_live_` no header `Authorization`
+- [Idempotência](/pages/idempotency): Repita criações com segurança usando `Idempotency-Key`
+- [Erros](/pages/errors): Trate erros RFC 7807 e o caso especial HTTP 202
+- [Transações](/pages/concepts/transactions): Entenda o recurso e seus estados
+- [Clientes](/pages/concepts/customers): Entenda como compradores e transações se relacionam
 
 ## Referência da API — Transações
 
-- [Cobrança PIX](/pages/pix/reference): Estrutura e atributos de uma cobrança PIX na API Bob Payments
-- [Criar cobrança](/pages/pix/create): POST /api/transactions — cria uma cobrança PIX
-- [Listar transações](/pages/pix/list): GET /api/transactions — lista paginada com filtros
-- [Consultar status](/pages/pix/check-status): GET /api/transactions/:id — status e dados de uma transação
+- [Estrutura da cobrança PIX](/pages/pix/reference): Consulte atributos e estados da transação
+- [Criar cobrança](/pages/pix/create): `POST /api/v1/transactions/`
+- [Listar transações](/pages/pix/list): `GET /api/v1/transactions/`
+- [Consultar status](/pages/pix/check-status): `GET /api/v1/transactions/{id}`
 
 ## Referência da API — Clientes
 
-- [Estrutura do cliente](/pages/customers/reference): Gerencie os compradores do seu projeto com histórico de transações
-- [Buscar cliente por ID](/pages/customers/get): GET /api/customers/:id — detalhes de um cliente
-- [Listar clientes](/pages/customers/list): GET /api/customers — lista paginada de clientes
+- [Estrutura do cliente](/pages/customers/reference): Consulte os dados do comprador
+- [Listar clientes](/pages/customers/list): `GET /api/v1/customers/`
+- [Buscar cliente por ID](/pages/customers/get): `GET /api/v1/customers/{id}`
 
-## Referência da API — Projeto
+## Referência da API — Projeto e sandbox
 
-- [Estrutura do projeto](/pages/store/reference): Configurações e informações do seu projeto
-- [Dados da loja](/pages/store/get): GET /api/store — retorna as configurações do projeto
+- [Estrutura do projeto](/pages/store/reference): Consulte as configurações públicas do projeto
+- [Consultar o projeto](/pages/store/get): `GET /api/v1/store/`
+- [Simular pagamento](/pages/pix/simulate-payment): `POST /api/v1/sandbox/transactions/{transactionId}/pay`
 
-## Referência da API — Sandbox
+## Regras essenciais
 
-- [Simular pagamento](/pages/pix/simulate-payment): POST /api/sandbox/transactions/:id/pay — simula a confirmação de um pagamento PIX
-
-## SDKs
-
-- [Visão geral](/pages/sdk/overview): Escolha uma biblioteca de servidor para integrar pagamentos PIX no backend
-- [SDK Node.js](/pages/sdk/node): Biblioteca oficial TypeScript/Node.js para criar pagamentos PIX e verificar webhooks
-- [SDK PHP](/pages/sdk/php): Biblioteca oficial PHP para criar pagamentos e verificar webhooks, sem dependências externas
+- Use **pagamento** para a capacidade do produto e **transação** para o recurso da API.
+- Envie valores em centavos. `10000` representa R$ 100,00.
+- Use as chaves secretas somente no backend.
+- Trate `transaction.paid` como a confirmação do pagamento.
+- Valide webhooks com o corpo bruto e processe entregas de forma idempotente.
+- Use `Idempotency-Key` ao criar uma transação pela API REST.
