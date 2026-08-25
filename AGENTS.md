@@ -1,4 +1,3 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
 > For Mintlify product knowledge (components, configuration, writing standards),
 > install the Mintlify skill: `npx skills add https://mintlify.com/docs`
 
@@ -21,11 +20,9 @@
 ## Terminology
 
  - Use **pagamento** when talking about the product capability and **transação** when referring to the API resource.
- - Write **PIX** in uppercase and **cartão de crédito** in full on first mention.
+ - Write **PIX** in uppercase.
  - Use **projeto** for the account scope associated with an API key; reserve **loja** for the merchant's business.
- - Use **checkout hospedado** and **SDK Checkout** consistently.
  - Call the test environment **sandbox** — never "Dev Mode" or "Bob Sandbox". `devMode` stays as-is only when naming the API field.
- - Cripto is available through the **checkout hospedado** (`crypto` in `paymentMethods`); the buyer completes payment on the hosted page reached via `checkoutUrl`. Do not document a direct-transaction crypto API — the curated `/api/v1/transactions/` operation stays PIX-only.
 
 ## Style preferences
 
@@ -39,5 +36,6 @@
 
 ## Content boundaries
 
- - Document the public API, SDKs, sandbox, webhooks and integration workflows.
+ - Document the public PIX API, server SDKs, sandbox, webhooks and integration workflows.
+ - Do not document payment links, checkout, frontend checkout SDKs or crypto as public capabilities.
  - Do not document internal admin features, gateway credentials, secret keys or unreleased payment methods as if they were available.

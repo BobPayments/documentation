@@ -49,7 +49,7 @@ Uma cobrança PIX é representada pela seguinte estrutura:
 </ResponseField>
 
 <ResponseField name="paymentMethod" type="string">
-  Método de pagamento da transação: `pix` (default na criação), `credit_card`, `crypto` ou `boleto`.
+  Método de pagamento da transação. Na criação direta documentada, use `pix` ou omita o campo para aplicar o default.
 </ResponseField>
 
 <ResponseField name="status" type="string">
@@ -92,22 +92,6 @@ Uma cobrança PIX é representada pela seguinte estrutura:
 
 <ResponseField name="updatedAt" type="date-time">
   Data e hora da última atualização.
-</ResponseField>
-
-<ResponseField name="gatewayAmountCents" type="number | null">
-  Valor cobrado no gateway na moeda de liquidação (ex.: centavos de USD em cripto). `null` quando liquida em BRL.
-</ResponseField>
-
-<ResponseField name="gatewayCurrency" type="string | null">
-  Moeda de liquidação do gateway (ISO 4217, ex.: `USD`). `null` = BRL.
-</ResponseField>
-
-<ResponseField name="fxRate" type="number | null">
-  Cotação BRL→moeda do gateway congelada na criação. `null` quando não há conversão.
-</ResponseField>
-
-<ResponseField name="checkoutUrl" type="string | null">
-  URL do checkout hospedado quando houver (ex.: pagamento em cripto).
 </ResponseField>
 
 ## Próximos passos

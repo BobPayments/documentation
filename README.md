@@ -8,9 +8,8 @@
 
 Bob Payments é uma plataforma de pagamentos para desenvolvedores. Você conecta uma única API e nós cuidamos do processamento, fallback e disponibilidade. Built by developers for developers, it offers:
 
-- PIX e cartão por trás de uma única API
+- PIX por meio da API direta
 - QR Code e código copia-e-cola gerados em uma chamada
-- Cartão de crédito via checkout hospedado ou SDK embutível
 - Notificações em tempo real via webhooks com verificação HMAC-SHA256
 - Sandbox completo para simular pagamentos sem mover dinheiro real
 - Respostas JSON consistentes em todos os endpoints
@@ -23,10 +22,10 @@ Esta documentação é construída com [Mintlify](https://mintlify.com).
 1. **Visualizar localmente**
 ```bash
 # Instalar o CLI do Mintlify
-npm i -g mintlify
+npm i -g mint
 
 # Iniciar o servidor de desenvolvimento
-mintlify dev
+mint dev
 ```
 
 2. **Acesse `http://localhost:3000` para ver a documentação**
@@ -45,7 +44,6 @@ mintlify dev
 │   ├── webhooks.mdx            # Webhooks e verificação de assinatura
 │   ├── production.mdx          # Guia para ir a produção
 │   ├── pix/                    # Cobranças PIX
-│   ├── credit-card/            # Cartão de crédito
 │   ├── customers/              # Gestão de clientes
 │   └── store/                  # Dados da loja
 ├── docs.json                   # Configuração do Mintlify
@@ -55,10 +53,10 @@ mintlify dev
 ## 🔧 Desenvolvimento local
 
 ```bash
-mintlify dev
+mint dev
 ```
 
-Se o servidor não iniciar, execute `mintlify install` para reinstalar as dependências.
+Se o servidor não iniciar, execute `mint update` para atualizar o CLI.
 
 ## 🚀 Deploy
 

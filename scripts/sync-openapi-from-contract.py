@@ -34,16 +34,27 @@ OUT = DOC_ROOT / "openapi.yaml"
 INCLUDE = {
     "/api/v1/transactions/": ["get", "post"],
     "/api/v1/transactions/{id}": ["get"],
-    "/api/v1/checkout-sessions/": ["post"],
-    "/api/v1/checkout-sessions/{token}/status": ["get"],
     "/api/v1/customers/": ["get"],
     "/api/v1/customers/{id}": ["get"],
     "/api/v1/store/": ["get"],
     "/api/v1/sandbox/transactions/{transactionId}/pay": ["post"],
-    "/api/v1/card-tokenization-sessions/": ["post"],
 }
 
-STRIP_RESPONSE_FIELDS = {"gateway", "connection"}
+STRIP_RESPONSE_FIELDS = {
+    "gateway",
+    "connection",
+    "card",
+    "cardBrand",
+    "cardLastFour",
+    "installments",
+    "nextAction",
+    "nextActionUrl",
+    "checkoutToken",
+    "checkoutUrl",
+    "gatewayAmountCents",
+    "gatewayCurrency",
+    "fxRate",
+}
 STRIP_QUERY_PARAMS = {"connectionId"}
 DESC_REPLACEMENTS = [
     (
@@ -81,6 +92,12 @@ def strip_provider_fields(node: object) -> None:
                     isinstance(p, dict) and p.get("name") in STRIP_QUERY_PARAMS
                 )
             ]
+        if "enum" in node and isinstance(node["enum"], list):
+            node["enum"] = [
+                value
+                for value in node["enum"]
+                if value not in {"credit_card", "crypto", "boleto"}
+            ]
         props = node.get("properties")
         if isinstance(props, dict):
             for field in list(props):
@@ -99,6 +116,37 @@ def strip_provider_fields(node: object) -> None:
     elif isinstance(node, list):
         for item in node:
             strip_provider_fields(item)
+
+
+def strip_fields(node: object, fields: set[str]) -> None:
+    if isinstance(node, dict):
+        properties = node.get("properties")
+        if isinstance(properties, dict):
+            for field in fields:
+                properties.pop(field, None)
+            if isinstance(node.get("required"), list):
+                node["required"] = [value for value in node["required"] if value not in fields]
+        for value in node.values():
+            strip_fields(value, fields)
+    elif isinstance(node, list):
+        for item in node:
+            strip_fields(item, fields)
+
+
+def restrict_direct_transaction_to_pix(operation: dict) -> None:
+    operation["description"] = "Cria uma nova transação PIX."
+    content = operation.get("requestBody", {}).get("content", {})
+    schema = content.get("application/json", {}).get("schema", {})
+    payment_method = schema.get("properties", {}).get("paymentMethod")
+    if isinstance(payment_method, dict):
+        payment_method["description"] = (
+            'Método de pagamento da transação. Use "pix" ou omita o campo para aplicar o default.'
+        )
+        payment_method["enum"] = ["pix"]
+
+    responses = operation.get("responses")
+    if isinstance(responses, dict):
+        strip_fields(responses, {"checkoutUrl"})
 
 
 def main() -> int:
@@ -129,6 +177,8 @@ def main() -> int:
                 return 1
             op = copy.deepcopy(item[method])
             strip_provider_fields(op)
+            if path.rstrip("/") == "/api/v1/transactions" and method == "post":
+                restrict_direct_transaction_to_pix(op)
             out_item[method] = op
         paths[path] = out_item
 
@@ -137,7 +187,7 @@ def main() -> int:
         "info": {
             "title": "Bob Payments API",
             "description": (
-                "API de pagamentos Bob Payments — PIX, cartão de crédito e cripto. "
+                "API de pagamentos Bob Payments para cobranças PIX. "
                 "Crie cobranças, gerencie clientes e receba webhooks."
             ),
             "version": (snap.get("info") or {}).get("version", "1.0.0"),

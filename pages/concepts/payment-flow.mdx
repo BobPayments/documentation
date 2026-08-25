@@ -4,50 +4,43 @@ description: "Entenda o caminho entre sua aplicação, a Bob Payments e o compra
 icon: "diagram-project"
 ---
 
-Todo pagamento na Bob passa pela mesma sequência — **cliente**, **sessão de checkout**, **coleta do pagamento** e **criação da transação** — independente da forma de integração. As opções mudam; a ordem é sempre a mesma.
-
-<Note>
-  **PIX** está disponível. Cripto e cartão de crédito estão em **beta** e dependem da habilitação no projeto. A API direta também aceita o `paymentMethod` correspondente quando publicado para a sua conta.
-</Note>
+Todo pagamento PIX passa pela mesma sequência: criar a transação, apresentar o código ao comprador e confirmar o resultado.
 
 ## O processo de pagamento na Bob
 
 <Steps>
-  <Step title="1. Identifique o cliente">
-    Todo pagamento se associa a um **cliente** (nome, documento, contato). A Bob guarda esses dados para reaproveitar em cobranças futuras e gera um identificador usado nos passos seguintes.
+  <Step title="1. Envie os dados do cliente">
+    Inclua nome, documento, contato e endereço na criação da transação. A Bob associa esses dados ao histórico do projeto.
   </Step>
-  <Step title="2. Crie a sessão de checkout">
-    A sessão conecta o cliente ao pagamento, guarda os detalhes da cobrança e carrega os métodos disponíveis (PIX, cripto, cartão). Integrações server-to-server que usam a **API direta de transações** podem pular este passo.
+  <Step title="2. Crie a transação PIX">
+    Envie o valor e a descrição da cobrança para `POST /api/v1/transactions/`. A resposta inclui o identificador, o status e o `pixCode`.
   </Step>
-  <Step title="3. Colete o pagamento">
-    Há duas formas de coletar:
-
-    - **Checkout hospedado ou SDK Checkout** — a Bob coleta com segurança: mostra o PIX (QR Code e copia-e-cola) e, para cartão, tokeniza os dados no navegador gerando um token opaco (`btk_...`). PAN, CVV e validade nunca passam pela sua aplicação.
-    - **API direta** — você assume a tokenização e a conformidade PCI, enviando à Bob apenas o token seguro.
+  <Step title="3. Apresente o pagamento">
+    Mostre o QR Code ou o código PIX copia-e-cola ao comprador.
   </Step>
-  <Step title="4. Crie a transação">
-    A transação é o pagamento em si — cada tentativa de cobrança. Ela usa o cliente e os dados coletados nos passos anteriores e recebe um status que evolui até o desfecho final.
+  <Step title="4. Confirme pelo webhook">
+    Quando o status mudar, a Bob envia um evento assinado ao seu backend. Use `transaction.paid` como confirmação oficial antes de liberar o pedido.
   </Step>
 </Steps>
 
 ## Confirmação por webhook
 
-O desfecho financeiro é **assíncrono**. Assim que a transação muda de estado (`transaction.paid`, `transaction.expired`), a Bob envia um **webhook assinado** ao seu backend — trate-o como a confirmação oficial do pagamento. A página de retorno (`successUrl`) orienta o comprador, mas não substitui o webhook.
+O desfecho financeiro é **assíncrono**. Assim que a transação muda de estado, a Bob envia um webhook assinado ao seu backend. Atualize o pedido de forma idempotente e responda com sucesso.
 
 ## Responsabilidades
 
 | Componente | Responsabilidade |
 |---|---|
-| Seu backend | Autenticar, criar recursos e confirmar o pedido |
-| Checkout hospedado ou SDK Checkout | Coletar a escolha do comprador e proteger os dados do cartão |
-| API Bob | Criar e consultar sessões, transações e clientes |
+| Seu backend | Autenticar, criar a transação e confirmar o pedido |
+| Sua interface | Apresentar o QR Code ou código copia-e-cola |
+| API Bob | Criar e consultar transações e clientes |
 | Webhook | Notificar mudanças de estado de forma assíncrona |
 
 ## Próximos passos
 
 <CardGroup cols={2}>
-  <Card title="Escolher uma integração" icon="signs-post" href="/pages/payments">
-    Compare os caminhos disponíveis.
+  <Card title="Criar uma cobrança" icon="code" href="/pages/pix/create">
+    Consulte os campos da operação de criação.
   </Card>
   <Card title="Entender transações" icon="arrow-right-arrow-left" href="/pages/concepts/transactions">
     Conheça o recurso que representa cada tentativa de pagamento.

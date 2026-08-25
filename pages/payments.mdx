@@ -1,74 +1,62 @@
 ---
 title: "Pagamentos"
-description: "Escolha o método de pagamento e o caminho de integração mais adequado para o seu produto."
+description: "Entenda como criar, apresentar e confirmar uma cobrança PIX."
 icon: "wallet"
 ---
 
-A Bob Payments oferece uma única integração para criar, acompanhar e conciliar pagamentos. O método escolhido muda a experiência do comprador, mas o ciclo da transação continua o mesmo: criar, aguardar o resultado e confirmar pelo webhook.
+A Bob Payments permite criar, acompanhar e conciliar pagamentos com PIX. Você cria uma transação, apresenta o código ao comprador e confirma o resultado pelo webhook.
 
-## Métodos disponíveis
+## Método disponível
 
-| Método | Disponibilidade | Melhor caminho | O que você recebe |
-|---|---|---|---|
-| **PIX** | Disponível | API direta, checkout hospedado ou SDK Checkout | Código copia-e-cola (`pixCode`), QR Code e eventos de status |
-| **Cartão de crédito (beta)** | Beta, quando habilitado no projeto | Checkout hospedado, SDK Checkout ou API direta com token `btk_...` | Tokenização no browser, 3DS (`nextActionUrl`) e eventos de status |
-| **Cripto (beta)** | Beta, quando habilitado no projeto | Checkout hospedado ou `paymentMethod: "crypto"` na API | `checkoutUrl` da página hospedada e eventos de status |
-
-<Note>
-  As integrações com cartão de crédito e cripto estão em **beta**. Fale com o time de vendas pelo [WhatsApp](https://wa.me/5521992614614) ou [e-mail](mailto:contato@payments.bob.company) para avaliar e habilitar o seu projeto. Um método só pode ser usado quando estiver **habilitado no projeto**.
-</Note>
+| Método | Disponibilidade | O que você recebe |
+|---|---|---|
+| **PIX** | Disponível | Código copia-e-cola (`pixCode`), QR Code e eventos de status |
 
 ## Escolha como integrar
 
 | Se você quer... | Use... |
 |---|---|
-| Começar rápido a receber PIX | [Checkout hospedado](/pages/checkout/overview) |
-| Manter a tela de pagamento no seu site | [SDK Checkout](/pages/sdk/checkout) |
-| Controlar a experiência do PIX e receber o código EMV | [API direta de transações](/pages/pix/create) |
+| Controlar a experiência do pagamento e receber o código EMV | [API direta de transações](/pages/pix/create) |
 | Integrar no backend com menos código | [SDKs de servidor](/pages/sdk/overview) |
 
-<Warning>
-  A API direta não deve receber número do cartão, CVV ou validade. Para cartão, use o checkout hospedado ou o SDK Checkout, que tokenizam os dados no navegador.
-</Warning>
-
-## Fluxo comum
+## Fluxo de pagamento
 
 <Steps>
   <Step title="Configure o ambiente">
-    Crie uma chave `sk_test_` e habilite os métodos que deseja aceitar. Comece pelo [Sandbox](/pages/sandbox).
+    Crie uma chave `sk_test_` e comece pelo [sandbox](/pages/sandbox).
   </Step>
-  <Step title="Crie o pagamento">
-    Use uma transação direta (`paymentMethod` omitido ou `"pix"`, `"credit_card"` ou `"crypto"`) ou crie uma sessão de checkout com `paymentMethods` (ex.: `['pix']`, `['crypto']`, `['credit_card', 'pix']`).
+  <Step title="Crie a transação">
+    Envie os dados do cliente e da cobrança para `POST /api/v1/transactions/`.
   </Step>
-  <Step title="Mostre o próximo passo ao comprador">
-    No PIX, exiba o `pixCode` e o QR Code. Em cripto, redirecione o comprador para a `checkoutUrl`. No cartão, use o checkout hospedado/SDK Checkout ou a API direta com token `btk_...` (e `nextActionUrl` se houver 3DS).
+  <Step title="Apresente o PIX">
+    Exiba o `pixCode` retornado como código copia-e-cola ou QR Code.
   </Step>
   <Step title="Confirme no servidor">
-    Receba o evento `transaction.paid`, verifique a assinatura e libere o pedido apenas depois da confirmação. A página de retorno do checkout não substitui o webhook.
+    Receba o evento `transaction.paid`, verifique a assinatura e libere o pedido apenas depois da confirmação.
   </Step>
 </Steps>
 
 ## Estados e confirmação
 
-Use o status da transação ou da sessão para exibir o estado ao comprador, mas trate o webhook como a fonte de verdade no backend. Um `201` confirma que o recurso foi criado; não confirma que o pagamento foi aprovado.
+Use o status da transação para atualizar a interface. No backend, trate o webhook como a fonte de verdade. Um `201` confirma que a transação foi criada; não confirma que o pagamento foi concluído.
 
 | Estado | Significado geral |
 |---|---|
-| `waiting_payment` | O comprador ainda precisa pagar ou concluir uma ação |
+| `waiting_payment` | O comprador ainda precisa pagar |
 | `processing` | O pagamento foi recebido e aguarda confirmação |
 | `paid` | O pagamento foi confirmado |
 | `expired` / `cancelled` | O pagamento não pode mais ser concluído |
 | `refunded` | O valor foi devolvido |
 
-Os estados específicos podem variar por método. Consulte a [referência de PIX](/pages/pix/reference), a [referência de cartão](/pages/credit-card/reference) e os [webhooks](/pages/webhooks) antes de implementar a máquina de estados do seu pedido.
+Consulte a [referência de PIX](/pages/pix/reference) e os [webhooks](/pages/webhooks) antes de implementar a máquina de estados do seu pedido.
 
 ## Próximos passos
 
 <CardGroup cols={2}>
-  <Card title="Começar no Sandbox" icon="flask" href="/pages/sandbox">
+  <Card title="Começar no sandbox" icon="flask" href="/pages/sandbox">
     Teste criação, pagamento, expiração e webhooks sem movimentar dinheiro real.
   </Card>
   <Card title="Ir para produção" icon="rocket" href="/pages/production">
-    Passe pelo checklist de segurança, idempotência e confirmação antes de usar `sk_live_`.
+    Revise segurança, idempotência e confirmação antes de usar `sk_live_`.
   </Card>
 </CardGroup>
