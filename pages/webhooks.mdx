@@ -26,7 +26,7 @@ Webhooks permitem que sua aplicação seja notificada automaticamente quando eve
 
 ## Versões do payload (v1 e v2)
 
-O payload de webhook é **versionado**. A versão é fixada por canal (webhooks do dashboard) ou por sessão (checkout):
+O payload de webhook é **versionado**. A versão é fixada por canal no dashboard:
 
 | | **v2** (recomendada) | **v1** (legado, congelado) |
 |---|---|---|
@@ -61,12 +61,10 @@ Exemplo de `transaction.paid` na **v2** (repare em `apiVersion` e `amountCents`)
 }
 ```
 
-Na **v2**, `data` também pode incluir `checkoutUrl` quando a transação tiver checkout hospedado (ex.: cripto). Esses campos **não** existem no payload v1 (formato congelado).
-
 ## Eventos disponíveis
 
 <Note>
-  Os exemplos abaixo mostram o formato **v1** (legado). Na **v2**: `data.amount` vira `data.amountCents`, o envelope ganha `apiVersion: "v2"`, e entram `data.paymentMethod` e (quando houver) `data.checkoutUrl`.
+  Os exemplos abaixo mostram o formato **v1** (legado). Na **v2**, `data.amount` vira `data.amountCents`, o envelope ganha `apiVersion: "v2"` e entra `data.paymentMethod`.
 </Note>
 
 <AccordionGroup>

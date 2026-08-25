@@ -6,7 +6,7 @@
     "strict": false
   },
   "name": "Bob Payments",
-  "description": "Documentação da API Bob Payments — uma integração para criar, acompanhar e conciliar pagamentos com PIX, cartão de crédito e cripto em beta.",
+  "description": "Documentação da API Bob Payments para criar, acompanhar e conciliar pagamentos com PIX.",
   "logo": {
     "light": "/logo/bob-logo-sm.webp",
     "dark": "/logo/bob-logo-sm.webp",
@@ -120,14 +120,6 @@
     {
       "source": "/api-reference/simular-pagamento-de-transação-sandbox",
       "destination": "/pages/pix/simulate-payment"
-    },
-    {
-      "source": "/api-reference/checkout/criar-sessão-de-checkout",
-      "destination": "/pages/checkout/create"
-    },
-    {
-      "source": "/api-reference/checkout/consultar-status-da-sessão",
-      "destination": "/pages/checkout/status"
     },
     {
       "source": "/api-reference/listar-todos-os-clientes",
@@ -269,7 +261,6 @@
             "pages": [
               "pages/concepts/payment-flow",
               "pages/concepts/customers",
-              "pages/concepts/sessions",
               "pages/concepts/transactions",
               "pages/concepts/webhooks"
             ]
@@ -277,9 +268,7 @@
           {
             "group": "Formas de integração",
             "pages": [
-              "pages/payments",
-              "pages/checkout/overview",
-              "pages/credit-card/overview"
+              "pages/payments"
             ]
           },
           {
@@ -313,17 +302,9 @@
             "group": "Transações",
             "pages": [
               "pages/pix/reference",
-              "pages/credit-card/reference",
               "pages/pix/create",
               "pages/pix/list",
               "pages/pix/check-status"
-            ]
-          },
-          {
-            "group": "Checkout",
-            "pages": [
-              "pages/checkout/create",
-              "pages/checkout/status"
             ]
           },
           {
@@ -363,12 +344,6 @@
             "pages": [
               "pages/sdk/node",
               "pages/sdk/php"
-            ]
-          },
-          {
-            "group": "Frontend",
-            "pages": [
-              "pages/sdk/checkout"
             ]
           }
         ]

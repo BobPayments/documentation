@@ -4,7 +4,7 @@ description: "Rode um projeto com o SDK da Bob e faça seu primeiro pagamento PI
 icon: "bolt"
 ---
 
-Este guia de ~5 minutos usa o SDK de servidor da Bob para criar uma cobrança **PIX** e confirmar seu primeiro pagamento no sandbox.
+Este guia de cerca de cinco minutos usa o SDK de servidor da Bob para criar uma cobrança **PIX** e confirmar seu primeiro pagamento no sandbox.
 
 <Note>
   Você precisa de uma chave `sk_test_`. Se ainda não tem, veja [Configurar sua conta](/pages/setup-account).
@@ -28,7 +28,7 @@ Este guia de ~5 minutos usa o SDK de servidor da Bob para criar uma cobrança **
   </Step>
 
   <Step title="Configure a chave de API">
-    Crie um arquivo `.env` na raiz com a sua chave de sandbox:
+    Crie um arquivo `.env` na raiz com sua chave de sandbox:
 
     ```bash
     BOB_API_KEY=sk_test_sua_chave
@@ -40,22 +40,36 @@ Este guia de ~5 minutos usa o SDK de servidor da Bob para criar uma cobrança **
   </Step>
 
   <Step title="Crie a cobrança PIX">
-    Crie uma sessão de checkout com PIX. A resposta traz a `checkoutUrl`, para onde você redireciona o comprador:
+    Crie uma transação e apresente o `pixCode` retornado ao comprador:
 
     ```typescript
     import { BobPayments } from '@bobpayments/sdk';
 
     const bob = new BobPayments({ apiKey: process.env.BOB_API_KEY! });
 
-    const session = await bob.checkoutSessions.create({
-      amountCents: 10_000, // R$100,00 — no sandbox, final .00 é pago automaticamente
-      items: [{ name: 'Plano Premium', quantity: 1, unitAmountCents: 10_000 }],
-      paymentMethods: ['pix'],
-      successUrl: 'https://loja.example.com/pedido/sucesso',
-      webhookUrl: 'https://loja.example.com/webhooks/bob',
+    const transaction = await bob.transactions.create({
+      customer: {
+        name: 'João Silva',
+        document: '12345678901',
+        documentType: 'CPF',
+        email: 'joao@example.com',
+        address: {
+          street: 'Rua das Flores',
+          streetNumber: '123',
+          neighborhood: 'Centro',
+          zipCode: '01310-100',
+          city: 'São Paulo',
+          state: 'SP',
+        },
+      },
+      payment: {
+        amountCents: 10_000,
+        product: 'Plano Premium',
+      },
+      originDomain: 'loja.example.com',
     });
 
-    console.log(session.checkoutUrl); // redirecione o comprador para cá
+    console.log(transaction.pixCode);
     ```
   </Step>
 
@@ -64,15 +78,15 @@ Este guia de ~5 minutos usa o SDK de servidor da Bob para criar uma cobrança **
 
     | Centavos do valor | Desfecho |
     |---|---|
-    | `.00` (ex.: `10000`) | Pago em ~5s (`transaction.paid`) |
-    | `.01` (ex.: `10001`) | Expira em ~5s (`transaction.expired`) |
+    | `.00` (ex.: `10000`) | Pago em cerca de 5 segundos (`transaction.paid`) |
+    | `.01` (ex.: `10001`) | Expira em cerca de 5 segundos (`transaction.expired`) |
     | `.02` (ex.: `10002`) | Fica pendente até expirar |
 
-    Como a sessão acima usa `10_000`, o pagamento é confirmado em segundos e dispara o webhook `transaction.paid`.
+    Como a transação acima usa `10_000`, o pagamento é confirmado em segundos e dispara o webhook `transaction.paid`.
   </Step>
 
   <Step title="Confira o pagamento no Dashboard">
-    Acesse **Transações** em [app.payments.bob.company](https://app.payments.bob.company) e veja a cobrança recém-paga, com o campo `isSandbox: true`.
+    Acesse **Transações** em [app.payments.bob.company](https://app.payments.bob.company) e veja a cobrança recém-paga com o campo `isSandbox: true`.
   </Step>
 </Steps>
 
@@ -80,7 +94,7 @@ Este guia de ~5 minutos usa o SDK de servidor da Bob para criar uma cobrança **
 
 <CardGroup cols={2}>
   <Card title="Entender o fluxo" icon="diagram-project" href="/pages/concepts/payment-flow">
-    Veja como sessão, transação, checkout e webhook se conectam.
+    Veja como transação, PIX e webhook se conectam.
   </Card>
   <Card title="Configurar webhooks" icon="bell" href="/pages/webhooks">
     Implemente a confirmação assíncrona no seu servidor.
@@ -88,7 +102,7 @@ Este guia de ~5 minutos usa o SDK de servidor da Bob para criar uma cobrança **
   <Card title="Testar no sandbox" icon="flask" href="/pages/sandbox">
     Simule os estados do pagamento sem movimentar dinheiro real.
   </Card>
-  <Card title="Ver todos os caminhos" icon="signs-post" href="/pages/payments">
-    Compare checkout hospedado, SDK Checkout e API direta.
+  <Card title="Consultar a API" icon="code" href="/pages/pix/create">
+    Veja os campos da operação de criação.
   </Card>
 </CardGroup>

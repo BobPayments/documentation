@@ -1,10 +1,10 @@
 # Bob Payments
 
-> A infraestrutura de pagamentos para o seu produto. Aceite PIX e avalie cartão de crédito e cripto em beta via checkout hospedado, SDK embutível ou API REST direta, com clientes, sessões de checkout e webhooks em tempo real.
+> A infraestrutura de pagamentos para seu produto. Aceite PIX pela API direta, gerencie clientes e receba webhooks em tempo real.
 
 ## Primeiros passos
 
-- [Início](/): Integre PIX com checkout hospedado, SDK Checkout ou API direta
+- [Início](/): Integre pagamentos PIX pela API direta ou pelos SDKs de servidor
 - [O que é a Bob Payments?](/pages/introduction): Visão geral da API, recursos disponíveis e primeiros passos
 - [Configurar sua conta](/pages/setup-account): Prepare o projeto, gere as chaves de API e ative os webhooks antes do primeiro pagamento
 - [Criar seu primeiro pagamento com SDK](/pages/quickstart): Rode um projeto com o SDK da Bob e faça seu primeiro pagamento PIX no sandbox em poucos minutos
@@ -13,15 +13,12 @@
 
 - [Fluxo de pagamento](/pages/concepts/payment-flow): O caminho entre sua aplicação, a Bob Payments e o comprador
 - [Clientes](/pages/concepts/customers): Como a Bob associa compradores, dados cadastrais e transações
-- [Sessão de checkout](/pages/concepts/sessions): O recurso que conecta o cliente ao pagamento e carrega os métodos disponíveis
 - [Transações](/pages/concepts/transactions): O recurso da API que representa uma tentativa de pagamento e seu ciclo de vida
 - [Webhooks](/pages/concepts/webhooks): Por que os eventos assíncronos são a fonte de verdade da integração
 
 ## Formas de integração
 
 - [Pagamentos](/pages/payments): Escolha o método de pagamento e o caminho de integração mais adequado para o seu produto
-- [Checkout hospedado](/pages/checkout/overview): A Bob cuida da tela de pagamento — você só cria a sessão e redireciona
-- [Cartão de crédito (beta)](/pages/credit-card/overview): Aceite cartão pelo checkout hospedado, SDK embutível ou API direta com token btk_
 
 ## Webhooks
 
@@ -42,15 +39,9 @@
 ## Referência da API — Transações
 
 - [Cobrança PIX](/pages/pix/reference): Estrutura e atributos de uma cobrança PIX na API Bob Payments
-- [Transação de cartão](/pages/credit-card/reference): Estrutura e atributos de uma transação de cartão de crédito
 - [Criar cobrança](/pages/pix/create): POST /api/transactions — cria uma cobrança PIX
 - [Listar transações](/pages/pix/list): GET /api/transactions — lista paginada com filtros
 - [Consultar status](/pages/pix/check-status): GET /api/transactions/:id — status e dados de uma transação
-
-## Referência da API — Checkout
-
-- [Criar sessão de checkout](/pages/checkout/create): POST — cria uma sessão de checkout hospedado
-- [Consultar status da sessão](/pages/checkout/status): GET — status de uma sessão de checkout
 
 ## Referência da API — Clientes
 
@@ -69,7 +60,6 @@
 
 ## SDKs
 
-- [Visão geral](/pages/sdk/overview): Qual SDK usar — bibliotecas de servidor para o backend e o SDK de frontend para o checkout
-- [SDK Node.js](/pages/sdk/node): Biblioteca oficial TypeScript/Node.js para criar pagamentos, usar checkout e verificar webhooks
+- [Visão geral](/pages/sdk/overview): Escolha uma biblioteca de servidor para integrar pagamentos PIX no backend
+- [SDK Node.js](/pages/sdk/node): Biblioteca oficial TypeScript/Node.js para criar pagamentos PIX e verificar webhooks
 - [SDK PHP](/pages/sdk/php): Biblioteca oficial PHP para criar pagamentos e verificar webhooks, sem dependências externas
-- [SDK Checkout](/pages/sdk/checkout): Embutir o checkout da Bob no seu site com cartão, PIX e 3DS
