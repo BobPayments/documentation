@@ -99,15 +99,43 @@
     },
     {
       "source": "/pages/environments",
-      "destination": "/pages/sandbox"
+      "destination": "/pages/pix/simulate-payment"
     },
     {
       "source": "/pages/concepts/payment-flow",
-      "destination": "/pages/payments"
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/pages/concepts/webhooks",
       "destination": "/pages/webhooks"
+    },
+    {
+      "source": "/pages/payments",
+      "destination": "/pages/pix/create"
+    },
+    {
+      "source": "/pages/sandbox",
+      "destination": "/pages/pix/simulate-payment"
+    },
+    {
+      "source": "/pages/production",
+      "destination": "/pages/authentication"
+    },
+    {
+      "source": "/pages/concepts/transactions",
+      "destination": "/pages/pix/reference"
+    },
+    {
+      "source": "/pages/concepts/customers",
+      "destination": "/pages/customers/reference"
+    },
+    {
+      "source": "/pages/idempotency",
+      "destination": "/pages/pix/create"
+    },
+    {
+      "source": "/pages/errors",
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/en",
@@ -119,7 +147,7 @@
     },
     {
       "source": "/api-reference",
-      "destination": "/pages/pix/reference"
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/api-reference/criar-nova-transação",
@@ -163,23 +191,23 @@
     },
     {
       "source": "/docs/public/guides/complete-integration",
-      "destination": "/pages/payments"
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/docs/public/guides/response-format",
-      "destination": "/pages/errors"
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/docs/public/guides/rate-limiting",
-      "destination": "/pages/errors"
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/docs/public/guides/idempotency",
-      "destination": "/pages/idempotency"
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/docs/public/api-reference/transaction-lifecycle",
-      "destination": "/pages/concepts/transactions"
+      "destination": "/pages/pix/reference"
     },
     {
       "source": "/docs/public/api-reference/create-pix",
@@ -195,7 +223,7 @@
     },
     {
       "source": "/docs/public/api-reference/errors",
-      "destination": "/pages/errors"
+      "destination": "/pages/pix/create"
     },
     {
       "source": "/docs/public/api-reference/create-customer",
@@ -215,7 +243,7 @@
     },
     {
       "source": "/docs/public/sandbox/overview",
-      "destination": "/pages/sandbox"
+      "destination": "/pages/pix/simulate-payment"
     },
     {
       "source": "/docs/public/sandbox/simulate-payment",
@@ -269,10 +297,10 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentação",
+        "tab": "Comece aqui",
         "groups": [
           {
-            "group": "Comece aqui",
+            "group": "Introdução",
             "pages": [
               "pages/introduction",
               "pages/quickstart",
@@ -280,61 +308,26 @@
             ]
           },
           {
-            "group": "Pagamentos PIX",
+            "group": "Webhooks",
             "pages": [
-              "pages/payments",
-              "pages/webhooks",
-              "pages/sandbox",
-              "pages/production"
-            ]
-          },
-          {
-            "group": "Consultas",
-            "pages": [
-              "pages/concepts/transactions",
-              "pages/concepts/customers"
-            ]
-          },
-          {
-            "group": "Boas práticas",
-            "pages": [
-              "pages/idempotency",
-              "pages/errors"
+              "pages/webhooks"
             ]
           }
         ]
       },
       {
-        "tab": "Referência da API",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "Transações",
+            "group": "API Reference",
             "pages": [
-              "pages/pix/reference",
               "pages/pix/create",
               "pages/pix/list",
-              "pages/pix/check-status"
-            ]
-          },
-          {
-            "group": "Clientes",
-            "pages": [
-              "pages/customers/reference",
+              "pages/pix/check-status",
+              "pages/pix/simulate-payment",
+              "pages/customers/list",
               "pages/customers/get",
-              "pages/customers/list"
-            ]
-          },
-          {
-            "group": "Projeto",
-            "pages": [
-              "pages/store/reference",
               "pages/store/get"
-            ]
-          },
-          {
-            "group": "Sandbox",
-            "pages": [
-              "pages/pix/simulate-payment"
             ]
           }
         ]

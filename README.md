@@ -37,15 +37,11 @@ mint dev
 ├── pages/
 │   ├── introduction.mdx        # Visão geral da API
 │   ├── quickstart.mdx          # Primeiro pagamento no sandbox
-│   ├── concepts/               # Conceitos principais e fluxo de pagamento
-│   ├── payments.mdx             # Métodos e caminhos de integração
-│   ├── sandbox.mdx             # Ambiente sandbox
 │   ├── authentication.mdx      # Autenticação Bearer Token
 │   ├── webhooks.mdx            # Webhooks e verificação de assinatura
-│   ├── production.mdx          # Guia para ir a produção
 │   ├── pix/                    # Cobranças PIX
 │   ├── customers/              # Gestão de clientes
-│   └── store/                  # Dados da loja
+│   └── store/                  # Dados do projeto
 ├── docs.json                   # Configuração do Mintlify
 └── openapi.yaml                # Especificação OpenAPI (gerada automaticamente)
 ```

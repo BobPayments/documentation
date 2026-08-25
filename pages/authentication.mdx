@@ -39,6 +39,22 @@ curl https://api.payments.bob.company/api/v1/store/ \
 
 Um erro `401` indica uma chave ausente, inválida ou revogada. Um erro `403` indica que a chave não pode acessar o recurso.
 
+## Vá para produção
+
+Use `sk_live_` somente depois que o fluxo completo funcionar com `sk_test_`. A URL e o código da integração continuam iguais.
+
+```bash
+# Sandbox
+BOB_API_KEY=sk_test_sua_chave
+
+# Produção
+BOB_API_KEY=sk_live_sua_chave
+```
+
+<Warning>
+  Uma chave `sk_live_` movimenta dinheiro real. Se ela vazar, revogue-a no Dashboard e gere outra.
+</Warning>
+
 <Card title="Criar uma cobrança" icon="code" href="/pages/pix/create" horizontal>
-  Consulte os campos e teste a operação na referência da API.
+  Consulte os campos, a idempotência e as respostas da operação.
 </Card>

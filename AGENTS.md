@@ -13,8 +13,8 @@
 
 ## Navigation structure
 
-- The **Documentação** tab holds guides and concepts only — no endpoint pages, so no HTTP method badges appear in its sidebar.
-- The **Referência da API** tab is curated by resource in `docs.json`, not generated from `openapi.yaml`. Each endpoint is an MDX page under `pages/` whose frontmatter points at the operation (`openapi: "POST /api/v1/transactions/"`), which keeps URLs stable and human-readable.
+- The **Comece aqui** tab holds guides only — introdução, autenticação, quickstart and webhooks. No endpoint pages, so no HTTP method badges appear in its sidebar.
+- The **API Reference** tab is a flat list of operations curated in `docs.json`, not generated from `openapi.yaml`. Each endpoint is an MDX page under `pages/` whose frontmatter points at the operation (`openapi: "POST /api/v1/transactions/"`), which keeps URLs stable and human-readable.
 - Because that tab is curated, **a new operation in `openapi.yaml` will not show up on its own**: add the matching MDX page and list it in the resource group. Mintlify still serves an auto-generated `/api-reference/<summary>` page for it, but that page is outside the navigation and `seo.indexing: "navigable"` keeps it out of search.
 
 ## Terminology
