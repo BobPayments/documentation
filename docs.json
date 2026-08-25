@@ -95,7 +95,11 @@
     },
     {
       "source": "/en",
-      "destination": "/en/pages/introduction"
+      "destination": "/pages/introduction"
+    },
+    {
+      "source": "/en/:slug*",
+      "destination": "/:slug*"
     },
     {
       "source": "/api-reference",
@@ -243,263 +247,128 @@
     }
   },
   "navigation": {
-    "languages": [
+    "tabs": [
       {
-        "language": "pt-BR",
-        "default": true,
-        "tabs": [
+        "tab": "Documentação",
+        "groups": [
           {
-            "tab": "Documentação",
-            "groups": [
+            "group": "Primeiros passos",
+            "pages": [
+              "pages/introduction",
               {
-                "group": "Primeiros passos",
+                "group": "Quickstart",
                 "pages": [
-                  "pages/introduction",
-                  {
-                    "group": "Quickstart",
-                    "pages": [
-                      "pages/setup-account",
-                      "pages/quickstart"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Conceitos principais",
-                "pages": [
-                  "pages/concepts/payment-flow",
-                  "pages/concepts/customers",
-                  "pages/concepts/sessions",
-                  "pages/concepts/transactions",
-                  "pages/concepts/webhooks"
-                ]
-              },
-              {
-                "group": "Formas de integração",
-                "pages": [
-                  "pages/payments",
-                  "pages/checkout/overview",
-                  "pages/credit-card/overview"
-                ]
-              },
-              {
-                "group": "Webhooks",
-                "pages": [
-                  "pages/webhooks"
-                ]
-              },
-              {
-                "group": "Usando a Bob",
-                "pages": [
-                  "pages/environments",
-                  "pages/sandbox",
-                  "pages/authentication",
-                  "pages/production"
-                ]
-              },
-              {
-                "group": "Fundamentos da API",
-                "pages": [
-                  "pages/idempotency",
-                  "pages/errors"
+                  "pages/setup-account",
+                  "pages/quickstart"
                 ]
               }
             ]
           },
           {
-            "tab": "Referência da API",
-            "groups": [
-              {
-                "group": "Transações",
-                "pages": [
-                  "pages/pix/reference",
-                  "pages/credit-card/reference",
-                  "pages/pix/create",
-                  "pages/pix/list",
-                  "pages/pix/check-status"
-                ]
-              },
-              {
-                "group": "Checkout",
-                "pages": [
-                  "pages/checkout/create",
-                  "pages/checkout/status"
-                ]
-              },
-              {
-                "group": "Clientes",
-                "pages": [
-                  "pages/customers/reference",
-                  "pages/customers/get",
-                  "pages/customers/list"
-                ]
-              },
-              {
-                "group": "Projeto",
-                "pages": [
-                  "pages/store/reference",
-                  "pages/store/get"
-                ]
-              },
-              {
-                "group": "Sandbox",
-                "pages": [
-                  "pages/pix/simulate-payment"
-                ]
-              }
+            "group": "Conceitos principais",
+            "pages": [
+              "pages/concepts/payment-flow",
+              "pages/concepts/customers",
+              "pages/concepts/sessions",
+              "pages/concepts/transactions",
+              "pages/concepts/webhooks"
             ]
           },
           {
-            "tab": "SDKs",
-            "groups": [
-              {
-                "group": "Comece aqui",
-                "pages": [
-                  "pages/sdk/overview"
-                ]
-              },
-              {
-                "group": "Servidor",
-                "pages": [
-                  "pages/sdk/node",
-                  "pages/sdk/php"
-                ]
-              },
-              {
-                "group": "Frontend",
-                "pages": [
-                  "pages/sdk/checkout"
-                ]
-              }
+            "group": "Formas de integração",
+            "pages": [
+              "pages/payments",
+              "pages/checkout/overview",
+              "pages/credit-card/overview"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "pages/webhooks"
+            ]
+          },
+          {
+            "group": "Usando a Bob",
+            "pages": [
+              "pages/environments",
+              "pages/sandbox",
+              "pages/authentication",
+              "pages/production"
+            ]
+          },
+          {
+            "group": "Fundamentos da API",
+            "pages": [
+              "pages/idempotency",
+              "pages/errors"
             ]
           }
         ]
       },
       {
-        "language": "en",
-        "tabs": [
+        "tab": "Referência da API",
+        "groups": [
           {
-            "tab": "Documentation",
-            "groups": [
-              {
-                "group": "Getting Started",
-                "pages": [
-                  "en/pages/introduction",
-                  {
-                    "group": "Quickstart",
-                    "pages": [
-                      "en/pages/setup-account",
-                      "en/pages/quickstart"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Core concepts",
-                "pages": [
-                  "en/pages/concepts/payment-flow",
-                  "en/pages/concepts/customers",
-                  "en/pages/concepts/sessions",
-                  "en/pages/concepts/transactions",
-                  "en/pages/concepts/webhooks"
-                ]
-              },
-              {
-                "group": "Integration methods",
-                "pages": [
-                  "en/pages/payments",
-                  "en/pages/checkout/overview",
-                  "en/pages/credit-card/overview"
-                ]
-              },
-              {
-                "group": "Webhooks",
-                "pages": [
-                  "en/pages/webhooks"
-                ]
-              },
-              {
-                "group": "Using Bob",
-                "pages": [
-                  "en/pages/sandbox",
-                  "en/pages/authentication",
-                  "en/pages/production"
-                ]
-              },
-              {
-                "group": "API fundamentals",
-                "pages": [
-                  "en/pages/idempotency",
-                  "en/pages/errors"
-                ]
-              }
+            "group": "Transações",
+            "pages": [
+              "pages/pix/reference",
+              "pages/credit-card/reference",
+              "pages/pix/create",
+              "pages/pix/list",
+              "pages/pix/check-status"
             ]
           },
           {
-            "tab": "API Reference",
-            "groups": [
-              {
-                "group": "Transactions",
-                "pages": [
-                  "en/pages/pix/reference",
-                  "en/pages/credit-card/reference",
-                  "en/pages/pix/create",
-                  "en/pages/pix/list",
-                  "en/pages/pix/check-status"
-                ]
-              },
-              {
-                "group": "Checkout",
-                "pages": [
-                  "en/pages/checkout/create",
-                  "en/pages/checkout/status"
-                ]
-              },
-              {
-                "group": "Customers",
-                "pages": [
-                  "en/pages/customers/reference",
-                  "en/pages/customers/get",
-                  "en/pages/customers/list"
-                ]
-              },
-              {
-                "group": "Project",
-                "pages": [
-                  "en/pages/store/reference",
-                  "en/pages/store/get"
-                ]
-              },
-              {
-                "group": "Sandbox",
-                "pages": [
-                  "en/pages/pix/simulate-payment"
-                ]
-              }
+            "group": "Checkout",
+            "pages": [
+              "pages/checkout/create",
+              "pages/checkout/status"
             ]
           },
           {
-            "tab": "SDKs",
-            "groups": [
-              {
-                "group": "Start here",
-                "pages": [
-                  "en/pages/sdk/overview"
-                ]
-              },
-              {
-                "group": "Server",
-                "pages": [
-                  "en/pages/sdk/node",
-                  "en/pages/sdk/php"
-                ]
-              },
-              {
-                "group": "Frontend",
-                "pages": [
-                  "en/pages/sdk/checkout"
-                ]
-              }
+            "group": "Clientes",
+            "pages": [
+              "pages/customers/reference",
+              "pages/customers/get",
+              "pages/customers/list"
+            ]
+          },
+          {
+            "group": "Projeto",
+            "pages": [
+              "pages/store/reference",
+              "pages/store/get"
+            ]
+          },
+          {
+            "group": "Sandbox",
+            "pages": [
+              "pages/pix/simulate-payment"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDKs",
+        "groups": [
+          {
+            "group": "Comece aqui",
+            "pages": [
+              "pages/sdk/overview"
+            ]
+          },
+          {
+            "group": "Servidor",
+            "pages": [
+              "pages/sdk/node",
+              "pages/sdk/php"
+            ]
+          },
+          {
+            "group": "Frontend",
+            "pages": [
+              "pages/sdk/checkout"
             ]
           }
         ]

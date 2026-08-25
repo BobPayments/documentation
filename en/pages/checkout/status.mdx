@@ -1,6 +1,0 @@
----
-title: "Check session status"
-openapi: "GET /api/v1/checkout-sessions/{token}/status"
----
-
-Use the `checkoutToken` returned at creation to check the state of the session. This endpoint is public and serves as a complement to the webhook; on the backend, confirm the order via the signed `transaction.paid` event.
