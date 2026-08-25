@@ -272,34 +272,11 @@
         "tab": "Documentação",
         "groups": [
           {
-            "group": "Comece aqui",
+            "group": "Integração",
             "pages": [
               "pages/introduction",
-              "pages/quickstart"
-            ]
-          },
-          {
-            "group": "Integre pagamentos",
-            "pages": [
-              "pages/payments",
-              "pages/webhooks",
-              "pages/sandbox",
-              "pages/production"
-            ]
-          },
-          {
-            "group": "Entenda a API",
-            "pages": [
               "pages/authentication",
-              "pages/idempotency",
-              "pages/errors"
-            ]
-          },
-          {
-            "group": "Conceitos",
-            "pages": [
-              "pages/concepts/transactions",
-              "pages/concepts/customers"
+              "pages/webhooks"
             ]
           }
         ]
@@ -310,7 +287,6 @@
           {
             "group": "Transações",
             "pages": [
-              "pages/pix/reference",
               "pages/pix/create",
               "pages/pix/list",
               "pages/pix/check-status"
@@ -319,7 +295,6 @@
           {
             "group": "Clientes",
             "pages": [
-              "pages/customers/reference",
               "pages/customers/get",
               "pages/customers/list"
             ]
@@ -327,7 +302,6 @@
           {
             "group": "Projeto",
             "pages": [
-              "pages/store/reference",
               "pages/store/get"
             ]
           },

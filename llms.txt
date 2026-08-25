@@ -2,47 +2,31 @@
 
 > API pública para criar, acompanhar e conciliar pagamentos PIX. Use somente no backend.
 
-## Caminho recomendado de integração
+## Integração
 
-- [Integre pagamentos PIX](/pages/introduction): Entenda o fluxo e as regras essenciais
-- [Crie seu primeiro pagamento](/pages/quickstart): Crie e confirme uma cobrança no sandbox usando a API REST
-- [Implemente o fluxo de pagamento](/pages/payments): Conecte criação, apresentação do PIX, estados e confirmação
-- [Confirme pagamentos com webhooks](/pages/webhooks): Valide eventos assinados e atualize o pedido
-- [Teste no sandbox](/pages/sandbox): Simule pagamento, expiração e pendência sem movimentar dinheiro real
-- [Vá para produção](/pages/production): Revise segurança, idempotência, erros e monitoramento
-
-## Fundamentos da API
-
-- [Autentique as requisições](/pages/authentication): Use chaves `sk_test_` e `sk_live_` no header `Authorization`
-- [Idempotência](/pages/idempotency): Repita criações com segurança usando `Idempotency-Key`
-- [Erros](/pages/errors): Trate erros RFC 7807 e o caso especial HTTP 202
-- [Transações](/pages/concepts/transactions): Entenda o recurso e seus estados
-- [Clientes](/pages/concepts/customers): Entenda como compradores e transações se relacionam
+- [Comece aqui](/pages/introduction): Crie uma cobrança PIX e confirme o pagamento
+- [Chaves de API](/pages/authentication): Use `sk_test_` e `sk_live_` no header `Authorization`
+- [Webhooks](/pages/webhooks): Receba, valide e processe eventos de pagamento
 
 ## Referência da API — Transações
 
-- [Estrutura da cobrança PIX](/pages/pix/reference): Consulte atributos e estados da transação
 - [Criar cobrança](/pages/pix/create): `POST /api/v1/transactions/`
 - [Listar transações](/pages/pix/list): `GET /api/v1/transactions/`
 - [Consultar status](/pages/pix/check-status): `GET /api/v1/transactions/{id}`
 
 ## Referência da API — Clientes
 
-- [Estrutura do cliente](/pages/customers/reference): Consulte os dados do comprador
 - [Listar clientes](/pages/customers/list): `GET /api/v1/customers/`
 - [Buscar cliente por ID](/pages/customers/get): `GET /api/v1/customers/{id}`
 
 ## Referência da API — Projeto e sandbox
 
-- [Estrutura do projeto](/pages/store/reference): Consulte as configurações públicas do projeto
 - [Consultar o projeto](/pages/store/get): `GET /api/v1/store/`
 - [Simular pagamento](/pages/pix/simulate-payment): `POST /api/v1/sandbox/transactions/{transactionId}/pay`
 
 ## Regras essenciais
 
-- Use **pagamento** para a capacidade do produto e **transação** para o recurso da API.
 - Envie valores em centavos. `10000` representa R$ 100,00.
 - Use as chaves secretas somente no backend.
 - Trate `transaction.paid` como a confirmação do pagamento.
 - Valide webhooks com o corpo bruto e processe entregas de forma idempotente.
-- Use `Idempotency-Key` ao criar uma transação pela API REST.
