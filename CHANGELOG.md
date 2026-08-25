@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.51](https://github.com/BobPayments/documentation/compare/v1.1.50...v1.1.51) (2026-08-25)
+
+### Documentação
+
+* split navigation into Comece aqui and a flat API Reference ([#22](https://github.com/BobPayments/documentation/issues/22)) ([fcc3af1](https://github.com/BobPayments/documentation/commit/fcc3af1580420899b57216ab384c9c9851efe4da))
+
 ## [1.1.50](https://github.com/BobPayments/documentation/compare/v1.1.49...v1.1.50) (2026-08-25)
 
 ### Documentação
