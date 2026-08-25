@@ -2,6 +2,12 @@
 
 Histórico de alterações na documentação da API Bob Payments.
 
+## [1.1.47](https://github.com/BobPayments/documentation/compare/v1.1.46...v1.1.47) (2026-08-25)
+
+### Documentação
+
+* drop the English locale so the portal is Portuguese-only ([#17](https://github.com/BobPayments/documentation/issues/17)) ([9afebf7](https://github.com/BobPayments/documentation/commit/9afebf73b3241d0390296ae490e73f61ed5cf74e))
+
 ## [1.1.46](https://github.com/BobPayments/documentation/compare/v1.1.45...v1.1.46) (2026-08-12)
 
 ### Documentação
